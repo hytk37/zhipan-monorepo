@@ -73,8 +73,18 @@ app.use((err, req, res, next) => {
 // ─── 启动服务器（仅直接运行时监听；被 require 时只导出 app，便于测试）──
 function startServer(port) {
   const PORT = (port === 0 || port) ? port : (parseInt(process.env.PORT, 10) || 3000);
-  const server = app.listen(PORT, '0.0.0.0', () => {
-    const actual = server.address().port;
+  const server = app.listen(PORT, '0.0.0.0');
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error('[启动失败] 端口 ' + PORT + ' 已被占用。请关闭占用进程，或指定其他端口：PORT=3001 node api-server.js');
+      process.exit(1);
+    }
+    throw err;
+  });
+
+  server.on('listening', () => {
+    const actual = (server.address() && server.address().port) || PORT;
     console.log('');
     console.log('  HX系统 · API Server 已启动 (v2.1)');
     console.log('  ------------------------------------------------');
@@ -88,14 +98,6 @@ function startServer(port) {
     console.log('  routes/auth.js      登录认证   3 个接口');
     console.log('  routes/admin.js     管理员     2 个接口  (需认证)');
     console.log('');
-  });
-
-  server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.error('[启动失败] 端口 ' + PORT + ' 已被占用。请关闭占用进程，或指定其他端口：PORT=3001 node api-server.js');
-      process.exit(1);
-    }
-    throw err;
   });
 
   return server;

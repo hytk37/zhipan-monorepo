@@ -140,20 +140,17 @@ app.listen(PORT, () => {
 
 ### 路由模块
 
-#### 1. `routes/overview.js` - 数据概览路由
+> 所有路由挂载在 `/api` 前缀下。后厨相关接口同时支持 `/api/*` 与 `/api/kitchen/*` 两种路径。
+> 完整接口清单与可用性由 `backend/scripts/smoke-test.js` 保证（`npm test` 可验证）。
+
+#### 1. `routes/overview.js` - 数据概览路由（5 个接口）
 
 **API接口**：
-- `GET /api/overview/students` - 获取学生列表
-- `GET /api/overview/student/:id/nutrition` - 获取学生营养数据
-- `GET /api/overview/kitchen/kpi` - 获取后厨KPI
-- `GET /api/overview/kitchen/group-radar` - 获取群体营养雷达图
-- `GET /api/overview/kitchen/heatmap` - 获取销量热力图
-- `GET /api/overview/kitchen/forecast` - 获取LSTM销量预测
-- `GET /api/overview/kitchen/purchase` - 获取采购建议
-- `GET /api/overview/kitchen/new-dishes` - 获取菜品上新建议
-- `GET /api/overview/overview/fiber-dist` - 获取膳食纤维分布
-- `GET /api/overview/overview/monthly-trend` - 获取30日趋势
-- `GET /api/overview/overview/system-status` - 获取系统状态
+- `GET /api/students` - 获取学生列表
+- `GET /api/student/:id/nutrition` - 获取学生营养数据
+- `GET /api/overview/fiber-dist` - 获取膳食纤维分布
+- `GET /api/overview/monthly-trend` - 获取30日趋势
+- `GET /api/overview/system-status` - 获取系统状态
 
 **示例路由**：
 ```javascript
@@ -172,6 +169,9 @@ router.get('/student/:id/nutrition', (req, res) => {
 ```
 
 #### 2. `routes/kitchen.js` - 后厨管理路由 (10个API)
+`/kpi` `/group-radar` `/heatmap` `/forecast` `/purchase` `/new-dishes`
+`/overview` `/sales-forecast` `/alerts` `/menu-optimize`
+
 #### 3. `routes/student.js` - 学生业务路由 (12个API)
 #### 4. `routes/auth.js` - 登录认证路由 (3个API)
 #### 5. `routes/admin.js` - 管理员路由 (2个API，需认证)
@@ -485,7 +485,7 @@ node api-server.js   # 启动API服务器
 1. 打开**微信开发者工具**
 2. 选择**导入项目**
 3. 项目目录选择：`D:\project\v3\zhipan-monorepo\miniapp`
-4. AppID：`wxe4c5c2ae90bb55e0` (测试号)
+4. AppID：`wxdf5d9046cb774131`（已在 `miniapp/project.config.json` 中配置）
 5. 点击**编译**运行
 
 **学生登录账号**：
