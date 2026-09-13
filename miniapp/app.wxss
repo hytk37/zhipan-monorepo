@@ -1,0 +1,132 @@
+/* app.wxss - 全局样式 */
+page {
+  background-color: #F5F5F5;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 通用卡片 */
+.card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin: 16rpx 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.05);
+}
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title .more {
+  font-size: 24rpx;
+  color: #999;
+  font-weight: 400;
+}
+
+/* 标签 */
+.tag {
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+  margin-right: 8rpx;
+  margin-bottom: 6rpx;
+}
+.tag-green { background: rgba(7,193,96,0.1); color: #07C160; }
+.tag-orange { background: rgba(255,149,0,0.1); color: #FF9500; }
+.tag-red { background: rgba(255,59,48,0.1); color: #FF3B30; }
+.tag-blue { background: rgba(0,122,255,0.1); color: #007AFF; }
+.tag-purple { background: rgba(124,58,237,0.1); color: #7c3aed; }
+
+/* 进度条 */
+.progress-bar {
+  height: 16rpx;
+  background: #F0F0F0;
+  border-radius: 100rpx;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 100rpx;
+  transition: width 0.6s ease;
+}
+
+/* 按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, #07C160, #06AD56);
+  color: #ffffff;
+  border-radius: 100rpx;
+  padding: 20rpx 0;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+}
+.btn-primary::after { border: none; }
+.btn-primary.disabled {
+  background: #CCCCCC;
+}
+
+/* 预警卡片 */
+.alert {
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  font-size: 24rpx;
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+}
+.alert-orange {
+  background: #FFF8E6;
+  color: #9A5700;
+  border-left: 6rpx solid #FF9500;
+}
+.alert-red {
+  background: #FFF0F0;
+  color: #991B1B;
+  border-left: 6rpx solid #FF3B30;
+}
+.alert-green {
+  background: #F0FFF4;
+  color: #166534;
+  border-left: 6rpx solid #07C160;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+}
+.empty-icon { font-size: 80rpx; margin-bottom: 16rpx; }
+.empty-text { font-size: 28rpx; color: #999; }
+
+/* 菜品卡片通用 */
+.food-card {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #FAFAFA;
+  border-radius: 16rpx;
+  margin-bottom: 12rpx;
+}
+.food-emoji { font-size: 64rpx; margin-right: 20rpx; }
+.food-info { flex: 1; }
+.food-name { font-size: 28rpx; font-weight: 600; margin-bottom: 6rpx; }
+.food-desc { font-size: 22rpx; color: #999; line-height: 1.4; }
+.food-tags { margin-top: 8rpx; }
+
+/* 加载 */
+.loading-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60rpx 0;
+}

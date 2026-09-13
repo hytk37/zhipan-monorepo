@@ -1,0 +1,185 @@
+/* pages/profile/profile.wxss */
+.page-profile { min-height: 100vh; padding-bottom: calc(100rpx + env(safe-area-inset-bottom, 0)); }
+
+/* 头部 */
+.profile-header { position: relative; overflow: hidden; }
+.header-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 320rpx;
+  background: linear-gradient(135deg, #07C160, #05A14E);
+}
+.profile-main {
+  position: relative;
+  z-index: 2;
+  padding: 40rpx 32rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.avatar-wrap { position: relative; margin-bottom: 12rpx; }
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60rpx;
+  border: 4rpx solid rgba(255,255,255,0.5);
+}
+.edit-badge {
+  position: absolute;
+  bottom: 0; right: 0;
+  font-size: 24rpx;
+  background: #ffffff;
+  border-radius: 50%;
+  width: 36rpx;
+  height: 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+}
+.user-name { font-size: 36rpx; font-weight: 700; color: #ffffff; }
+.user-id { font-size: 24rpx; color: rgba(255,255,255,0.8); margin-top: 6rpx; }
+.user-badges {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+.badge-item {
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 100rpx;
+  background: rgba(255,255,255,0.25);
+  color: #ffffff;
+}
+.badge-diet {
+  background: rgba(124,58,237,0.35);
+  border: 1rpx solid rgba(255,255,255,0.4);
+}
+.stats-row {
+  display: flex;
+  gap: 48rpx;
+  margin-top: 24rpx;
+  padding: 20rpx 40rpx;
+  background: rgba(255,255,255,0.15);
+  border-radius: 20rpx;
+}
+.stat-item { text-align: center; color: #ffffff; }
+.stat-num { font-size: 36rpx; font-weight: 700; }
+.stat-label { font-size: 22rpx; opacity: 0.8; margin-top: 4rpx; }
+
+/* 等级进度 */
+.level-bar { height: 20rpx; }
+.level-fill { background: linear-gradient(90deg, #07C160, #4CD964); }
+.level-text { font-size: 22rpx; color: #999; margin-top: 8rpx; text-align: right; }
+
+/* 本周打卡 */
+.week-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12rpx 0;
+}
+.week-day {
+  text-align: center;
+  flex: 1;
+}
+.day-label {
+  font-size: 22rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 8rpx;
+}
+.day-dot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: #F0F0F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 22rpx;
+  color: #CCC;
+}
+.week-day.checked .day-dot {
+  background: #07C160;
+  color: #ffffff;
+}
+.week-day.checked .day-label {
+  color: #07C160;
+  font-weight: 600;
+}
+.dot-empty {
+  display: block;
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #DDD;
+}
+
+/* 成就墙 */
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16rpx;
+}
+.ach-item {
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 16rpx;
+  background: #F8FFF8;
+  position: relative;
+}
+.ach-item.locked { opacity: 0.5; background: #F5F5F5; }
+.ach-icon { font-size: 44rpx; margin-bottom: 8rpx; }
+.ach-name { font-size: 20rpx; color: #333; }
+.ach-lock { font-size: 20rpx; position: absolute; top: 4rpx; right: 4rpx; }
+
+/* 菜单 */
+.menu-card {
+  margin: 20rpx 24rpx;
+  background: #ffffff;
+  border-radius: 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28rpx 28rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-left { display: flex; align-items: center; gap: 16rpx; flex: 1; }
+.menu-icon { font-size: 36rpx; }
+.menu-text { display: flex; flex-direction: column; }
+.menu-title { font-size: 28rpx; color: #333; }
+.menu-desc { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+.menu-arrow { font-size: 32rpx; color: #CCC; flex-shrink: 0; }
+
+/* 过敏源 */
+.allergy-tags { display: flex; gap: 12rpx; flex-wrap: wrap; margin-bottom: 12rpx; }
+.allergy-tag {
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 100rpx;
+  background: #FFF0F0;
+  color: #FF3B30;
+}
+.allergy-tip { font-size: 22rpx; color: #999; }
+
+/* 版本信息 */
+.version-info {
+  text-align: center;
+  padding: 32rpx 0 16rpx;
+  font-size: 22rpx;
+  color: #CCC;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}

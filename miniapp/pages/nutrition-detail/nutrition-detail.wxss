@@ -1,0 +1,19 @@
+/* pages/nutrition-detail/nutrition-detail.wxss */
+.page-nutrition { padding-bottom: 40rpx; }
+.score-big { text-align: center; padding: 20rpx 0; }
+.score-num { font-size: 72rpx; font-weight: 700; color: #07C160; }
+.score-label { font-size: 26rpx; color: #999; margin-left: 8rpx; }
+.detail-item { margin-bottom: 20rpx; }
+.detail-item:last-child { margin-bottom: 0; }
+.detail-head { display: flex; justify-content: space-between; margin-bottom: 8rpx; }
+.detail-label { font-size: 26rpx; color: #333; }
+.detail-val { font-size: 24rpx; color: #999; }
+.suggestion { border-radius: 12rpx; padding: 16rpx 20rpx; font-size: 24rpx; margin-bottom: 12rpx; border-left: 6rpx solid; }
+.suggestion.alert-green { background: #F0FFF4; color: #166534; border-color: #07C160; }
+.suggestion.alert-orange { background: #FFF8E6; color: #9A5700; border-color: #FF9500; }
+.suggestion.alert-blue { background: #F0F5FF; color: #1A4D8F; border-color: #007AFF; }
+.history-row { display: flex; justify-content: space-between; padding: 14rpx 0; border-bottom: 1rpx solid #F0F0F0; font-size: 26rpx; }
+.history-row:last-child { border-bottom: none; }
+.hist-date { color: #333; }
+.hist-cal { color: #999; }
+.hist-score { font-weight: 600; }

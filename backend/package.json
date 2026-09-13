@@ -1,0 +1,14 @@
+{
+  "name": "hx-smart-canteen-api",
+  "version": "2.1.0",
+  "description": "智盘 HX系统 · 高校智慧食堂 API 服务",
+  "main": "api-server.js",
+  "scripts": {
+    "start": "node api-server.js",
+    "test": "node scripts/smoke-test.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}

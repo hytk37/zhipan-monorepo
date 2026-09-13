@@ -1,0 +1,151 @@
+/* pages/settings/settings.wxss */
+.page-settings { padding-bottom: 40rpx; }
+
+/* 表单项 */
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+.form-item:last-child { border-bottom: none; }
+.form-label { width: 200rpx; font-size: 28rpx; color: #333; flex-shrink: 0; }
+.form-input {
+  flex: 1;
+  text-align: right;
+  font-size: 28rpx;
+  color: #333;
+  border: none;
+  background: transparent;
+}
+.form-unit { font-size: 24rpx; color: #999; margin-left: 8rpx; width: 60rpx; flex-shrink: 0; }
+.form-value { font-size: 28rpx; color: #07C160; }
+
+/* 目标类型说明 */
+.goal-type-desc {
+  font-size: 24rpx;
+  color: #999;
+  padding: 12rpx 0;
+  margin-bottom: 8rpx;
+}
+
+/* 过敏源 */
+.allergy-tip-text { font-size: 24rpx; color: #999; margin-bottom: 16rpx; }
+.allergy-grid { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.allergy-chip {
+  padding: 12rpx 24rpx;
+  border-radius: 100rpx;
+  font-size: 26rpx;
+  background: #F5F5F5;
+  color: #666;
+  border: 2rpx solid #E0E0E0;
+  transition: all 0.2s;
+}
+.allergy-chip.active {
+  background: #FFF0F0;
+  color: #FF3B30;
+  border-color: #FF3B30;
+  font-weight: 600;
+}
+/* 已选过敏源 */
+.selected-allergies { display: flex; flex-wrap: wrap; gap: 12rpx; margin-bottom: 8rpx; }
+.selected-tag {
+  padding: 8rpx 20rpx;
+  border-radius: 100rpx;
+  font-size: 24rpx;
+  background: #FFE0E0;
+  color: #FF3B30;
+}
+.remove-hint { font-size: 22rpx; color: #CCC; }
+
+/* 提醒行 */
+.remind-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+}
+.remind-divider { height: 1rpx; background: #F0F0F0; margin: 8rpx 0; }
+.remind-left { display: flex; align-items: center; gap: 8rpx; }
+.remind-emoji { font-size: 32rpx; }
+.remind-label { font-size: 28rpx; color: #333; }
+.remind-time-label { font-size: 26rpx; color: #999; }
+
+/* BMI */
+.bmi-display { text-align: center; padding: 24rpx 0 16rpx; }
+.bmi-num { font-size: 72rpx; font-weight: 700; }
+.bmi-status { font-size: 28rpx; display: block; margin-top: 8rpx; font-weight: 600; }
+.bmi-bar-wrap { position: relative; padding: 0 8rpx; margin-bottom: 16rpx; }
+.bmi-bar {
+  display: flex;
+  height: 16rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+.bmi-bar-seg { height: 100%; }
+.seg-low { flex: 18.5; background: #007AFF; }
+.seg-normal { flex: 5.5; background: #07C160; }
+.seg-high { flex: 4; background: #FF9500; }
+.seg-obese { flex: 7; background: #FF3B30; }
+.bmi-pointer {
+  position: absolute;
+  top: -6rpx;
+  width: 28rpx;
+  height: 28rpx;
+  background: #333;
+  border-radius: 50%;
+  border: 4rpx solid #ffffff;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.2);
+  transform: translateX(-50%);
+  transition: left 0.3s;
+}
+.bmi-scale { display: flex; gap: 4rpx; }
+.bmi-range {
+  flex: 1;
+  text-align: center;
+  font-size: 20rpx;
+  padding: 10rpx 0;
+  border-radius: 8rpx;
+}
+.bmi-low { background: #F0F5FF; color: #007AFF; }
+.bmi-normal { background: #F0FFF4; color: #07C160; }
+.bmi-high { background: #FFF8E6; color: #FF9500; }
+.bmi-obese { background: #FFF0F0; color: #FF3B30; }
+
+/* 保存按钮 */
+.save-wrap { padding: 32rpx 24rpx; }
+
+/* 头像选择 */
+.avatar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  justify-content: center;
+  padding: 12rpx 0;
+}
+.avatar-option {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4rpx solid transparent;
+  transition: all 0.2s;
+}
+.avatar-option.selected {
+  border-color: #07C160;
+  transform: scale(1.15);
+  box-shadow: 0 4rpx 16rpx rgba(7,193,96,0.3);
+}
+.avatar-emoji { font-size: 40rpx; }
+
+/* 饮食偏好说明 */
+.diet-hint {
+  font-size: 24rpx;
+  color: #999;
+  padding: 8rpx 0;
+}
+
+/* 紫色标签（新增用于蛋奶素） */
+.tag-purple { background: rgba(124,58,237,0.1); color: #7c3aed; }

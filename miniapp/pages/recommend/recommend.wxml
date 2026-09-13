@@ -1,0 +1,90 @@
+<!-- pages/recommend/recommend.wxml -->
+<view class="page-recommend">
+
+  <!-- 分类标签 -->
+  <view class="category-tabs">
+    <view
+      class="category-tab {{currentCat === item.key ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="key"
+      data-cat="{{item.key}}"
+      bindtap="switchCategory"
+    >
+      {{item.name}}
+    </view>
+  </view>
+
+  <!-- 用户画像 + AI个性化方案 -->
+  <view class="plan-card">
+    <view class="plan-header">
+      <view class="plan-avatar">🤖</view>
+      <view class="plan-info">
+        <view class="plan-name">AI 为你定制</view>
+        <view class="plan-desc">BMI {{userProfile.bmi}}（{{userProfile.bmiStatus}}）· 目标「{{userProfile.goal}}」</view>
+      </view>
+    </view>
+    <!-- 饮食偏好标签 -->
+    <view style="display:flex;gap:6px;margin:10px 0;flex-wrap:wrap;" wx:if="{{dietTags && dietTags.length > 0}}">
+      <text
+        class="diet-tag"
+        wx:for="{{dietTags}}"
+        wx:key="*this"
+        style="font-size:11px;padding:2px 10px;border-radius:100px;{{item.style}}"
+      >{{item.label}}</text>
+    </view>
+    <view class="plan-lack">
+      <text>⚠️ 你近期缺乏：</text>
+      <text class="lack-highlight">{{userProfile.lackNutrient}}</text>
+    </view>
+    <view class="plan-foods">
+      <view class="plan-food" wx:for="{{aiPlan.foods}}" wx:key="id" bindtap="goFoodDetail" data-id="{{item.id}}">
+        <view class="pf-emoji">{{item.emoji}}</view>
+        <view class="pf-info">
+          <view class="pf-name">{{item.name}}</view>
+          <view class="pf-detail">{{item.cal}} · 蛋白质{{item.protein}}</view>
+          <view class="pf-reason">💡 {{item.reason}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="plan-total">
+      <text>方案总热量：{{aiPlan.totalCal}} kcal</text>
+    </view>
+    <button class="btn-primary adopt-btn" bindtap="adoptPlan">采纳此方案</button>
+  </view>
+
+  <!-- 食堂精选 -->
+  <view class="card">
+    <view class="card-title"><text>👨🍳 今日食堂精选</text></view>
+    <view wx:for="{{chefPicks}}" wx:key="id" wx:if="{{currentCat === 'all' || item.cat === currentCat}}">
+      <view class="food-card" bindtap="goFoodDetail" data-id="{{item.id}}">
+        <view class="food-emoji">{{item.emoji}}</view>
+        <view class="food-info">
+          <view class="food-name">{{item.name}}</view>
+          <view class="food-desc">{{item.desc}}</view>
+          <view class="food-tags">
+            <text class="tag tag-{{tag.type}}" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="text">{{tag.text}}</text>
+            <text class="diet-badge" wx:for="{{item.diet}}" wx:for-item="d" wx:key="*this" wx:if="{{d === '清真'}}" style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(22,163,74,.1);color:#16a34a;margin-left:4px;">清真✓</text>
+            <text class="diet-badge" wx:for="{{item.diet}}" wx:for-item="d" wx:key="*this" wx:if="{{d === '素食'}}" style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(124,58,237,.1);color:#7c3aed;margin-left:4px;">素食✓</text>
+            <text class="diet-badge" wx:for="{{item.diet}}" wx:for-item="d" wx:key="*this" wx:if="{{d === '蛋奶素'}}" style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(124,58,237,.1);color:#7c3aed;margin-left:4px;">蛋奶素✓</text>
+            <text class="diet-badge" wx:for="{{item.diet}}" wx:for-item="d" wx:key="*this" wx:if="{{d === '无麸质'}}" style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(234,88,12,.1);color:#ea580c;margin-left:4px;">无麸质✓</text>
+            <text class="diet-badge" wx:for="{{item.diet}}" wx:for-item="d" wx:key="*this" wx:if="{{d === '低敏'}}" style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(13,148,136,.1);color:#0d9488;margin-left:4px;">低敏✓</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 营养小贴士 -->
+  <view class="card">
+    <view class="card-title"><text>💡 营养小贴士</text></view>
+    <view class="tip-card" wx:for="{{tips}}" wx:key="title" bindtap="showTip" data-index="{{index}}">
+      <view class="tip-icon">{{item.icon}}</view>
+      <view class="tip-content">
+        <view class="tip-title">{{item.title}}</view>
+        <view class="tip-text">{{item.content}}</view>
+      </view>
+      <view class="tip-arrow">›</view>
+    </view>
+  </view>
+
+</view>

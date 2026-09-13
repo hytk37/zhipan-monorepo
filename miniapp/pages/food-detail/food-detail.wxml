@@ -1,0 +1,52 @@
+<!-- pages/food-detail/food-detail.wxml -->
+<view class="page-food">
+  <!-- 菜品头部 -->
+  <view class="food-header">
+    <view class="food-emoji-big">{{food.emoji}}</view>
+    <view class="food-name-big">{{food.name}}</view>
+    <view class="food-source">{{food.source}}</view>
+    <view class="food-tags-row">
+      <text class="tag tag-green" wx:for="{{food.tags}}" wx:key="*this">{{item}}</text>
+      <text class="tag tag-red" wx:if="{{food.allergy.length > 0}}" wx:for="{{food.allergy}}" wx:for-item="a" wx:key="*this">含{{a}}</text>
+    </view>
+  </view>
+
+  <!-- 营养数据 -->
+  <view class="card">
+    <view class="card-title"><text>📊 营养成分</text></view>
+    <view class="nutrient-grid">
+      <view class="nutrient-item" wx:for="{{nutritionData}}" wx:key="label">
+        <view class="nutrient-val" style="color:{{item.color}}">{{item.value}}</view>
+        <view class="nutrient-unit">{{item.unit}}</view>
+        <view class="nutrient-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评分与热度 -->
+  <view class="card">
+    <view class="card-title"><text>⭐ 评价</text></view>
+    <view class="rating-row">
+      <view class="rating-score">{{food.rating}}</view>
+      <view class="rating-stars">★★★★{{food.rating >= 4.5 ? '★' : '☆'}}</view>
+      <view class="rating-count">{{food.eatCount}}人吃过</view>
+    </view>
+  </view>
+
+  <!-- 加入餐单 -->
+  <view class="add-btn-wrap">
+    <button class="btn-primary add-btn" bindtap="addToMeal">➕ 加入今日餐单</button>
+  </view>
+
+  <!-- 推荐搭配 -->
+  <view class="card">
+    <view class="card-title"><text>🔗 搭配推荐</text></view>
+    <view class="food-card" wx:for="{{relatedFoods}}" wx:key="name" bindtap="goFoodDetail" data-id="{{item.id}}">
+      <view class="food-emoji">{{item.emoji}}</view>
+      <view class="food-info">
+        <view class="food-name">{{item.name}}</view>
+        <view class="food-desc">{{item.cal}}kcal · 蛋白质{{item.protein}}g</view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,111 @@
+/* pages/index/index.wxss */
+.page-home { min-height: 100vh; padding-bottom: calc(100rpx + env(safe-area-inset-bottom, 0)); }
+
+/* 顶部问候 */
+.header {
+  background: linear-gradient(135deg, #07C160, #05A14E);
+  padding: 36rpx 32rpx 52rpx;
+  color: #ffffff;
+  border-radius: 0 0 32rpx 32rpx;
+}
+.greeting { font-size: 36rpx; font-weight: 700; }
+.sub-text { font-size: 24rpx; opacity: 0.85; margin-top: 8rpx; }
+
+/* 营养卡片 */
+.nutrition-card { margin-top: -24rpx; position: relative; z-index: 2; }
+.nutrition-ring-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-bottom: 20rpx;
+}
+.ring-wrap {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  flex-shrink: 0;
+}
+.ring-canvas {
+  width: 200rpx;
+  height: 200rpx;
+}
+.ring-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.ring-score { font-size: 52rpx; font-weight: 700; color: #07C160; line-height: 1; }
+.ring-label { font-size: 20rpx; color: #999; margin-top: 4rpx; }
+.bars-wrap { flex: 1; }
+.bar-item { margin-bottom: 16rpx; }
+.bar-item:last-child { margin-bottom: 0; }
+.bar-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6rpx;
+}
+.bar-label { font-size: 22rpx; color: #666; }
+.bar-val { font-size: 22rpx; color: #999; }
+.cal-row { margin-top: 16rpx; }
+.cal-text { font-size: 22rpx; color: #666; margin-bottom: 6rpx; display: block; }
+.cal-bar { height: 20rpx; }
+
+/* 趋势图 */
+.trend-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 200rpx;
+  padding: 0 8rpx;
+}
+.trend-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+.trend-val { font-size: 18rpx; color: #999; margin-bottom: 4rpx; }
+.trend-bar-wrap {
+  flex: 1;
+  width: 40rpx;
+  display: flex;
+  align-items: flex-end;
+}
+.trend-bar {
+  width: 100%;
+  background: #07C160;
+  border-radius: 8rpx 8rpx 0 0;
+  min-height: 6rpx;
+  opacity: 0.5;
+}
+.trend-bar.active { opacity: 1; background: #FF6B35; }
+.trend-label { font-size: 20rpx; color: #999; margin-top: 8rpx; }
+.trend-label.active { color: #FF6B35; font-weight: 600; }
+
+/* 快捷入口 */
+.quick-grid {
+  display: flex;
+  justify-content: space-around;
+  padding: 12rpx 0;
+}
+.quick-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.quick-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  margin-bottom: 8rpx;
+}
+.qi-1 { background: #F0FFF4; }
+.qi-2 { background: #FFF8E6; }
+.qi-3 { background: #F0F5FF; }
+.quick-text { font-size: 24rpx; color: #333; }

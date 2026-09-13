@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HX系统 · 管理后台</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0b0d14;--bg2:#12141e;--bg3:#171b28;--bg4:#1e2335;
+  --border:#252940;--border-light:#2f3350;
+  --text:#e8eaf0;--text2:#8588a0;--text3:#55587a;
+  --green:#00d68f;--red:#ff4d6a;--yellow:#f5a623;--blue:#3b82f6;
+  --cyan:#06d6a0;--purple:#7c5cfc;--orange:#f97316;--pink:#ec4899;
+  --sidebar-w:248px;
+}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+/* ===== 侧边栏 ===== */
+.sidebar{position:fixed;left:0;top:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid var(--border);z-index:100;display:flex;flex-direction:column}
+.sidebar-logo{padding:28px 20px 22px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.sidebar-logo .logo-icon{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,var(--green),#00b87a);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;color:#fff;box-shadow:0 4px 14px rgba(0,214,143,.25)}
+.sidebar-logo h1{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.sidebar-logo span{font-size:11px;color:var(--text3);display:block;margin-top:2px;letter-spacing:.5px}
+.sidebar-nav{flex:1;padding:16px 10px;overflow-y:auto}
+.nav-group{margin-bottom:18px}
+.nav-group-title{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;padding:0 14px;margin-bottom:10px;font-weight:500}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;cursor:pointer;transition:all .2s cubic-bezier(0.16,1,0.3,1);color:var(--text2);font-size:13px;margin-bottom:3px;user-select:none;position:relative}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(0,214,143,.12),rgba(6,214,160,.06));color:var(--green);font-weight:600}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;border-radius:0 3px 3px 0;background:var(--green)}
+.nav-item .icon{width:22px;text-align:center;font-size:16px;opacity:.85}
+.nav-item.active .icon{opacity:1}
+.nav-item .badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;line-height:1.4}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--bg3);transition:background .2s}
+.user-card:hover{background:var(--bg4)}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,var(--green),#00b87a);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;color:#fff}
+.user-info .name{font-size:13px;font-weight:600;color:var(--text)}
+.user-info .role{font-size:11px;color:var(--text3)}
+
+/* ===== 主区域 ===== */
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.topbar{padding:16px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(11,13,20,.85);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.topbar-left h2{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.topbar-left .date{font-size:12px;color:var(--text3)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-btn{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-size:13px;cursor:pointer;transition:all .2s cubic-bezier(0.16,1,0.3,1);display:flex;align-items:center;gap:6px;letter-spacing:.2px}
+.topbar-btn:hover{border-color:var(--green);color:var(--green);transform:translateY(-1px)}
+.topbar-btn:active{transform:translateY(0)}
+.topbar-btn.primary{background:linear-gradient(145deg,var(--green),#00b87a);color:#fff;border:none;font-weight:500}
+.topbar-btn.primary:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,214,143,.3)}
+.topbar-btn.primary:active{transform:translateY(0)}
+
+/* ===== 登录覆盖层 ===== */
+.login-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:44px;width:400px;max-width:90vw;box-shadow:0 24px 80px rgba(0,0,0,.4)}
+.login-box h2{font-size:22px;margin-bottom:4px;display:flex;align-items:center;gap:10px;letter-spacing:-.3px}
+.login-box p{color:var(--text2);font-size:14px;margin-bottom:32px}
+.login-box .field{margin-bottom:20px}
+.login-box .field label{display:block;font-size:13px;color:var(--text3);margin-bottom:6px;font-weight:500}
+.login-box .field input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s}
+.login-box .field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,214,143,.1)}
+.login-box .login-btn{width:100%;padding:13px;border-radius:10px;border:none;background:linear-gradient(145deg,var(--green),#00b87a);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s cubic-bezier(0.16,1,0.3,1);letter-spacing:.3px}
+.login-box .login-btn:hover{opacity:.88;box-shadow:0 4px 20px rgba(0,214,143,.25);transform:translateY(-1px)}
+.login-box .login-btn:active{transform:translateY(0)}
+.login-box .login-error{color:var(--red);font-size:13px;margin-top:12px;display:none}
+.login-box .login-loading{display:none;text-align:center;color:var(--text2);font-size:14px;margin-top:16px}
+
+/* ===== 学生管理 ===== */
+.student-actions{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.student-actions .import-btn{padding:12px 24px;border-radius:10px;border:1px dashed var(--green);background:rgba(0,214,143,.06);color:var(--green);cursor:pointer;font-size:14px;transition:all .2s;display:flex;align-items:center;gap:8px;font-weight:500}
+.student-actions .import-btn:hover{background:rgba(0,214,143,.12)}
+.student-actions .refresh-btn{padding:12px 24px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;font-size:14px;transition:all .2s}
+.student-actions .refresh-btn:hover{color:var(--text);border-color:var(--border-light)}
+#import-input{display:none}
+.student-table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.student-table{width:100%;border-collapse:collapse}
+.student-table th{padding:14px 18px;text-align:left;font-size:12px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border);background:var(--bg3);letter-spacing:.3px}
+.student-table td{padding:12px 18px;font-size:14px;border-bottom:1px solid var(--border)}
+.student-table tr:last-child td{border-bottom:none}
+.student-table tr{transition:background .15s}
+.student-table tr:hover td{background:rgba(0,214,143,.03)}
+.student-table .account-cell{font-family:monospace;color:var(--cyan);font-size:13px}
+.student-table .pwd-cell{font-family:monospace;color:var(--yellow);font-size:13px}
+.student-count{font-size:13px;color:var(--text3);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.import-result{margin-top:16px;padding:16px;border-radius:8px;display:none}
+.import-result.success{display:block;background:rgba(0,214,143,.1);border:1px solid var(--green);color:var(--green)}
+.import-result.error{display:block;background:rgba(255,77,106,.1);border:1px solid var(--red);color:var(--red)}
+.import-result .accounts-list{margin-top:8px;font-size:13px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px}
+.import-result .accounts-list span{padding:4px 8px;background:var(--bg3);border-radius:4px}
+.student-search{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:14px;outline:none;width:260px;transition:border-color .2s,box-shadow .2s}
+.student-search:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,214,143,.1)}
+
+/* ===== 内容 ===== */
+.content{padding:28px 32px}
+.page{display:none}
+.page.active{display:block;animation:pageFadeIn .3s cubic-bezier(0.16,1,0.3,1)}
+@keyframes pageFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.section{margin-bottom:16px}
+
+/* ===== 卡片 ===== */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px 24px;position:relative;overflow:hidden;transition:all .25s cubic-bezier(0.16,1,0.3,1);cursor:default}
+.stat-card:hover{transform:translateY(-3px);border-color:var(--border-light);box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.stat-card .label{font-size:12px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.stat-card .value{font-size:30px;font-weight:800;margin-bottom:6px;letter-spacing:-1px;line-height:1.1}
+.stat-card .change{font-size:12px;display:flex;align-items:center;gap:4px;color:var(--text3)}
+.stat-card .change.up{color:var(--red)}
+.stat-card .change.down{color:var(--green)}
+.stat-card .glow{position:absolute;width:140px;height:140px;border-radius:50%;filter:blur(70px);opacity:.1;top:-40px;right:-40px;transition:opacity .4s}
+.stat-card:hover .glow{opacity:.18}
+.stat-card .icon-bg{position:absolute;bottom:-8px;right:-5px;font-size:64px;opacity:.05;pointer-events:none}
+
+/* ===== 图表容器 ===== */
+.charts-row{display:grid;gap:14px;margin-bottom:24px}
+.charts-row.cols-2{grid-template-columns:1fr 1fr}
+.charts-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+.charts-row.cols-2-1{grid-template-columns:2fr 1fr}
+.charts-row.cols-1-2{grid-template-columns:1fr 2fr}
+.chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;transition:border-color .2s}
+.chart-box:hover{border-color:var(--border-light)}
+.chart-box .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.chart-box .chart-title{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text);letter-spacing:-.2px}
+.chart-box .chart-title .dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+.chart-box .chart-actions{display:flex;gap:6px}
+.chart-box .chart-actions button{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s}
+.chart-box .chart-actions button.active,.chart-box .chart-actions button:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.chart-box canvas{max-height:300px;border-radius:6px}
+
+/* ===== 表格 ===== */
+.table-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:24px}
+.table-box:hover{border-color:var(--border-light)}
+.table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.table-title{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text);letter-spacing:-.2px}
+.table-title .dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;padding:12px 14px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:500;white-space:nowrap;letter-spacing:.2px}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:rgba(0,214,143,.03)}
+.tag{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.tag-green{background:rgba(0,214,143,.12);color:var(--green)}
+.tag-red{background:rgba(255,77,106,.12);color:var(--red)}
+.tag-yellow{background:rgba(255,170,0,.12);color:var(--yellow)}
+.tag-blue{background:rgba(59,130,246,.12);color:var(--blue)}
+.tag-purple{background:rgba(168,85,247,.12);color:var(--purple)}
+.tag-orange{background:rgba(249,115,22,.12);color:var(--orange)}
+.rarity{display:inline-flex;align-items:center;gap:4px}
+.rarity-common{color:var(--text2)}.rarity-rare{color:var(--blue)}.rarity-epic{color:var(--purple)}.rarity-legend{color:var(--orange)}
+.progress-mini{width:80px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle}
+.progress-mini .fill{height:100%;border-radius:3px;transition:width .6s}
+
+/* ===== 预警卡片 ===== */
+.alert-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.alert-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;gap:14px;transition:border-color .2s}
+.alert-card:hover{border-color:var(--border-light)}
+.alert-card .alert-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.alert-card .alert-icon.warn{background:rgba(245,166,35,.12);color:var(--yellow)}
+.alert-card .alert-icon.danger{background:rgba(255,77,106,.12);color:var(--red)}
+.alert-card .alert-icon.info{background:rgba(59,130,246,.12);color:var(--blue)}
+.alert-card .alert-body h4{font-size:14px;font-weight:600;margin-bottom:4px;color:var(--text)}
+.alert-card .alert-body p{font-size:12px;color:var(--text3);line-height:1.5}
+
+/* ===== 菜品管理 ===== */
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.food-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;transition:all .25s cubic-bezier(0.16,1,0.3,1);cursor:pointer}
+.food-card:hover{border-color:var(--border-light);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.food-card .food-emoji{font-size:40px;text-align:center;margin:8px 0}
+.food-card .food-name{font-size:14px;font-weight:600;text-align:center;margin-bottom:8px;color:var(--text)}
+.food-card .food-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:10px}
+.food-card .food-nutrition{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px}
+.food-card .food-nutrition span{display:flex;justify-content:space-between;padding:3px 8px;background:var(--bg3);border-radius:6px;color:var(--text2)}
+.food-card .food-nutrition span b{color:var(--text)}
+.food-card .food-actions{display:flex;gap:8px;margin-top:12px;justify-content:center}
+.food-card .food-actions button{padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s}
+.food-card .food-actions button:hover{border-color:var(--green);color:var(--green)}
+.food-card .food-actions button.danger:hover{border-color:var(--red);color:var(--red)}
+
+/* ===== 模态框 ===== */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:28px;width:480px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.4);animation:modalIn .2s cubic-bezier(0.16,1,0.3,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px;color:var(--text)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;color:var(--text3);margin-bottom:6px;font-weight:500}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.form-group input:focus,.form-group select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,214,143,.1)}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}
+.modal-actions button{padding:9px 22px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:14px;cursor:pointer;transition:all .2s cubic-bezier(0.16,1,0.3,1)}
+.modal-actions button.primary{background:linear-gradient(145deg,var(--green),#00b87a);color:#fff;border:none;font-weight:500}
+.modal-actions button:hover{opacity:.88;transform:translateY(-1px)}
+.modal-actions button:active{transform:translateY(0)}
+
+/* ===== 时段热力 ===== */
+.heatmap-grid{display:grid;grid-template-columns:80px repeat(6,1fr);gap:3px;font-size:11px;text-align:center}
+.heatmap-grid .cell{padding:8px 4px;border-radius:4px;font-weight:600}
+.heatmap-grid .header{color:var(--text3);font-weight:500;padding-bottom:6px}
+.heatmap-grid .row-label{color:var(--text2);text-align:right;padding-right:8px;display:flex;align-items:center;justify-content:flex-end}
+
+/* ===== 筛选按钮 ===== */
+.filter-cat-btn{padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;transition:all .2s cubic-bezier(0.16,1,0.3,1)}
+.filter-cat-btn:hover{border-color:var(--green);color:var(--green)}
+.filter-cat-btn.active{background:linear-gradient(145deg,var(--green),#00b87a);color:#fff;border:none}
+.food-diet-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;justify-content:center}
+.diet-tag{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:600}
+.diet-tag.halal{background:rgba(0,214,143,.12);color:var(--green)}
+.diet-tag.veg{background:rgba(59,130,246,.12);color:var(--blue)}
+.diet-tag.gf{background:rgba(168,85,247,.12);color:var(--purple)}
+.diet-tag.low{background:rgba(255,170,0,.12);color:var(--yellow)}
+
+/* ==================== 营养大屏专用样式 ==================== */
+.dash-title{font-size:20px;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}
+.dash-subtitle{font-size:13px;color:var(--text3);margin-bottom:24px;line-height:1.5}
+.section{margin-bottom:16px}
+
+/* 指标卡片 */
+.dash-metric{background:var(--bg3);border-radius:10px;padding:16px;transition:background .2s}
+.dash-metric:hover{background:var(--bg4)}
+.dash-metric .mlabel{font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:500}
+.dash-metric .mvalue{font-size:24px;font-weight:600;color:var(--text);letter-spacing:-.5px}
+.dash-metric.blue .mvalue{color:var(--blue)}
+.dash-metric.green .mvalue{color:var(--green)}
+.dash-metric.orange .mvalue{color:var(--orange)}
+.dash-metric.red .mvalue{color:var(--red)}
+.dash-metric.purple .mvalue{color:var(--purple)}
+.dash-metric.teal .mvalue{color:var(--cyan)}
+.dash-metric.amber .mvalue{color:var(--yellow)}
+.dash-metric .msub{font-size:11px;color:var(--text3);margin-top:6px}
+
+/* 大屏进度条 */
+.dash-pbar{display:flex;align-items:center;gap:10px;margin:8px 0}
+.dash-pbar .plabel{font-size:12px;color:var(--text3);width:72px;flex-shrink:0;font-weight:500}
+.dash-pbar .ptrack{flex:1;height:8px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.dash-pbar .pfill{height:100%;border-radius:100px;transition:width .8s cubic-bezier(0.16,1,0.3,1)}
+.dash-pbar .ppct{font-size:12px;color:var(--text2);width:44px;text-align:right;flex-shrink:0;font-weight:600}
+
+/* 大屏预警条 */
+.dash-alert{border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.dash-alert.warn{background:rgba(245,166,35,.08);border-left:3px solid var(--yellow);color:#d4a84b}
+.dash-alert.info{background:rgba(59,130,246,.08);border-left:3px solid var(--blue);color:#6fa8f7}
+.dash-alert.ok{background:rgba(0,214,143,.08);border-left:3px solid var(--green);color:#3dd68c}
+.dash-alert .aicon{width:18px;height:18px;border-radius:50%;flex-shrink:0;margin-top:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.dash-alert.warn .aicon{background:var(--yellow);color:#1a1a2e}
+.dash-alert.info .aicon{background:var(--blue);color:#fff}
+.dash-alert.ok .aicon{background:var(--green);color:#1a1a2e}
+
+/* 用户选择器 */
+.user-selector{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;padding:4px 0}
+.user-pick{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;cursor:pointer;border:2px solid transparent;transition:all .2s cubic-bezier(0.16,1,0.3,1);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.user-pick:hover{transform:scale(1.08)}
+.user-pick.selected{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,214,143,.15)}
+
+/* 时间线 */
+.timeline-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.timeline-row:last-child{border-bottom:none}
+.timeline-row:hover{opacity:.85}
+.timeline-time{color:var(--text3);font-size:11px;width:64px;flex-shrink:0;font-family:monospace}
+.timeline-meal{color:var(--text3);font-size:12px;width:48px;flex-shrink:0;font-weight:500}
+.timeline-items{color:var(--text);flex:1}
+.timeline-cal{color:var(--orange);font-size:12px;font-weight:600;width:64px;text-align:right;flex-shrink:0}
+
+/* 仪表条 */
+.dash-gauge{margin:12px 0}
+.dash-gauge .gh{display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px}
+.dash-gauge .gn{color:var(--text3);font-weight:500}
+.dash-gauge .gv{font-weight:600}
+.dash-gauge .gt{height:8px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.dash-gauge .gf{height:100%;border-radius:100px;transition:width 1s cubic-bezier(0.16,1,0.3,1);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+
+/* 热力图 7列 */
+.dash-heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dash-hcell{aspect-ratio:1;border-radius:3px;transition:.2s;cursor:pointer;position:relative}
+.dash-hcell:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100%+4px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:11px;padding:4px 8px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:10}
+
+/* 推荐卡片 */
+.rec-card{border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;align-items:flex-start;gap:12px;background:var(--bg3)}
+.rec-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.rec-rank.r1{background:rgba(255,170,0,.15);color:var(--yellow)}
+.rec-rank.r2{background:rgba(255,255,255,.06);color:var(--text2)}
+.rec-rank.r3{background:rgba(168,85,247,.12);color:var(--purple)}
+.rec-info h4{font-size:13px;font-weight:500;margin-bottom:4px}
+.rec-info p{font-size:12px;color:var(--text2);line-height:1.5}
+.rec-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.rec-tag{font-size:11px;padding:1px 7px;border-radius:100px;background:rgba(59,130,246,.12);color:var(--blue)}
+.rec-tag.g{background:rgba(0,214,143,.12);color:var(--green)}
+.rec-tag.o{background:rgba(255,170,0,.12);color:var(--yellow)}
+
+/* 预测 & 采购 */
+.forecast-row{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:13px;border-radius:8px;margin-bottom:4px;transition:all .2s cubic-bezier(0.16,1,0.3,1)}
+.forecast-row:hover{background:var(--bg3);transform:translateX(3px)}
+.forecast-row:last-child{margin-bottom:0}
+.forecast-dish{flex:1;color:var(--text)}
+.forecast-qty{color:var(--text2);width:64px;text-align:right}
+.forecast-trend{width:80px;text-align:right;font-size:12px;font-weight:600}
+.trend-up{color:var(--red)}.trend-dn{color:var(--green)}
+.purchase-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;margin-bottom:6px;font-size:13px;background:var(--bg3);transition:all .2s cubic-bezier(0.16,1,0.3,1)}
+.purchase-item:hover{background:var(--bg4);transform:translateX(3px)}
+.purchase-item:last-child{margin-bottom:0}
+.pchange{font-size:11px;padding:2px 8px;border-radius:100px;font-weight:600}
+.pchange.up{background:rgba(255,77,106,.12);color:var(--red)}
+.pchange.down{background:rgba(0,214,143,.12);color:var(--green)}
+.pchange.same{background:rgba(255,255,255,.06);color:var(--text3)}
+
+/* 图例 & 分隔 */
+.dash-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--text2);margin-bottom:10px}
+.dash-legend .li{display:flex;align-items:center;gap:5px}
+.dash-legend .lswatch{width:10px;height:10px;border-radius:2px}
+.dash-divider{height:1px;background:var(--border);margin:16px 0}
+
+/* 小标签 */
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:500}
+.chip-over{background:rgba(255,77,106,.12);color:var(--red)}
+.chip-low{background:rgba(255,170,0,.12);color:var(--yellow)}
+.chip-ok{background:rgba(0,214,143,.12);color:var(--green)}
+.chip-info{background:rgba(59,130,246,.12);color:var(--blue)}
+
+.status-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px}
+.status-dot.on{background:var(--green)}.status-dot.warn{background:var(--yellow)}.status-dot.off{background:var(--red)}
+
+.chart-wrap{position:relative;width:100%}
+
+.dash-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.dash-toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ===== 登录覆盖层 ===== -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h2>🔐 HX系统管理后台</h2>
+    <p>请输入管理员账号和密码登录</p>
+    <div class="field">
+      <label>👤 管理员账号</label>
+      <input type="text" id="loginUser" placeholder="输入账号..." value="admin" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>🔑 密码</label>
+      <input type="password" id="loginPass" placeholder="输入密码..." value="admin123" autocomplete="off">
+    </div>
+    <button class="login-btn" onclick="handleLogin()">登 录</button>
+    <div class="login-loading" id="loginLoading">⏳ 登录中...</div>
+    <div class="login-error" id="loginError">❌ 用户名或密码错误</div>
+  </div>
+</div>
+
+<!-- ===== 侧边栏 ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">智</div>
+    <div><h1>HX系统后台</h1><span>Smart Plate Admin</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-title">数据总览</div>
+      <div class="nav-item active" data-page="overview"><span class="icon">📊</span>数据概览</div>
+      <div class="nav-item" data-page="sales"><span class="icon">💰</span>售卖分析</div>
+      <div class="nav-item" data-page="nutrition"><span class="icon">🥗</span>营养监控</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">运营管理</div>
+      <div class="nav-item" data-page="health"><span class="icon">🏥</span>学生健康<span class="badge">3</span></div>
+      <div class="nav-item" data-page="foods"><span class="icon">🍽️</span>菜品管理</div>
+      <div class="nav-item" data-page="students"><span class="icon">👥</span>学生管理</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">营养大屏</div>
+      <div class="nav-item" data-page="dash-student"><span class="icon">🧑</span>学生端营养</div>
+      <div class="nav-item" data-page="dash-kitchen"><span class="icon">🍳</span>后厨管理</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item" data-page="settings"><span class="icon">⚙️</span>系统设置</div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">管</div>
+      <div class="user-info"><div class="name">管理员</div><div class="role">超级管理员</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== 主区域 ===== -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="page-title">数据概览</h2>
+      <span class="date" id="current-date"></span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" id="btn-refresh">🔄 刷新数据</button>
+      <button class="topbar-btn" id="btn-export">📥 导出报告</button>
+      <button class="topbar-btn primary" id="btn-ai">🤖 AI 智能分析</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ===== 页面1: 数据概览 ===== -->
+    <div class="page active" id="page-overview">
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="glow" style="background:var(--green)"></div>
+          <div class="icon-bg">🍽️</div>
+          <div class="label">🍽️ 今日用餐人次</div>
+          <div class="value" style="color:var(--green)">12,680</div>
+          <div class="change up">↑ 8.3% 较昨日</div>
+        </div>
+        <div class="stat-card">
+          <div class="glow" style="background:var(--blue)"></div>
+          <div class="icon-bg">👨‍🎓</div>
+          <div class="label">👨‍🎓 活跃学生数</div>
+          <div class="value" style="color:var(--blue)">9,456</div>
+          <div class="change up">↑ 5.1% 较昨日</div>
+        </div>
+        <div class="stat-card">
+          <div class="glow" style="background:var(--cyan)"></div>
+          <div class="icon-bg">⭐</div>
+          <div class="label">⭐ 平均营养评分</div>
+          <div class="value" style="color:var(--cyan)">78.6</div>
+          <div class="change up">↑ 2.4 较上周</div>
+        </div>
+      </div>
+
+      <div class="charts-row cols-2-1">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>近30天用餐趋势</div>
+            <div class="chart-actions">
+              <button class="active" data-range="30d">30天</button>
+              <button data-range="7d">7天</button>
+            </div>
+          </div>
+          <canvas id="chart-trend"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>三餐占比</div>
+          </div>
+          <canvas id="chart-meal-pie"></canvas>
+        </div>
+      </div>
+
+      <div class="charts-row cols-2">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>窗口销量 TOP8</div>
+          </div>
+          <canvas id="chart-window-rank"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>菜品分类销量</div>
+          </div>
+          <canvas id="chart-category-radar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 页面2: 售卖分析 ===== -->
+    <div class="page" id="page-sales">
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="glow" style="background:var(--green)"></div>
+          <div class="label">📈 本周总销量</div>
+          <div class="value" style="color:var(--green)">78,520</div>
+          <div class="change up">↑ 12.3% 较上周</div>
+        </div>
+        <div class="stat-card">
+          <div class="glow" style="background:var(--blue)"></div>
+          <div class="label">🏆 最受欢迎菜品</div>
+          <div class="value" style="color:var(--blue);font-size:22px">红烧排骨</div>
+          <div class="change up">今日售 1,248 份</div>
+        </div>
+        <div class="stat-card">
+          <div class="glow" style="background:var(--purple)"></div>
+          <div class="label">⏰ 高峰时段</div>
+          <div class="value" style="color:var(--purple);font-size:22px">11:30-12:15</div>
+          <div class="change">午间高峰</div>
+        </div>
+      </div>
+
+      <div class="charts-row cols-2">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>菜品销量排行 TOP10</div>
+          </div>
+          <canvas id="chart-food-rank"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>分类销售占比</div>
+          </div>
+          <canvas id="chart-category-pie"></canvas>
+        </div>
+      </div>
+
+      <div class="charts-row cols-2">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>时段分布（用餐热力图）</div>
+          </div>
+          <div id="heatmap-container"></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>每日销量趋势</div>
+          </div>
+          <canvas id="chart-daily-sales"></canvas>
+        </div>
+      </div>
+
+      <div class="table-box">
+        <div class="table-header">
+          <div class="table-title"><span class="dot"></span>菜品售卖明细</div>
+          <div class="chart-actions">
+            <button class="active">今日</button><button>本周</button><button>本月</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>菜品名称</th><th>分类</th><th>已售</th><th>剩余</th><th>售罄率</th><th>状态</th></tr></thead>
+          <tbody id="sales-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== 页面3: 营养监控 ===== -->
+    <div class="page" id="page-nutrition">
+      <div class="alert-cards">
+        <div class="alert-card">
+          <div class="alert-icon warn">⚠️</div>
+          <div class="alert-body">
+            <h4>蛋白质摄入不足</h4>
+            <p>全校 32.6% 学生蛋白质摄入低于推荐量，建议增加高蛋白菜品供应</p>
+          </div>
+        </div>
+        <div class="alert-card">
+          <div class="alert-icon danger">🔴</div>
+          <div class="alert-body">
+            <h4>高风险学生预警</h4>
+            <p>检测到 286 名学生连续一周营养评分低于 60，已标记重点关注</p>
+          </div>
+        </div>
+        <div class="alert-card">
+          <div class="alert-icon info">💡</div>
+          <div class="alert-body">
+            <h4>AI 配餐建议</h4>
+            <p>增加 3 个高纤维菜品窗口可提升全校纤维达标率 18%，预计成本 +¥420/天</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-row cols-2">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>全校营养素摄入达标率</div>
+          </div>
+          <canvas id="chart-nutrition-bar"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>营养素缺乏人数分布</div>
+          </div>
+          <canvas id="chart-nutrition-deficit"></canvas>
+        </div>
+      </div>
+
+      <div class="charts-row cols-2-1">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>近30天营养达标趋势</div>
+          </div>
+          <canvas id="chart-nutrition-trend"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>营养评分分布</div>
+          </div>
+          <canvas id="chart-score-dist"></canvas>
+        </div>
+      </div>
+
+      <div class="table-box">
+        <div class="table-header">
+          <div class="table-title"><span class="dot"></span>营养缺乏预警明细</div>
+        </div>
+        <table>
+          <thead><tr><th>营养素</th><th>推荐摄入</th><th>实际均值</th><th>达标率</th><th>缺乏人数</th><th>严重程度</th><th>建议措施</th></tr></thead>
+          <tbody id="nutrition-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== 页面4: 学生健康 ===== -->
+    <div class="page" id="page-health">
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="glow" style="background:var(--green)"></div>
+          <div class="label">✅ 健康学生</div>
+          <div class="value" style="color:var(--green)">8,432</div>
+          <div class="change">占比 71.1%</div>
+        </div>
+        <div class="stat-card">
+          <div class="glow" style="background:var(--yellow)"></div>
+          <div class="label">⚠️ 亚健康</div>
+          <div class="value" style="color:var(--yellow)">3,138</div>
+          <div class="change">占比 26.5%</div>
+        </div>
+        <div class="stat-card">
+          <div class="glow" style="background:var(--red)"></div>
+          <div class="label">🔴 高风险</div>
+          <div class="value" style="color:var(--red)">286</div>
+          <div class="change">占比 2.4%</div>
+        </div>
+        <div class="stat-card">
+          <div class="glow" style="background:var(--blue)"></div>
+          <div class="label">📋 今日打卡</div>
+          <div class="value" style="color:var(--blue)">6,892</div>
+          <div class="change up">↑ 58.1% 打卡率</div>
+        </div>
+      </div>
+
+      <div class="charts-row cols-2">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>各学院营养评分对比</div>
+          </div>
+          <canvas id="chart-college-compare"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>学生营养画像分布</div>
+          </div>
+          <canvas id="chart-student-heatmap"></canvas>
+        </div>
+      </div>
+
+      <div class="charts-row cols-2-1">
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>高风险学生营养趋势</div>
+          </div>
+          <canvas id="chart-risk-trend"></canvas>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title"><span class="dot"></span>BMI 分布</div>
+          </div>
+          <canvas id="chart-bmi-dist"></canvas>
+        </div>
+      </div>
+
+      <div class="table-box">
+        <div class="table-header">
+          <div class="table-title"><span class="dot"></span>高风险学生名单</div>
+          <div class="chart-actions"><button class="active">全部</button><button>蛋白质缺乏</button><button>热量不足</button></div>
+        </div>
+        <table>
+          <thead><tr><th>学号</th><th>姓名</th><th>学院</th><th>营养评分</th><th>连续低分天数</th><th>主要缺乏</th><th>风险等级</th><th>操作</th></tr></thead>
+          <tbody id="risk-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== 页面5: 菜品管理 ===== -->
+    <div class="page" id="page-foods">
+      <div class="table-header" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+        <div class="table-title"><span class="dot"></span>菜品库</div>
+        <div style="display:flex;gap:8px">
+          <button class="topbar-btn" id="btn-filter-cat">📂 分类筛选</button>
+          <button class="topbar-btn primary" id="btn-add-food">➕ 添加菜品</button>
+        </div>
+      </div>
+      <div class="food-grid" id="food-grid"></div>
+    </div>
+
+    <!-- ===== 页面7: 学生管理 ===== -->
+    <div class="page" id="page-students">
+      <div class="student-actions">
+        <button class="import-btn" onclick="document.getElementById('import-input').click()">📤 批量导入学生</button>
+        <input type="file" id="import-input" accept=".csv,.xlsx,.xls" onchange="handleImport(event)" style="display:none">
+        <button class="refresh-btn" onclick="loadStudentList()">🔄 刷新列表</button>
+        <input class="student-search" type="text" placeholder="🔍 搜索姓名或学号..." oninput="filterStudentList(this.value)">
+      </div>
+      <div class="import-result" id="importResult"></div>
+      <div class="student-count">👥 共 <strong id="studentTotal">0</strong> 名学生</div>
+      <div class="student-table-wrap">
+        <table class="student-table">
+          <thead>
+            <tr><th>账号</th><th>密码</th><th>姓名</th><th>学号</th><th>学院</th></tr>
+          </thead>
+          <tbody id="studentTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== 页面6: 系统设置 ===== -->
+    <div class="page" id="page-settings">
+      <div class="chart-box" style="margin-bottom:20px">
+        <div class="chart-header"><div class="chart-title"><span class="dot"></span>基础设置</div></div>
+        <div class="form-row">
+          <div class="form-group"><label>学校名称</label><input value="XX大学" /></div>
+          <div class="form-group"><label>食堂数量</label><input value="3" type="number" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>学生总数</label><input value="11856" type="number" /></div>
+          <div class="form-group"><label>数据更新频率</label><select><option>实时</option><option>每5分钟</option><option>每15分钟</option></select></div>
+        </div>
+      </div>
+      <div class="chart-box" style="margin-bottom:20px">
+        <div class="chart-header"><div class="chart-title"><span class="dot"></span>营养标准配置</div></div>
+        <div class="form-row">
+          <div class="form-group"><label>每日推荐热量 (kcal)</label><input value="2200" type="number" /></div>
+          <div class="form-group"><label>蛋白质推荐 (g)</label><input value="75" type="number" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>碳水推荐 (g)</label><input value="280" type="number" /></div>
+          <div class="form-group"><label>脂肪推荐 (g)</label><input value="65" type="number" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>膳食纤维推荐 (g)</label><input value="25" type="number" /></div>
+          <div class="form-group"><label>低分预警阈值</label><input value="60" type="number" /></div>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-header"><div class="chart-title"><span class="dot"></span>预警通知设置</div></div>
+        <div class="form-row">
+          <div class="form-group"><label>低营养评分预警</label><select><option>开启</option><option>关闭</option></select></div>
+          <div class="form-group"><label>连续低分天数阈值</label><input value="5" type="number" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>通知方式</label><select><option>站内通知 + 邮件</option><option>仅站内通知</option><option>仅邮件</option></select></div>
+          <div class="form-group"><label>通知频率</label><select><option>每日汇总</option><option>实时通知</option><option>每周汇总</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 大屏: 学生个人营养中心 ===== -->
+    <div class="page" id="page-dash-student">
+      <div class="dash-title">学生个人营养中心</div>
+      <div class="dash-subtitle">基于 11,856 名学生就餐刷卡数据，实时计算营养摄入，生成个性化健康推荐</div>
+      <div class="user-selector" id="user-selector">
+        <span style="font-size:13px;color:var(--text2)">切换学生：</span>
+        <div class="user-pick selected" style="background:#fef3c7;color:#92400e" data-uid="0">👨🏻</div>
+        <div class="user-pick" style="background:#fce7f3;color:#9d174d" data-uid="1">👩🏾</div>
+        <div class="user-pick" style="background:#ede9fe;color:#5b21b6" data-uid="2">👨🏼</div>
+        <div class="user-pick" style="background:#e0f2fe;color:#075985" data-uid="3">👩🏽</div>
+        <div class="user-pick" style="background:#fef9c3;color:#854d0e" data-uid="4">👨🏽</div>
+        <div class="user-pick" style="background:#f3e8ff;color:#7e22ce" data-uid="5">🧑🏻</div>
+        <span id="user-name-display" style="font-size:13px;font-weight:500;color:var(--green);margin-left:8px">张伟（男，20岁，汉族）</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:8px">共 11,856 名学生已接入</span>
+      </div>
+      <div class="section">
+        <div class="stat-cards" style="grid-template-columns:repeat(4,1fr)">
+          <div class="dash-metric blue"><div class="mlabel">今日热量摄入</div><div class="mvalue" id="s-cal">2980</div><div class="msub">推荐 2250 <span class="chip chip-over">超标 32%</span></div></div>
+          <div class="dash-metric orange"><div class="mlabel">蛋白质摄入</div><div class="mvalue" id="s-protein">62g</div><div class="msub">推荐 75g <span class="chip chip-low">缺口 13g</span></div></div>
+          <div class="dash-metric red"><div class="mlabel">脂肪摄入</div><div class="mvalue" id="s-fat">105g</div><div class="msub">推荐 70g <span class="chip chip-over">超标 50%</span></div></div>
+          <div class="dash-metric amber"><div class="mlabel">膳食纤维摄入</div><div class="mvalue" id="s-fiber">3g</div><div class="msub">推荐 25g <span class="chip chip-low">缺口 22g</span></div></div>
+        </div>
+      </div>
+      <div class="charts-row cols-2 section">
+        <div class="chart-box"><div class="chart-header"><div class="chart-title"><span class="dot"></span>近7日营养摄入达标率</div></div><div class="chart-wrap" style="height:200px"><canvas id="chart-nutrition"></canvas></div></div>
+        <div class="chart-box"><div class="chart-header"><div class="chart-title"><span class="dot"></span>近7日热量趋势</div></div><div class="chart-wrap" style="height:200px"><canvas id="chart-calorie"></canvas></div></div>
+      </div>
+      <div class="charts-row cols-2 section">
+        <div class="chart-box">
+          <div class="chart-header"><div class="chart-title"><span class="dot"></span>今日就餐记录</div></div>
+          <div id="meal-timeline">
+            <div class="timeline-row"><span class="timeline-time">07:35</span><span class="timeline-meal">早餐</span><span class="timeline-items">米饭、猪肉包、豆浆</span><span class="timeline-cal">480 千卡</span></div>
+            <div class="timeline-row"><span class="timeline-time">11:48</span><span class="timeline-meal">午餐</span><span class="timeline-items">米饭、红烧肉、可乐鸡翅</span><span class="timeline-cal">1280 千卡</span></div>
+            <div class="timeline-row"><span class="timeline-time">17:22</span><span class="timeline-meal">晚餐</span><span class="timeline-items">米饭、糖醋排骨、炒土豆丝</span><span class="timeline-cal">1220 千卡</span></div>
+          </div>
+          <div class="dash-divider"></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text2)">全日合计</span><span style="color:var(--orange);font-weight:500">2980 千卡（超标 730 千卡）</span></div>
+          <div style="margin-top:14px">
+            <div class="dash-pbar"><span class="plabel">热量</span><div class="ptrack"><div class="pfill" style="width:100%;background:var(--orange)"></div></div><span class="ppct">132%</span></div>
+            <div class="dash-pbar"><span class="plabel">蛋白质</span><div class="ptrack"><div class="pfill" style="width:83%;background:var(--blue)"></div></div><span class="ppct">83%</span></div>
+            <div class="dash-pbar"><span class="plabel">脂肪</span><div class="ptrack"><div class="pfill" style="width:100%;background:var(--red)"></div></div><span class="ppct">150%</span></div>
+            <div class="dash-pbar"><span class="plabel">碳水</span><div class="ptrack"><div class="pfill" style="width:95%;background:var(--purple)"></div></div><span class="ppct">95%</span></div>
+            <div class="dash-pbar"><span class="plabel">膳食纤维</span><div class="ptrack"><div class="pfill" style="width:12%;background:var(--yellow)"></div></div><span class="ppct">12%</span></div>
+          </div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header"><div class="chart-title"><span class="dot"></span>AI营养预警与分析</div></div>
+          <div class="dash-alert warn"><div class="aicon">!</div><div><strong>脂肪超标严重</strong>——今日脂肪摄入 105g，超标 50%。近3日油炸及红烧类食品摄入过多，建议选择清蒸或水煮类菜品。</div></div>
+          <div class="dash-alert warn"><div class="aicon">!</div><div><strong>膳食纤维严重不足</strong>——今日仅摄入 3g，达标率 12%。建议增加蔬菜、粗粮摄入。</div></div>
+          <div class="dash-alert warn"><div class="aicon">!</div><div><strong>蛋白质摄入不足</strong>——缺口 13g。可尝试鸡胸肉、鱼、豆类等高蛋白来源。</div></div>
+          <div class="dash-alert ok"><div class="aicon">✓</div><div><strong>碳水化合物基本达标</strong>——今日碳水 285g，达标率 95%。</div></div>
+        </div>
+      </div>
+      <div class="chart-box section">
+        <div class="chart-header"><div class="chart-title"><span class="dot"></span>AI个性化健康菜单推荐（明日推荐）</div></div>
+        <div class="dash-legend" style="margin-bottom:14px">
+          <span class="li"><span class="lswatch" style="background:var(--green)"></span>当前营养缺口：纤维 -22g、蛋白质 -13g；超标：脂肪 +35g、热量 +730千卡</span>
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div class="rec-card" style="flex:1;min-width:200px"><div class="rec-rank r1">1</div><div class="rec-info"><h4>清蒸鲈鱼</h4><p>高蛋白(22g/份)、低脂肪(4g/份)，精准弥补蛋白质缺口。</p><div class="rec-tags"><span class="rec-tag">蛋白质 +22g</span><span class="rec-tag g">低脂</span></div></div></div>
+          <div class="rec-card" style="flex:1;min-width:200px"><div class="rec-rank r2">2</div><div class="rec-info"><h4>咖喱蔬菜配鹰嘴豆</h4><p>膳食纤维 5.1g/份，南亚风味高蛋白素食。</p><div class="rec-tags"><span class="rec-tag o">纤维 +5g</span><span class="rec-tag g">低热量</span></div></div></div>
+          <div class="rec-card" style="flex:1;min-width:200px"><div class="rec-rank r3">3</div><div class="rec-info"><h4>番茄炒蛋</h4><p>营养均衡，蛋白质12g/份，维生素C丰富。</p><div class="rec-tags"><span class="rec-tag">蛋白质 +12g</span><span class="rec-tag g">VC 丰富</span></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 大屏: 后厨智能决策管理 ===== -->
+    <div class="page" id="page-dash-kitchen">
+      <div class="dash-title">后厨智能决策管理端</div>
+      <div class="dash-subtitle">聚合全校 11,856 名学生就餐与营养数据，为食堂后厨提供食材采购、菜品优化、菜单排布全流程智能方案</div>
+
+      <!-- 顶部4个指标卡 -->
+      <div class="stat-cards" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+        <div class="stat-card"><div class="glow" style="background:var(--blue)"></div><div class="icon-bg">🍽️</div><div class="label">今日就餐人次</div><div class="value" style="color:var(--blue)">12,680</div><div class="change up">全校注册 11,856 人 · 较昨日 +3.2%</div></div>
+        <div class="stat-card"><div class="glow" style="background:var(--orange)"></div><div class="icon-bg">🔥</div><div class="label">全校平均热量摄入</div><div class="value" style="color:var(--orange)">2,340</div><div class="change" style="color:var(--text2)">推荐均值 2,025 <span class="chip chip-over" style="margin-left:6px">超标 16%</span></div></div>
+        <div class="stat-card"><div class="glow" style="background:var(--red)"></div><div class="icon-bg">⚠️</div><div class="label">群体脂肪超标率</div><div class="value" style="color:var(--red)">68%</div><div class="change up">约 8,062 名学生超标 · 较上周 +5%</div></div>
+        <div class="stat-card"><div class="glow" style="background:var(--yellow)"></div><div class="icon-bg">🌿</div><div class="label">平均膳食纤维达标率</div><div class="value" style="color:var(--yellow)">56%</div><div class="change" style="color:var(--text2)">全校均值 14g，推荐 25g · 仅 6,640 人达标</div></div>
+      </div>
+
+      <!-- 第二行：雷达图+仪表（独立行） -->
+      <div class="chart-box section">
+        <div class="chart-header"><div class="chart-title"><span class="dot" style="background:var(--blue)"></span>全校群体营养摄入分析（近7日）</div></div>
+        <div class="chart-wrap" style="height:150px"><canvas id="chart-group"></canvas></div>
+        <div style="margin-top:10px">
+        <div class="dash-gauge"><div class="gh"><span class="gn">热量</span><span class="gv" style="color:var(--orange)">超标 16%</span></div><div class="gt"><div class="gf" style="width:100%;background:var(--orange)"></div></div></div>
+        <div class="dash-gauge"><div class="gh"><span class="gn">脂肪</span><span class="gv" style="color:var(--red)">超标 22%</span></div><div class="gt"><div class="gf" style="width:100%;background:var(--red)"></div></div></div>
+        <div class="dash-gauge"><div class="gh"><span class="gn">蛋白质</span><span class="gv" style="color:var(--blue)">达标率 78%</span></div><div class="gt"><div class="gf" style="width:78%;background:var(--blue)"></div></div></div>
+        <div class="dash-gauge"><div class="gh"><span class="gn">膳食纤维</span><span class="gv" style="color:var(--yellow)">达标率 56%</span></div><div class="gt"><div class="gf" style="width:56%;background:var(--yellow)"></div></div></div>
+      </div>
+
+      <!-- 第三行：热力图 / 预测（独立行，左右两栏） -->
+      <div class="charts-row cols-2 section">
+        <div class="chart-box">
+          <div class="chart-header"><div class="chart-title"><span class="dot" style="background:var(--cyan)"></span>近30日菜品销量热力图</div></div>
+          <div class="dash-legend" style="margin-bottom:8px">
+            <span class="li"><span class="lswatch" style="background:#1e2a4a"></span>较低</span>
+            <span class="li"><span class="lswatch" style="background:#2563eb"></span>中等</span>
+            <span class="li"><span class="lswatch" style="background:#60a5fa"></span>热销</span>
+          </div>
+          <div class="dash-heatmap" id="dash-heatmap"></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header"><div class="chart-title"><span class="dot" style="background:var(--orange)"></span>明日销量预测（LSTM模型）</div></div>
+          <div id="forecast-list">
+            <div class="forecast-row"><span class="forecast-dish">🍚 米饭</span><span class="forecast-qty">3,680 份</span><span class="forecast-trend trend-up">▲ 2.1%</span></div>
+            <div class="forecast-row"><span class="forecast-dish">🥩 红烧肉</span><span class="forecast-qty">1,120 份</span><span class="forecast-trend trend-up">▲ 4.8%</span></div>
+            <div class="forecast-row"><span class="forecast-dish">🐟 清蒸鲈鱼</span><span class="forecast-qty">420 份</span><span class="forecast-trend trend-dn">▼ 0.8%</span></div>
+            <div class="forecast-row"><span class="forecast-dish">🥦 清炒西兰花</span><span class="forecast-qty">460 份</span><span class="forecast-trend trend-up">▲ 12.3%</span></div>
+            <div class="forecast-row"><span class="forecast-dish">🍅 番茄炒蛋</span><span class="forecast-qty">940 份</span><span class="forecast-trend trend-up">▲ 3.5%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第四行：采购清单 / 菜品上新 -->
+      <div class="charts-row cols-2 section">
+        <div class="chart-box">
+          <div class="chart-header"><div class="chart-title"><span class="dot" style="background:var(--green)"></span>AI智能采购建议清单</div></div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:6px">📦 基于销量预测 × 库存现状 × 群体营养优化</div>
+          <div id="purchase-list">
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🥦 西兰花</div><div style="font-size:11px;color:var(--text3)">高纤维，补充全校纤维缺口 · 素食✓</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">145 kg</strong></div><span class="pchange up">↑ +60%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🐟 鲈鱼</div><div style="font-size:11px;color:var(--text3)">高蛋白低脂 · 清真✓</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">128 kg</strong></div><span class="pchange up">↑ +25%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🫘 鹰嘴豆</div><div style="font-size:11px;color:var(--text3)">高蛋白高纤维素食，满足留学生及素食需求</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">45 kg</strong></div><span class="pchange up">↑ +120%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🍗 清真鸡胸肉</div><div style="font-size:11px;color:var(--text3)">高蛋白，满足回族/维吾尔族等清真饮食需求</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">85 kg</strong></div><span class="pchange up">↑ +45%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🥓 猪五花肉</div><div style="font-size:11px;color:var(--text3)">高脂食材，适当控制</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--yellow)">195 kg</strong></div><span class="pchange down">↓ -20%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🍚 大米</div><div style="font-size:11px;color:var(--text3)">主食刚需</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--blue)">820 kg</strong></div><span class="pchange same">↑ 2.1%</span></div>
+          </div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-header"><div class="chart-title"><span class="dot" style="background:var(--purple)"></span>菜品上新与菜单优化建议</div></div>
+          <div class="table-box" style="margin-bottom:0;padding:0;background:transparent;border:none">
+            <table>
+              <thead><tr><th>菜品</th><th>解决痛点</th><th>预估接受度</th><th>饮食适配</th></tr></thead>
+              <tbody>
+                <tr><td>🥘 爆炒猪肝</td><td>补铁、补蛋白</td><td><span class="chip chip-ok">高 87%</span></td><td><span class="chip chip-info">无限制</span></td></tr>
+                <tr><td>🍛 咖喱鸡（清真）</td><td>高蛋白、异域风味</td><td><span class="chip chip-ok">高 82%</span></td><td><span class="chip chip-ok">清真✓</span></td></tr>
+                <tr><td>🥗 藜麦蔬菜碗</td><td>高纤维、低卡</td><td><span class="chip chip-info">中 73%</span></td><td><span class="chip chip-ok">素食✓ 无麸质✓</span></td></tr>
+                <tr><td>🥢 凉拌木耳</td><td>补铁、高纤维</td><td><span class="chip chip-ok">高 82%</span></td><td><span class="chip chip-info">素食✓ 清真✓</span></td></tr>
+                <tr><td>🥙 鸡胸肉沙拉</td><td>高蛋白低脂</td><td><span class="chip chip-info">中 69%</span></td><td><span class="chip chip-ok">清真可选</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:16px">
+            <div class="dash-alert warn"><div class="aicon">!</div><div><strong>菜单替换建议</strong> — 周午餐：将「糖醋排骨」替换为「清蒸鲈鱼」，可降低全校均值脂肪 8%</div></div>
+            <div class="dash-alert ok"><div class="aicon">✓</div><div><strong>搭配优化</strong> — 周五：搭配「番茄鸡蛋汤」，营养均衡度提升，预测日销量超 940 份</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<div class="dash-toast" id="dash-toast"></div>
+
+<!-- ===== 添加/编辑菜品模态框 ===== -->
+<div class="modal-overlay" id="modal-add-food">
+  <div class="modal">
+    <h3 id="modal-food-title">➕ 添加菜品</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Emoji 图标</label><input id="f-emoji" placeholder="🥩" maxlength="2" /></div>
+      <div class="form-group"><label>菜品名称</label><input id="f-name" placeholder="如：红烧排骨" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>分类</label><select id="f-cat"><option>荤菜</option><option>素菜</option><option>汤品</option><option>主食</option><option>小吃</option><option>饮品</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>热量 (kcal)</label><input id="f-cal" type="number" placeholder="380" /></div>
+      <div class="form-group"><label>蛋白质 (g)</label><input id="f-pro" type="number" placeholder="25" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>碳水 (g)</label><input id="f-carb" type="number" placeholder="30" /></div>
+      <div class="form-group"><label>脂肪 (g)</label><input id="f-fat" type="number" placeholder="15" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>膳食纤维 (g)</label><input id="f-fiber" type="number" placeholder="5" /></div>
+      <div class="form-group"><label>稀有度</label><select id="f-rarity"><option value="common">普通</option><option value="rare">稀有</option><option value="epic">史诗</option><option value="legend">传说</option></select></div>
+    </div>
+    <div class="form-group"><label>饮食标签（多选）</label>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px">
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="f-tag-halal" /> 清真</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="f-tag-veg" /> 素食</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="f-tag-gf" /> 无麸质</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="f-tag-low" /> 低敏</label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button id="btn-cancel-food">取消</button>
+      <button class="primary" id="btn-save-food">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 删除确认模态框 ===== -->
+<div class="modal-overlay" id="modal-delete-food">
+  <div class="modal" style="width:380px;text-align:center">
+    <h3>⚠️ 确认删除</h3>
+    <p style="color:var(--text2);margin-bottom:20px" id="delete-food-msg">确定要删除该菜品吗？此操作不可恢复。</p>
+    <div class="modal-actions" style="justify-content:center">
+      <button id="btn-cancel-delete">取消</button>
+      <button class="primary" style="background:var(--red);border-color:var(--red)" id="btn-confirm-delete">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 分类筛选模态框 ===== -->
+<div class="modal-overlay" id="modal-filter-food">
+  <div class="modal" style="width:360px">
+    <h3>📂 分类筛选</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin:16px 0" id="filter-cat-btns">
+      <button class="filter-cat-btn active" data-cat="all">全部</button>
+      <button class="filter-cat-btn" data-cat="荤菜">🥩 荤菜</button>
+      <button class="filter-cat-btn" data-cat="素菜">🥬 素菜</button>
+      <button class="filter-cat-btn" data-cat="汤品">🍲 汤品</button>
+      <button class="filter-cat-btn" data-cat="主食">🍚 主食</button>
+      <button class="filter-cat-btn" data-cat="小吃">🧆 小吃</button>
+      <button class="filter-cat-btn" data-cat="饮品">🥤 饮品</button>
+    </div>
+    <div style="margin-bottom:12px"><label style="font-size:13px;color:var(--text2)">搜索菜品</label><input id="f-search" placeholder="输入菜品名称..." style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:14px;outline:none" /></div>
+    <div class="modal-actions">
+      <button id="btn-reset-filter">重置</button>
+      <button class="primary" id="btn-apply-filter">应用筛选</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 日期 =====
+const now = new Date();
+document.getElementById('current-date').textContent = now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 '+['日','一','二','三','四','五','六'][now.getDay()]+'曜日';
+
+// ===== Toast 通知 =====
+function showToast(msg) {
+  let t = document.getElementById('admin-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'admin-toast';
+    t.style.cssText = 'position:fixed;top:24px;right:24px;z-index:999;padding:12px 24px;border-radius:10px;background:var(--bg4);border:1px solid var(--green);color:var(--text);font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.4);transform:translateY(-20px);opacity:0;transition:all .3s;pointer-events:none';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(-20px)'; }, 2200);
+}
+
+// ===== 侧边栏导航 =====
+const pageTitles = {overview:'数据概览',sales:'售卖分析',nutrition:'营养监控',health:'学生健康',foods:'菜品管理',students:'学生管理',settings:'系统设置','dash-student':'学生端营养中心','dash-kitchen':'后厨智能管理'};
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function(){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    this.classList.add('active');
+    const page = this.getAttribute('data-page');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+    document.getElementById('page-title').textContent = pageTitles[page]||'';
+    // 查看后隐藏角标
+    const badge = this.querySelector('.badge');
+    if (badge) badge.style.display = 'none';
+    // 重新渲染图表（解决 hidden canvas 问题）
+    setTimeout(()=>{ Object.values(charts).forEach(c=>{ try{c.resize()}catch(e){} }); },100);
+  });
+});
+
+// ===== 图表颜色 =====
+const C = {
+  green:'#00d68f',red:'#ff4d6a',yellow:'#ffaa00',blue:'#3b82f6',
+  cyan:'#06d6a0',purple:'#a855f7',orange:'#f97316',pink:'#ec4899',
+  grid:'#1e2030',text:'#55587a',text2:'#8588a0',text3:'#55587a'
+};
+Chart.defaults.color = C.text;
+Chart.defaults.borderColor = C.grid;
+Chart.defaults.font.family = "'PingFang SC','Microsoft YaHei',sans-serif";
+Chart.defaults.font.size = 11;
+const charts = {};
+
+// ===== 概览页图表 =====
+// 近30天趋势
+const trendDays = Array.from({length:30},(_,i)=>{ const d=new Date();d.setDate(d.getDate()-29+i);return (d.getMonth()+1)+'/'+d.getDate(); });
+const trendMeals = [9800,10200,10100,10800,11300,8500,7800,10500,10900,11200,11600,12100,8900,8200,11800,12200,12400,12600,11900,9200,8600,12000,12300,12500,12680,12800,12100,9400,8800,12680];
+charts.trend = new Chart(document.getElementById('chart-trend'),{
+  type:'line',data:{labels:trendDays,datasets:[
+    {label:'用餐人次',data:trendMeals,borderColor:C.green,backgroundColor:C.green+'20',fill:true,tension:.4,pointRadius:0,pointHoverRadius:4}
+  ]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8}},y:{grid:{color:C.grid},ticks:{callback:v=>(v/1000).toFixed(0)+'k'}}}}
+});
+
+// 三餐占比
+charts.mealPie = new Chart(document.getElementById('chart-meal-pie'),{
+  type:'doughnut',data:{labels:['早餐','午餐','晚餐'],datasets:[{data:[3168,5360,4152],backgroundColor:[C.yellow,C.green,C.purple],borderWidth:0}]},
+  options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{padding:12,usePointStyle:true,pointStyle:'circle'}}}}
+});
+
+// 窗口销量TOP8
+charts.windowRank = new Chart(document.getElementById('chart-window-rank'),{
+  type:'bar',data:{labels:['1号窗口','2号窗口','3号窗口','4号窗口','5号窗口','6号窗口','7号窗口','8号窗口'],
+  datasets:[{label:'今日销量',data:[1860,2100,1780,1560,1980,2200,1420,1780],backgroundColor:[C.green,C.blue,C.cyan,C.orange,C.purple,C.pink,C.yellow,C.red],borderRadius:6}]},
+  options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:C.grid}},y:{grid:{display:false}}}}
+});
+
+// 分类雷达
+charts.categoryRadar = new Chart(document.getElementById('chart-category-radar'),{
+  type:'radar',data:{labels:['荤菜','素菜','汤品','主食','小吃','饮品'],
+  datasets:[{label:'今日',data:[3200,2800,1600,3400,1200,480],backgroundColor:C.green+'30',borderColor:C.green,pointBackgroundColor:C.green},
+            {label:'昨日',data:[3000,2600,1500,3200,1100,460],backgroundColor:C.blue+'30',borderColor:C.blue,pointBackgroundColor:C.blue}]},
+  options:{responsive:true,plugins:{legend:{position:'bottom',labels:{usePointStyle:true}}},scales:{r:{grid:{color:C.grid},angleLines:{color:C.grid},pointLabels:{color:C.text},ticks:{display:false}}}}
+});
+
+// ===== 售卖分析页 =====
+// 菜品销量TOP10
+const foodNames = ['红烧排骨','宫保鸡丁','麻婆豆腐','西红柿鸡蛋','清炒时蔬','糖醋里脊','青椒肉丝','土豆丝','紫菜蛋花汤','米饭'];
+const foodSales = [1248,1102,986,945,892,856,812,768,720,6800];
+charts.foodRank = new Chart(document.getElementById('chart-food-rank'),{
+  type:'bar',data:{labels:foodNames,datasets:[{label:'销量(份)',data:foodSales,backgroundColor:foodSales.map((_,i)=>i<3?C.green:i<6?C.blue:C.text+'40'),borderRadius:6}]},
+  options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:C.grid}},y:{grid:{display:false}}}}
+});
+
+// 分类占比
+charts.categoryPie = new Chart(document.getElementById('chart-category-pie'),{
+  type:'doughnut',data:{labels:['荤菜','素菜','汤品','主食','小吃','饮品'],
+  datasets:[{data:[3200,2800,1600,3400,1200,480],backgroundColor:[C.red,C.green,C.yellow,C.blue,C.purple,C.orange],borderWidth:0}]},
+  options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{padding:10,usePointStyle:true,pointStyle:'circle'}}}}
+});
+
+// 每日销量趋势
+charts.dailySales = new Chart(document.getElementById('chart-daily-sales'),{
+  type:'bar',data:{labels:['周一','周二','周三','周四','周五','周六','周日'],
+  datasets:[{label:'早餐',data:[2800,3100,3000,3168,2900,1600,1200],backgroundColor:C.yellow,borderRadius:4},
+            {label:'午餐',data:[4800,5100,5200,5360,5000,3800,3200],backgroundColor:C.green,borderRadius:4},
+            {label:'晚餐',data:[3600,3800,4000,4152,3900,3200,2800],backgroundColor:C.purple,borderRadius:4}]},
+  options:{responsive:true,plugins:{legend:{position:'bottom',labels:{usePointStyle:true}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:C.grid}}}}
+});
+
+// 热力图
+(function(){
+  const times = ['7:00','7:30','8:00','8:30','11:00','11:30','12:00','12:30','13:00','17:00','17:30','18:00','18:30','19:00'];
+  const days = ['周一','周二','周三','周四','周五','周六','周日'];
+  const data = times.map(t => days.map(d => {
+    const isMorning = t.startsWith('7')||t.startsWith('8');
+    const isLunch = t.startsWith('11')||t.startsWith('12')||t==='13:00';
+    const isDinner = t.startsWith('17')||t.startsWith('18')||t==='19:00';
+    const isWeekend = d==='周六'||d==='周日';
+    let base = isMorning?40:isLunch?85:isDinner?65:0;
+    if(isWeekend) base = Math.round(base*0.6);
+    return Math.round(base + Math.random()*15 - 7);
+  }));
+  let html = '<div class="heatmap-grid">';
+  html += '<div class="header"></div>';
+  days.forEach(d => html += '<div class="header">'+d+'</div>');
+  times.forEach((t,ti) => {
+    html += '<div class="row-label">'+t+'</div>';
+    data[ti].forEach(v => {
+      const alpha = Math.min(v/100,1);
+      const bg = `rgba(0,214,143,${alpha})`;
+      const color = alpha > 0.5 ? '#fff' : 'var(--text2)';
+      html += '<div class="cell" style="background:'+bg+';color:'+color+'">'+v+'%</div>';
+    });
+  });
+  html += '</div>';
+  document.getElementById('heatmap-container').innerHTML = html;
+})();
+
+// 售卖表格
+const salesData = [
+  {name:'红烧排骨',cat:'荤菜',sold:1248,remain:52,rate:96,status:'热销'},
+  {name:'宫保鸡丁',cat:'荤菜',sold:1102,remain:98,rate:92,status:'热销'},
+  {name:'麻婆豆腐',cat:'素菜',sold:986,remain:114,rate:90,status:'正常'},
+  {name:'西红柿鸡蛋',cat:'素菜',sold:945,remain:55,rate:95,status:'正常'},
+  {name:'清炒时蔬',cat:'素菜',sold:892,remain:208,rate:81,status:'正常'},
+  {name:'糖醋里脊',cat:'荤菜',sold:856,remain:44,rate:95,status:'热销'},
+  {name:'紫菜蛋花汤',cat:'汤品',sold:720,remain:180,rate:80,status:'正常'},
+  {name:'米饭',cat:'主食',sold:6800,remain:0,rate:100,status:'售罄'},
+  {name:'馒头',cat:'主食',sold:2400,remain:0,rate:100,status:'售罄'},
+  {name:'豆浆',cat:'饮品',sold:480,remain:120,rate:80,status:'正常'}
+];
+const catColors = {'荤菜':'tag-red','素菜':'tag-green','汤品':'tag-yellow','主食':'tag-blue','小吃':'tag-purple','饮品':'tag-orange'};
+const statusColors = {'热销':'tag-red','正常':'tag-green','售罄':'tag-yellow'};
+document.getElementById('sales-table-body').innerHTML = salesData.map(r =>
+  `<tr><td>${r.name}</td><td><span class="tag ${catColors[r.cat]}">${r.cat}</span></td><td>${r.sold.toLocaleString()}</td><td>${r.remain}</td><td><div class="progress-mini"><div class="fill" style="width:${r.rate}%;background:${r.rate>=95?C.red:r.rate>=80?C.green:C.yellow}"></div></div> ${r.rate}%</td><td><span class="tag ${statusColors[r.status]}">${r.status}</span></td></tr>`
+).join('');
+
+// ===== 营养监控页 =====
+// 营养素达标率
+charts.nutritionBar = new Chart(document.getElementById('chart-nutrition-bar'),{
+  type:'bar',data:{labels:['热量','蛋白质','碳水','脂肪','膳食纤维','维生素'],
+  datasets:[{label:'达标率(%)',data:[82,67,78,85,54,62],backgroundColor:[C.yellow,C.red,C.green,C.blue,C.orange,C.purple],borderRadius:6}]},
+  options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:C.grid},max:100,ticks:{callback:v=>v+'%'}}}}
+});
+
+// 缺乏人数
+charts.nutritionDeficit = new Chart(document.getElementById('chart-nutrition-deficit'),{
+  type:'bar',data:{labels:['蛋白质','膳食纤维','维生素','碳水','热量','脂肪'],
+  datasets:[{label:'缺乏人数',data:[3865,5423,4496,2608,2130,892],backgroundColor:[C.red,C.orange,C.purple,C.yellow,C.pink,C.blue],borderRadius:6}]},
+  options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:C.grid},ticks:{callback:v=>(v/1000).toFixed(1)+'k'}}}}
+});
+
+// 营养达标趋势
+const trendDays2 = Array.from({length:30},(_,i)=>{ const d=new Date();d.setDate(d.getDate()-29+i);return (d.getMonth()+1)+'/'+d.getDate(); });
+charts.nutritionTrend = new Chart(document.getElementById('chart-nutrition-trend'),{
+  type:'line',data:{labels:trendDays2,datasets:[
+    {label:'热量',data:Array.from({length:30},()=>75+Math.random()*15),borderColor:C.yellow,tension:.4,pointRadius:0},
+    {label:'蛋白质',data:Array.from({length:30},()=>60+Math.random()*15),borderColor:C.red,tension:.4,pointRadius:0},
+    {label:'碳水',data:Array.from({length:30},()=>70+Math.random()*15),borderColor:C.green,tension:.4,pointRadius:0},
+    {label:'纤维',data:Array.from({length:30},()=>45+Math.random()*15),borderColor:C.orange,tension:.4,pointRadius:0}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{usePointStyle:true}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8}},y:{grid:{color:C.grid},min:30,max:100,ticks:{callback:v=>v+'%'}}}}
+});
+
+// 评分分布
+charts.scoreDist = new Chart(document.getElementById('chart-score-dist'),{
+  type:'doughnut',data:{labels:['优秀 80+','良好 70-79','一般 60-69','较差 <60'],
+  datasets:[{data:[4263,3176,2133,2284],backgroundColor:[C.green,C.blue,C.yellow,C.red],borderWidth:0}]},
+  options:{responsive:true,cutout:'60%',plugins:{legend:{position:'bottom',labels:{padding:10,usePointStyle:true,pointStyle:'circle'}}}}
+});
+
+// 营养缺乏表格
+const nutriData = [
+  {name:'膳食纤维',target:25,actual:16.2,rate:54,deficit:5423,severity:'严重',action:'增加粗粮、蔬菜窗口'},
+  {name:'维生素',target:100,actual:68,rate:62,deficit:4496,severity:'较严重',action:'增加水果、蔬菜供应'},
+  {name:'蛋白质',target:75,actual:52.6,rate:67,deficit:3865,severity:'较严重',action:'增加高蛋白菜品'},
+  {name:'碳水',target:280,actual:228,rate:78,deficit:2608,severity:'一般',action:'主食搭配优化'},
+  {name:'热量',target:2200,actual:1860,rate:82,deficit:2130,severity:'一般',action:'增加高热量选项'},
+  {name:'脂肪',target:65,actual:57.5,rate:85,deficit:892,severity:'轻微',action:'维持当前配比'}
+];
+const sevColors = {'严重':'tag-red','较严重':'tag-orange','一般':'tag-yellow','轻微':'tag-green'};
+document.getElementById('nutrition-table-body').innerHTML = nutriData.map(r =>
+  `<tr><td>${r.name}</td><td>${r.target}${r.name==='维生素'?'mg':'g'}</td><td>${r.actual}${r.name==='维生素'?'mg':'g'}</td><td><div class="progress-mini"><div class="fill" style="width:${r.rate}%;background:${r.rate>=80?C.green:r.rate>=60?C.yellow:C.red}"></div></div> ${r.rate}%</td><td>${r.deficit.toLocaleString()}</td><td><span class="tag ${sevColors[r.severity]}">${r.severity}</span></td><td style="color:var(--text2)">${r.action}</td></tr>`
+).join('');
+
+// ===== 学生健康页 =====
+// 学院对比
+charts.collegeCompare = new Chart(document.getElementById('chart-college-compare'),{
+  type:'bar',data:{labels:['计算机学院','经管学院','文学院','理学院','工程学院','医学院','艺术学院','体育学院'],
+  datasets:[{label:'平均评分',data:[76,81,79,74,72,86,77,83],backgroundColor:[C.blue,C.green,C.purple,C.yellow,C.orange,C.cyan,C.pink,C.red],borderRadius:6}]},
+  options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:C.grid},min:60,max:100}}}
+});
+
+// 学生画像（用极坐标图模拟热力效果）
+charts.studentHeatmap = new Chart(document.getElementById('chart-student-heatmap'),{
+  type:'polarArea',data:{labels:['高蛋白低碳','均衡饮食','高碳水','低热量','高脂肪','素食倾向'],
+  datasets:[{data:[2860,4200,1890,1560,680,666],backgroundColor:[C.red+'90',C.green+'90',C.yellow+'90',C.blue+'90',C.orange+'90',C.purple+'90']}]},
+  options:{responsive:true,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:8,font:{size:11}}}},scales:{r:{grid:{color:C.grid},ticks:{display:false}}}}
+});
+
+// 高风险趋势
+charts.riskTrend = new Chart(document.getElementById('chart-risk-trend'),{
+  type:'line',data:{labels:trendDays2,datasets:[
+    {label:'高风险人数',data:Array.from({length:30},()=>250+Math.random()*80),borderColor:C.red,backgroundColor:C.red+'20',fill:true,tension:.4,pointRadius:0},
+    {label:'亚健康人数',data:Array.from({length:30},()=>2800+Math.random()*400),borderColor:C.yellow,tension:.4,pointRadius:0}
+  ]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{usePointStyle:true}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8}},y:{grid:{color:C.grid}}}}
+});
+
+// BMI分布
+charts.bmiDist = new Chart(document.getElementById('chart-bmi-dist'),{
+  type:'bar',data:{labels:['偏瘦 <18.5','正常 18.5-24','偏重 24-28','肥胖 >28'],
+  datasets:[{label:'人数',data:[1423,7656,2080,698],backgroundColor:[C.blue,C.green,C.yellow,C.red],borderRadius:6}]},
+  options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:C.grid},ticks:{callback:v=>(v/1000).toFixed(1)+'k'}}}}
+});
+
+// 高风险学生表格
+const riskStudents = [
+  {id:'2023010042',name:'张**',college:'计算机学院',score:42,days:12,lack:'蛋白质/热量',level:'高'},
+  {id:'2023010156',name:'李**',college:'文学院',score:48,days:9,lack:'蛋白质/纤维',level:'高'},
+  {id:'2023020089',name:'王**',college:'理学院',score:52,days:7,lack:'碳水/热量',level:'中'},
+  {id:'2023020234',name:'赵**',college:'工程学院',score:55,days:6,lack:'纤维/维生素',level:'中'},
+  {id:'2023030067',name:'刘**',college:'艺术学院',score:51,days:8,lack:'蛋白质/碳水',level:'高'},
+  {id:'2023030198',name:'陈**',college:'经管学院',score:58,days:5,lack:'纤维',level:'低'},
+  {id:'2023040045',name:'孙**',college:'医学院',score:56,days:5,lack:'维生素/纤维',level:'中'},
+  {id:'2023040112',name:'周**',college:'体育学院',score:44,days:11,lack:'热量/碳水',level:'高'}
+];
+const levelColors = {'高':'tag-red','中':'tag-yellow','低':'tag-blue'};
+document.getElementById('risk-table-body').innerHTML = riskStudents.map(r =>
+  `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.college}</td><td style="color:${r.score<50?C.red:r.score<60?C.yellow:C.green};font-weight:700">${r.score}</td><td>${r.days}天</td><td>${r.lack.split('/').map(l=>'<span class="tag tag-orange">'+l+'</span>').join(' ')}</td><td><span class="tag ${levelColors[r.level]}">${r.level}</span></td><td><button style="padding:4px 10px;border-radius:6px;border:1px solid var(--green);background:transparent;color:var(--green);font-size:12px;cursor:pointer" onclick="alert('已发送营养建议通知给学生')">发送建议</button></td></tr>`
+).join('');
+
+// ===== 菜品管理页 =====
+const foodList = [
+  {emoji:'🥩',name:'红烧排骨',cat:'荤菜',cal:380,pro:25,carb:30,fat:15,fiber:2,rarity:'rare',tags:[]},
+  {emoji:'🍗',name:'宫保鸡丁',cat:'荤菜',cal:320,pro:22,carb:25,fat:12,fiber:3,rarity:'rare',tags:['halal']},
+  {emoji:'🥘',name:'麻婆豆腐',cat:'素菜',cal:180,pro:12,carb:10,fat:10,fiber:4,rarity:'common',tags:['veg']},
+  {emoji:'🍳',name:'西红柿鸡蛋',cat:'素菜',cal:160,pro:10,carb:12,fat:8,fiber:3,rarity:'common',tags:['veg']},
+  {emoji:'🥬',name:'清炒时蔬',cat:'素菜',cal:80,pro:4,carb:8,fat:3,fiber:5,rarity:'common',tags:['veg','gf']},
+  {emoji:'🍖',name:'糖醋里脊',cat:'荤菜',cal:360,pro:20,carb:28,fat:14,fiber:1,rarity:'rare',tags:[]},
+  {emoji:'🥕',name:'青椒肉丝',cat:'荤菜',cal:240,pro:15,carb:14,fat:10,fiber:4,rarity:'common',tags:[]},
+  {emoji:'🥔',name:'酸辣土豆丝',cat:'素菜',cal:120,pro:3,carb:18,fat:5,fiber:4,rarity:'common',tags:['veg','gf']},
+  {emoji:'🍲',name:'紫菜蛋花汤',cat:'汤品',cal:40,pro:3,carb:2,fat:2,fiber:1,rarity:'common',tags:[]},
+  {emoji:'🍚',name:'米饭',cat:'主食',cal:230,pro:4,carb:50,fat:0.5,fiber:1,rarity:'common',tags:['gf']},
+  {emoji:'🐟',name:'清蒸鲈鱼',cat:'荤菜',cal:200,pro:28,carb:0,fat:8,fiber:0,rarity:'epic',tags:['halal']},
+  {emoji:'🥗',name:'沙拉拼盘',cat:'素菜',cal:100,pro:5,carb:12,fat:4,fiber:6,rarity:'rare',tags:['veg','gf']},
+  {emoji:'🥟',name:'手工水饺',cat:'主食',cal:280,pro:12,carb:32,fat:10,fiber:2,rarity:'rare',tags:[]},
+  {emoji:'🧆',name:'五谷杂粮粥',cat:'主食',cal:140,pro:4,carb:28,fat:1,fiber:5,rarity:'epic',tags:['veg']},
+  {emoji:'🥩',name:'黑椒牛排',cat:'荤菜',cal:420,pro:35,carb:5,fat:22,fiber:1,rarity:'legend',tags:['halal']},
+  {emoji:'🥦',name:'西兰花虾仁',cat:'荤菜',cal:160,pro:18,carb:6,fat:5,fiber:4,rarity:'epic',tags:['low']}
+];
+const rarityInfo = {common:{label:'普通',class:'rarity-common',stars:'☆'},rare:{label:'稀有',class:'rarity-rare',stars:'★'},epic:{label:'史诗',class:'rarity-epic',stars:'★'},legend:{label:'传说',class:'rarity-legend',stars:'★'}};
+const tagLabels = {halal:'清真',veg:'素食',gf:'无麸质',low:'低敏'};
+const tagClasses = {halal:'halal',veg:'veg',gf:'gf',low:'low'};
+
+let filterCat = 'all';
+let filterSearch = '';
+let editingIndex = -1; // -1 = 添加模式, >=0 = 编辑模式
+
+function renderFoodGrid() {
+  const filtered = foodList.filter(f => {
+    const catMatch = filterCat === 'all' || f.cat === filterCat;
+    const searchMatch = !filterSearch || f.name.includes(filterSearch);
+    return catMatch && searchMatch;
+  });
+  if (filtered.length === 0) {
+    document.getElementById('food-grid').innerHTML = '<div style="text-align:center;color:var(--text3);padding:60px 0;font-size:15px">没有找到匹配的菜品</div>';
+    return;
+  }
+  document.getElementById('food-grid').innerHTML = filtered.map(f => {
+    const idx = foodList.indexOf(f);
+    const r = rarityInfo[f.rarity];
+    const dietTags = f.tags.map(t => '<span class="diet-tag '+tagClasses[t]+'">'+tagLabels[t]+'</span>').join('');
+    return `<div class="food-card"><div class="food-emoji">${f.emoji}</div><div class="food-name">${f.name} <span class="rarity ${r.class}">${r.label} ${r.stars}</span></div><div class="food-meta"><span class="tag ${catColors[f.cat]}">${f.cat}</span></div><div class="food-nutrition"><span>热量 <b>${f.cal}</b></span><span>蛋白 <b>${f.pro}g</b></span><span>碳水 <b>${f.carb}g</b></span><span>脂肪 <b>${f.fat}g</b></span></div>${dietTags?'<div class="food-diet-tags">'+dietTags+'</div>':''}<div class="food-actions"><button data-idx="${idx}" class="btn-edit-food">✏️ 编辑</button><button data-idx="${idx}" class="btn-del-food danger">🗑️ 删除</button></div></div>`;
+  }).join('');
+}
+
+renderFoodGrid();
+
+// 事件委托：编辑 & 删除
+document.getElementById('food-grid').addEventListener('click', function(e) {
+  const editBtn = e.target.closest('.btn-edit-food');
+  const delBtn = e.target.closest('.btn-del-food');
+  if (editBtn) {
+    const idx = parseInt(editBtn.getAttribute('data-idx'));
+    openEditFood(idx);
+  } else if (delBtn) {
+    const idx = parseInt(delBtn.getAttribute('data-idx'));
+    openDeleteFood(idx);
+  }
+});
+
+// 打开添加模态框
+function openAddFood() {
+  editingIndex = -1;
+  document.getElementById('modal-food-title').textContent = '➕ 添加菜品';
+  document.getElementById('btn-save-food').textContent = '保存';
+  resetFoodForm();
+  document.getElementById('modal-add-food').classList.add('show');
+}
+
+// 打开编辑模态框
+function openEditFood(idx) {
+  editingIndex = idx;
+  const f = foodList[idx];
+  document.getElementById('modal-food-title').textContent = '✏️ 编辑菜品';
+  document.getElementById('btn-save-food').textContent = '更新';
+  document.getElementById('f-emoji').value = f.emoji;
+  document.getElementById('f-name').value = f.name;
+  document.getElementById('f-cat').value = f.cat;
+  document.getElementById('f-cal').value = f.cal;
+  document.getElementById('f-pro').value = f.pro;
+  document.getElementById('f-carb').value = f.carb;
+  document.getElementById('f-fat').value = f.fat;
+  document.getElementById('f-fiber').value = f.fiber;
+  document.getElementById('f-rarity').value = f.rarity;
+  document.getElementById('f-tag-halal').checked = f.tags.includes('halal');
+  document.getElementById('f-tag-veg').checked = f.tags.includes('veg');
+  document.getElementById('f-tag-gf').checked = f.tags.includes('gf');
+  document.getElementById('f-tag-low').checked = f.tags.includes('low');
+  document.getElementById('modal-add-food').classList.add('show');
+}
+
+// 重置表单
+function resetFoodForm() {
+  ['f-emoji','f-name','f-cal','f-pro','f-carb','f-fat','f-fiber'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-cat').selectedIndex = 0;
+  document.getElementById('f-rarity').selectedIndex = 0;
+  ['f-tag-halal','f-tag-veg','f-tag-gf','f-tag-low'].forEach(id => document.getElementById(id).checked = false);
+}
+
+// 保存菜品
+document.getElementById('btn-save-food').addEventListener('click', () => {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('请输入菜品名称'); return; }
+  const emoji = document.getElementById('f-emoji').value.trim() || '🍽️';
+  const cat = document.getElementById('f-cat').value;
+  const cal = parseInt(document.getElementById('f-cal').value) || 0;
+  const pro = parseInt(document.getElementById('f-pro').value) || 0;
+  const carb = parseInt(document.getElementById('f-carb').value) || 0;
+  const fat = parseInt(document.getElementById('f-fat').value) || 0;
+  const fiber = parseInt(document.getElementById('f-fiber').value) || 0;
+  const rarity = document.getElementById('f-rarity').value;
+  const tags = [];
+  if (document.getElementById('f-tag-halal').checked) tags.push('halal');
+  if (document.getElementById('f-tag-veg').checked) tags.push('veg');
+  if (document.getElementById('f-tag-gf').checked) tags.push('gf');
+  if (document.getElementById('f-tag-low').checked) tags.push('low');
+
+  const foodData = {emoji, name, cat, cal, pro, carb, fat, fiber, rarity, tags};
+
+  if (editingIndex >= 0) {
+    foodList[editingIndex] = foodData;
+    showToast('✅ 菜品「' + name + '」已更新');
+  } else {
+    foodList.push(foodData);
+    showToast('✅ 菜品「' + name + '」已添加');
+  }
+
+  document.getElementById('modal-add-food').classList.remove('show');
+  renderFoodGrid();
+});
+
+// 取消添加/编辑
+document.getElementById('btn-cancel-food').addEventListener('click', () => {
+  document.getElementById('modal-add-food').classList.remove('show');
+});
+
+// 删除菜品
+let deleteIdx = -1;
+function openDeleteFood(idx) {
+  deleteIdx = idx;
+  document.getElementById('delete-food-msg').textContent = '确定要删除「' + foodList[idx].name + '」吗？此操作不可恢复。';
+  document.getElementById('modal-delete-food').classList.add('show');
+}
+document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+  if (deleteIdx >= 0) {
+    const name = foodList[deleteIdx].name;
+    foodList.splice(deleteIdx, 1);
+    showToast('🗑️ 菜品「' + name + '」已删除');
+    deleteIdx = -1;
+    document.getElementById('modal-delete-food').classList.remove('show');
+    renderFoodGrid();
+  }
+});
+document.getElementById('btn-cancel-delete').addEventListener('click', () => {
+  deleteIdx = -1;
+  document.getElementById('modal-delete-food').classList.remove('show');
+});
+
+// 分类筛选
+document.getElementById('btn-filter-cat').addEventListener('click', () => {
+  document.getElementById('modal-filter-food').classList.add('show');
+});
+document.getElementById('filter-cat-btns').addEventListener('click', function(e) {
+  const btn = e.target.closest('.filter-cat-btn');
+  if (!btn) return;
+  this.querySelectorAll('.filter-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterCat = btn.getAttribute('data-cat');
+});
+document.getElementById('f-search').addEventListener('input', function() {
+  filterSearch = this.value.trim();
+});
+document.getElementById('btn-apply-filter').addEventListener('click', () => {
+  document.getElementById('modal-filter-food').classList.remove('show');
+  renderFoodGrid();
+  showToast('📂 筛选已应用');
+});
+document.getElementById('btn-reset-filter').addEventListener('click', () => {
+  filterCat = 'all';
+  filterSearch = '';
+  document.getElementById('f-search').value = '';
+  document.querySelectorAll('#filter-cat-btns .filter-cat-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-cat') === 'all');
+  });
+  renderFoodGrid();
+  document.getElementById('modal-filter-food').classList.remove('show');
+  showToast('📂 筛选已重置');
+});
+
+// 添加菜品按钮
+document.getElementById('btn-add-food').addEventListener('click', openAddFood);
+
+// 点击遮罩关闭所有模态框
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+});
+
+// ===== 顶栏按钮 =====
+document.getElementById('btn-refresh').addEventListener('click',function(){
+  this.textContent = '⏳ 刷新中...';
+  setTimeout(()=>{ this.textContent = '🔄 刷新数据'; },1200);
+});
+document.getElementById('btn-export').addEventListener('click',()=>alert('报告已生成，正在下载...'));
+document.getElementById('btn-ai').addEventListener('click',()=>{
+  alert('🤖 AI 智能分析\n\n基于近30天数据分析：\n\n1. 蛋白质摄入不足问题集中在计算机学院和工程学院\n2. 建议在2号窗口增加高蛋白菜品\n3. 午餐时段纤维供给缺口最大，建议增加沙拉/粗粮选项\n4. 预计调整后全校营养达标率可提升12%');
+});
+
+// ===== 登录功能 =====
+// 自动检测：如果当前页面是通过 http:// 打开的（即通过 /admin 路由），
+// 就用当前主机地址；否则回退到配置的局域网 IP
+const loc = window.location;
+const API_BASE = (loc.protocol === 'http:' || loc.protocol === 'https:')
+  ? loc.protocol + '//' + loc.hostname + ':3000'
+  : 'http://localhost:3000';
+let adminToken = localStorage.getItem('adminToken') || '';
+
+// 密码框回车登录
+document.getElementById('loginPass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') handleLogin();
+});
+
+async function handleLogin() {
+  const elUser = document.getElementById('loginUser');
+  const elPass = document.getElementById('loginPass');
+  const elError = document.getElementById('loginError');
+  const elLoading = document.getElementById('loginLoading');
+  const elBtn = document.querySelector('.login-btn');
+
+  elError.style.display = 'none';
+  elLoading.style.display = 'block';
+  elBtn.disabled = true;
+
+  try {
+    const res = await fetch(API_BASE + '/api/admin/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username: elUser.value, password: elPass.value})
+    });
+    const data = await res.json();
+    if (data.success) {
+      adminToken = data.token;
+      localStorage.setItem('adminToken', adminToken);
+      document.getElementById('loginOverlay').style.display = 'none';
+      document.querySelector('.user-info .name').textContent = data.name || '管理员';
+    } else {
+      elError.textContent = '❌ ' + (data.error || '用户名或密码错误');
+      elError.style.display = 'block';
+    }
+  } catch(e) {
+    elError.textContent = '❌ 服务器连接失败，请确保后端已启动';
+    elError.style.display = 'block';
+  }
+
+  elLoading.style.display = 'none';
+  elBtn.disabled = false;
+}
+
+// 页面加载时检查登录状态
+(function checkLoginState() {
+  if (adminToken) {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.querySelector('.user-info .name').textContent = '管理员';
+    loadStudentList();
+  }
+})();
+
+// ===== 学生管理 =====
+let allStudents = [];
+
+async function loadStudentList() {
+  if (!adminToken) return;
+  try {
+    const res = await fetch(API_BASE + '/api/admin/students', {
+      headers: {'Authorization': 'Bearer ' + adminToken}
+    });
+    if (res.status === 401) {
+      adminToken = '';
+      localStorage.removeItem('adminToken');
+      document.getElementById('loginOverlay').style.display = 'flex';
+      return;
+    }
+    const data = await res.json();
+    if (data.success) {
+      allStudents = data.list || [];
+      renderStudentTable(allStudents);
+    }
+  } catch(e) {
+    console.log('加载学生列表失败', e);
+  }
+}
+
+function renderStudentTable(list) {
+  const tbody = document.getElementById('studentTableBody');
+  const total = document.getElementById('studentTotal');
+  total.textContent = list.length;
+  tbody.innerHTML = list.map(function(s) {
+    return '<tr><td class="account-cell">' + s.account + '</td><td class="pwd-cell">' + s.password + '</td><td>' + s.name + '</td><td>' + s.studentId + '</td><td>' + (s.college || '-') + '</td></tr>';
+  }).join('');
+}
+
+function filterStudentList(keyword) {
+  if (!keyword) return renderStudentTable(allStudents);
+  const kw = keyword.toLowerCase();
+  const filtered = allStudents.filter(function(s) {
+    return s.name.indexOf(kw) >= 0 || s.name.toLowerCase().indexOf(kw) >= 0 ||
+      String(s.studentId).indexOf(kw) >= 0 || (s.account && s.account.indexOf(kw) >= 0);
+  });
+  renderStudentTable(filtered);
+}
+
+async function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const resultDiv = document.getElementById('importResult');
+  resultDiv.className = 'import-result';
+
+  try {
+    const text = await file.text();
+    const lines = text.split('\n').filter(function(l) { return l.trim(); });
+    if (lines.length < 2) {
+      resultDiv.className = 'import-result error';
+      resultDiv.innerHTML = '❌ CSV 文件格式错误：至少需要表头行和一行数据';
+      return;
+    }
+
+    const headers = lines[0].split(',').map(function(h) { return h.trim().toLowerCase(); });
+    const nameIdx = headers.findIndex(function(h) { return h.includes('姓名') || h.includes('name'); });
+    const collegeIdx = headers.findIndex(function(h) { return h.includes('学院') || h.includes('college'); });
+    const genderIdx = headers.findIndex(function(h) { return h.includes('性别') || h.includes('gender'); });
+    const ageIdx = headers.findIndex(function(h) { return h.includes('年龄') || h.includes('age'); });
+
+    if (nameIdx < 0) {
+      resultDiv.className = 'import-result error';
+      resultDiv.innerHTML = '❌ CSV 缺少"姓名"列，请确保包含姓名、学院等字段';
+      return;
+    }
+
+    const students = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',').map(function(c) { return c.trim().replace(/^"|"$/g, ''); });
+      if (!cols[nameIdx]) continue;
+      students.push({
+        name: cols[nameIdx],
+        college: collegeIdx >= 0 ? cols[collegeIdx] : '',
+        gender: genderIdx >= 0 ? cols[genderIdx] : '',
+        age: ageIdx >= 0 ? parseInt(cols[ageIdx]) || 18 : 18
+      });
+    }
+
+    if (students.length === 0) {
+      resultDiv.className = 'import-result error';
+      resultDiv.innerHTML = '❌ 未读取到有效学生数据';
+      return;
+    }
+
+    const res = await fetch(API_BASE + '/api/admin/students/batch', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken},
+      body: JSON.stringify({students: students})
+    });
+    const data = await res.json();
+    if (data.success) {
+      resultDiv.className = 'import-result success';
+      var accountsHtml = data.students.map(function(s) {
+        return '<span>账号: ' + s.account + ' / 密码: ' + s.password + ' - ' + s.name + '</span>';
+      }).join('');
+      resultDiv.innerHTML = '✅ 成功导入 ' + data.count + ' 名学生！<br><div class="accounts-list">' + accountsHtml + '</div>';
+      loadStudentList();
+    } else {
+      resultDiv.className = 'import-result error';
+      resultDiv.innerHTML = '❌ ' + (data.error || '导入失败');
+    }
+  } catch(e) {
+    resultDiv.className = 'import-result error';
+    resultDiv.innerHTML = '❌ 文件读取失败，请使用 CSV 格式（UTF-8编码）';
+    console.error(e);
+  }
+
+  event.target.value = '';
+}
+
+// 切换到学生管理页面时自动刷新列表
+const studentNav = document.querySelector('.nav-item[data-page="students"]');
+if (studentNav) {
+  studentNav.addEventListener('click', function() {
+    setTimeout(loadStudentList, 200);
+  });
+}
+
+// ==================== 营养大屏 JS 逻辑 ====================
+function dashToast(msg) {
+  var t = document.getElementById('dash-toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 1800);
+}
+
+var DASH_USERS = [
+  {name:'张伟（男，20岁，汉族）',cal:'2980',calPct:132,protein:'62g',fat:'105g',fiber:'3g',bars:[132,83,150,95,12],diet:'无限制'},
+  {name:'阿依古丽（女，19岁，维吾尔族·清真饮食）',cal:'1750',calPct:97,protein:'55g',fat:'48g',fiber:'18g',bars:[97,92,87,88,72],diet:'清真'},
+  {name:'王博（男，22岁，汉族）',cal:'3200',calPct:142,protein:'80g',fat:'120g',fiber:'5g',bars:[142,107,171,102,20],diet:'无限制'},
+  {name:'Priya（女，21岁，印度籍·素食偏好）',cal:'1600',calPct:89,protein:'42g',fat:'52g',fiber:'22g',bars:[89,70,95,80,88],diet:'蛋奶素'},
+  {name:'赵磊（男，20岁，回族·清真饮食）',cal:'2480',calPct:110,protein:'71g',fat:'82g',fiber:'8g',bars:[110,95,117,93,32],diet:'清真'},
+  {name:'刘芳（非二元，19岁，汉族）',cal:'1920',calPct:107,protein:'58g',fat:'62g',fiber:'21g',bars:[107,97,113,85,84],diet:'无限制'}
+];
+
+function selectDashUser(idx, el) {
+  document.querySelectorAll('.user-pick').forEach(function(a) { a.classList.remove('selected'); });
+  el.classList.add('selected');
+  var u = DASH_USERS[idx];
+  var nd = document.getElementById('user-name-display');
+  if (nd) nd.textContent = u.name;
+  ['s-cal','s-protein','s-fat','s-fiber'].forEach(function(id, i) {
+    var el2 = document.getElementById(id);
+    if (el2) el2.textContent = [u.cal, u.protein, u.fat, u.fiber][i];
+  });
+  var fills = document.querySelectorAll('.dash-pbar .pfill');
+  var pcts = document.querySelectorAll('.dash-pbar .ppct');
+  var colors = ['var(--orange)','var(--blue)','var(--red)','var(--purple)','var(--yellow)'];
+  u.bars.forEach(function(v, i) {
+    if (fills[i]) { fills[i].style.width = Math.min(v, 100) + '%'; fills[i].style.background = colors[i]; }
+    if (pcts[i]) pcts[i].textContent = v + '%';
+  });
+  if (window.dashChartNutrition) {
+    var recs = [2250, 75, 70, 300, 25];
+    var actuals = [parseFloat(u.cal) || 0, parseFloat(u.protein) || 0, parseFloat(u.fat) || 0, parseFloat(u.cal) * 0.4 / 4 || 0, parseFloat(u.fiber) || 0];
+    dashChartNutrition.data.datasets[0].data = actuals.map(function(a, i) { return Math.round(a / recs[i] * 100); });
+    dashChartNutrition.update();
+  }
+}
+
+var userSelector = document.getElementById('user-selector');
+if (userSelector) {
+  userSelector.addEventListener('click', function(e) {
+    var pick = e.target.closest('.user-pick');
+    if (!pick) return;
+    var idx = parseInt(pick.getAttribute('data-uid'), 10);
+    if (!isNaN(idx)) selectDashUser(idx, pick);
+  });
+}
+
+var dashCharts = {};
+
+function initDashCharts() {
+  try {
+    var cn = document.getElementById('chart-nutrition');
+    if (cn && !dashCharts.nutrition) {
+      dashCharts.nutrition = new Chart(cn, {
+        type: 'bar', data: { labels: ['热量','蛋白质','脂肪','碳水','膳食纤维'],
+          datasets: [
+            { label: '实际摄入%', data: [132, 83, 150, 95, 12], backgroundColor: [C.orange, C.blue, C.red, C.purple, C.cyan], borderRadius: 4 },
+            { label: '基准线', data: [100, 100, 100, 100, 100], backgroundColor: C.text + '40', borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: { x: { grid: { display: false } }, y: { max: 180, ticks: { callback: function(v) { return v + '%'; } }, grid: { color: C.grid } } }
+        }
+      });
+      window.dashChartNutrition = dashCharts.nutrition;
+    }
+
+    var cc = document.getElementById('chart-calorie');
+    if (cc && !dashCharts.calorie) {
+      dashCharts.calorie = new Chart(cc, {
+        type: 'line', data: { labels: ['周一','周二','周三','周四','周五','周六','周日'],
+          datasets: [
+            { label: '实际热量', data: [2980, 2850, 2760, 3100, 2920, 2680, 3050], borderColor: C.orange, backgroundColor: C.orange + '14', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: C.orange },
+            { label: '上限', data: [2250, 2250, 2250, 2250, 2250, 2250, 2250], borderColor: C.blue, borderDash: [4, 4], backgroundColor: C.blue + '0A', fill: true, tension: 0, pointRadius: 0 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: { x: { grid: { display: false } }, y: { min: 1500, grid: { color: C.grid } } }
+        }
+      });
+    }
+
+    var cg = document.getElementById('chart-group');
+    if (cg && !dashCharts.group) {
+      dashCharts.group = new Chart(cg, {
+        type: 'radar', data: { labels: ['热量','蛋白质','脂肪','碳水','膳食纤维'],
+          datasets: [
+            { label: '全校均值', data: [116, 78, 122, 91, 56], backgroundColor: C.blue + '1E', borderColor: C.blue, pointBackgroundColor: C.blue, pointRadius: 4, borderWidth: 2 },
+            { label: '国标参考线', data: [100, 100, 100, 100, 100], backgroundColor: C.green + '14', borderColor: C.green, borderDash: [4, 4], pointRadius: 0, borderWidth: 2 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              align: 'end',
+              labels: {
+                boxWidth: 14, boxHeight: 8, padding: 16,
+                font: { size: 11 },
+                color: C.text2,
+                usePointStyle: true,
+                pointStyle: 'line'
+              }
+            }
+          },
+          scales: { r: { min: 0, max: 140, ticks: { stepSize: 20, color: C.text3, backdropColor: 'transparent' }, grid: { color: C.grid }, pointLabels: { font: { size: 11 }, color: C.text2 } } }
+        }
+      });
+    }
+
+  } catch (e2) { console.warn('Dash charts init error:', e2); }
+}
+
+function initDashHeatmap() {
+  var hm = document.getElementById('dash-heatmap');
+  if (!hm || hm.children.length > 0) return;
+  var dishes = ['米饭','红烧肉','可乐鸡翅','清蒸鲈鱼','番茄炒蛋','西兰花','糖醋排骨'];
+  var SCALE = ['#0f172a','#1e2a4a','#1e3a6a','#1d4ed8','#2563eb','#3b82f6','#60a5fa'];
+  dishes.forEach(function(dish) {
+    var header = document.createElement('div');
+    header.style.cssText = 'font-size:10px;color:var(--text3);padding:2px 0;grid-column:span 7;border-bottom:1px solid var(--border);margin-top:4px;';
+    header.textContent = dish;
+    hm.appendChild(header);
+    for (var i = 0; i < 7; i++) {
+      var val = Math.floor(Math.random() * 7);
+      var cell = document.createElement('div');
+      cell.className = 'dash-hcell';
+      cell.style.background = SCALE[val];
+      cell.setAttribute('data-tip', '周' + ['一','二','三','四','五','六','日'][i] + ': ' + (200 + val * 130) + '份');
+      hm.appendChild(cell);
+    }
+  });
+}
+
+document.querySelectorAll('.nav-item').forEach(function(item) {
+  item.addEventListener('click', function() {
+    var page = this.getAttribute('data-page');
+    if (page === 'dash-student' || page === 'dash-kitchen') {
+      setTimeout(function() {
+        initDashCharts(); initDashHeatmap();
+        Object.values(dashCharts).forEach(function(c) { try { c.resize(); } catch(e) {} });
+      }, 200);
+    }
+  });
+});
+
+// 页面加载时自动初始化当前 dashboard 页面的图表
+(function() {
+  var activePage = document.querySelector('.page.active');
+  if (activePage) {
+    var id = activePage.id;
+    if (id === 'page-dash-student' || id === 'page-dash-kitchen') {
+      setTimeout(function() { initDashCharts(); initDashHeatmap(); }, 300);
+    }
+  }
+})();
+</script>
+</body>
+</html>
