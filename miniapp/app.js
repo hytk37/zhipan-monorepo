@@ -1,7 +1,24 @@
 // app.js
+
+/**
+ * 取窗口信息。
+ * wx.getWindowInfo 需要基础库 ≥ 2.20.1；低版本或异常时回退到 getSystemInfoSync，
+ * 避免 onLaunch 直接抛错 —— 启动期抛错会表现成整页白屏。
+ */
+function getWindowInfo() {
+  if (typeof wx.getWindowInfo === 'function') {
+    try {
+      return wx.getWindowInfo();
+    } catch (e) {
+      // 继续走下面的兜底
+    }
+  }
+  return wx.getSystemInfoSync();
+}
+
 App({
   onLaunch() {
-    const sysInfo = wx.getWindowInfo();
+    const sysInfo = getWindowInfo();
     this.globalData.statusBarHeight = sysInfo.statusBarHeight || 20;
     const savedId = wx.getStorageSync('studentId');
     if (savedId) {
