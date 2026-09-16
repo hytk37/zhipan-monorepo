@@ -5,10 +5,19 @@
   "main": "api-server.js",
   "scripts": {
     "start": "node api-server.js",
-    "test": "node scripts/smoke-test.js"
+    "test": "node scripts/smoke-test.js",
+    "db:check": "node scripts/check-sql.js sql/schema.sql",
+    "db:seed:dry": "node scripts/seed.js --dry-run",
+    "db:seed": "node scripts/seed.js --exec",
+    "db:seed:file": "node scripts/seed.js --out=sql/seed-demo.sql --students=6 --days-summary=7",
+    "db:test": "node scripts/db-smoke-test.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mysql2": "^3.24.4"
+  },
+  "devDependencies": {
+    "node-sql-parser": "^5.4.0"
   }
 }

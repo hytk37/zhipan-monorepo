@@ -5,3 +5,7 @@ miniapp/project.private.config.json
 .DS_Store
 Thumbs.db
 *.log
+
+# 数据库凭据（参考 backend/.env.example）
+.env
+backend/.env
