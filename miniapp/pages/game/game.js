@@ -86,6 +86,15 @@ Page({
     setTimeout(() => this._initTrendChart(), 300)
   },
 
+  // 页面隐藏/卸载时停掉粒子 rAF 循环，释放主线程（避免后台空转拖慢整机）
+  onHide() {
+    canvasMod.stopParticles(this)
+  },
+
+  onUnload() {
+    canvasMod.stopParticles(this)
+  },
+
   // ===== 主题 =====
   _buildThemeStyle(themeKey) {
     return themeMod.buildStyle(themeKey)

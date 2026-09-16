@@ -333,7 +333,7 @@ page {
 .map-deco{position:absolute;border-radius:50%;background:var(--accent)}
 .map-container{position:relative;margin:-16rpx -28rpx 0;padding:0 0 0}
 .map-canvas-wrap{position:relative;width:100%;height:0;padding-bottom:120%}
-.map-canvas{position:absolute;top:0;left:0;width:100%;height:100%}
+.map-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
 .map-nodes{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
 .map-lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .map-line{position:absolute;height:0;border-top:2rpx dashed rgba(255,255,255,0.15);transform-origin:0 0}
@@ -416,7 +416,7 @@ page {
 .chart-legend{display:flex;gap:24rpx;margin-bottom:16rpx;flex-wrap:wrap}
 .chart-legend-item{font-size:22rpx;color:var(--text2);display:flex;align-items:center;gap:6rpx}
 .chart-dot{width:16rpx;height:16rpx;border-radius:50%}
-.trend-canvas{width:100%;height:400rpx}
+.trend-canvas{width:100%;height:400rpx;pointer-events:none}
 .buff-tag{font-size:24rpx;padding:10rpx 24rpx;border-radius:20rpx;display:flex;align-items:center;gap:6rpx;font-weight:600}
 .buff-tag.good{background:rgba(105,240,174,0.12);color:var(--exp);border:2rpx solid rgba(105,240,174,0.25)}
 .buff-tag.warn{background:rgba(255,152,0,0.12);color:#ffb74d;border:2rpx solid rgba(255,152,0,0.25)}

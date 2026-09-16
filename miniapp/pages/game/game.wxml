@@ -158,7 +158,7 @@
             <text class="chart-legend-item"><view class="chart-dot" style="background:var(--exp)"></view><text style="color:var(--exp)">绿色</text>：碳水</text>
             <text class="chart-legend-item"><view class="chart-dot" style="background:#ab47bc"></view><text style="color:#ab47bc">紫色</text>：纤维</text>
           </view>
-          <canvas type="2d" id="trendCanvas" class="trend-canvas" disable-scroll></canvas>
+          <canvas type="2d" id="trendCanvas" class="trend-canvas"></canvas>
         </view>
 
         <view class="card">

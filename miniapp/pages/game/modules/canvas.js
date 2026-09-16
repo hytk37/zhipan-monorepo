@@ -60,7 +60,19 @@ function renderParticles(page) {
 
     page._particleCanvas = canvas
 
+    // 令牌机制：每次重新初始化（如切主题）都让旧循环自杀，避免 rAF 死循环叠加
+    const token = page._particleToken = (page._particleToken || 0) + 1
+    let frameCount = 0
+
     const draw = function () {
+      // 令牌不匹配说明已有新循环接管，本循环立即退出
+      if (page._particleToken !== token) return
+      // 降帧到 ~30fps：粒子运动缓慢，肉眼无感知差异，主线程压力减半
+      frameCount++
+      if (frameCount % 2 === 1) {
+        canvas.requestAnimationFrame(draw)
+        return
+      }
       ctx.clearRect(0, 0, w, h)
       const t = THEMES[page.data.currentTheme]
       const isLight = t && t.light
@@ -255,8 +267,16 @@ function renderTrend(page) {
   })
 }
 
+/** 停止粒子动画（页面隐藏/卸载、切主题前调用，释放主线程） */
+function stopParticles(page) {
+  // 令牌 +1 后，正在跑的循环下一帧自检发现不匹配即退出
+  page._particleToken = (page._particleToken || 0) + 1
+  page._particleCanvas = null
+}
+
 module.exports = {
   renderParticles: renderParticles,
   renderMap: renderMap,
-  renderTrend: renderTrend
+  renderTrend: renderTrend,
+  stopParticles: stopParticles
 }
