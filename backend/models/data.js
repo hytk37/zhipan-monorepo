@@ -139,7 +139,7 @@ const nutritionData = {
 
 // ─── 后厨数据 ─────────────────────────────────────
 const kitchenKPI = {
-  mealCount: 12680,
+  mealCount: 4278,
   mealCountChange: '+3.2%',
   avgCal: 2340,
   avgCalRec: 2025,
@@ -149,7 +149,7 @@ const kitchenKPI = {
   fiberOkRate: 56,
   fiberAvg: 14,
   fiberRec: 25,
-  fiberOkCount: 6640,
+  fiberOkCount: 2240,
 };
 
 const groupRadar = {
@@ -162,35 +162,35 @@ const heatmapData = {
   dishes: ['米饭', '红烧肉', '可乐鸡翅', '清蒸鲈鱼', '番茄炒蛋', '西兰花', '糖醋排骨'],
   days: ['一', '二', '三', '四', '五', '六', '日'],
   data: [
-    [980, 1050, 1020, 1100, 1080, 1200, 1150],
-    [1050, 980, 1120, 1080, 1150, 980, 1020],
-    [820, 870, 790, 850, 880, 920, 860],
-    [380, 420, 390, 410, 400, 450, 420],
-    [880, 920, 940, 910, 930, 890, 900],
-    [420, 460, 480, 440, 500, 520, 490],
-    [720, 780, 750, 770, 810, 740, 760],
+    [331, 354, 344, 371, 364, 405, 388],
+    [354, 331, 378, 364, 388, 331, 344],
+    [277, 294, 267, 287, 297, 310, 290],
+    [128, 142, 132, 138, 135, 152, 142],
+    [297, 310, 317, 307, 314, 300, 304],
+    [142, 155, 162, 148, 169, 175, 165],
+    [243, 263, 253, 260, 273, 250, 256],
   ]
 };
 
 const forecastData = [
-  { dish: '米饭', qty: 3680, trend: 'up', change: '2.1%' },
-  { dish: '红烧肉', qty: 1120, trend: 'up', change: '4.8%' },
-  { dish: '可乐鸡翅', qty: 870, trend: 'up', change: '1.2%' },
-  { dish: '清蒸鲈鱼', qty: 420, trend: 'down', change: '0.8%' },
-  { dish: '清炒西兰花', qty: 460, trend: 'up', change: '12.3%' },
-  { dish: '番茄炒蛋', qty: 940, trend: 'up', change: '3.5%' },
-  { dish: '糖醋排骨', qty: 780, trend: 'up', change: '1.6%' },
-  { dish: '回锅肉', qty: 650, trend: 'down', change: '2.4%' },
+  { dish: '米饭', qty: 1242, trend: 'up', change: '2.1%' },
+  { dish: '红烧肉', qty: 378, trend: 'up', change: '4.8%' },
+  { dish: '可乐鸡翅', qty: 294, trend: 'up', change: '1.2%' },
+  { dish: '清蒸鲈鱼', qty: 142, trend: 'down', change: '0.8%' },
+  { dish: '清炒西兰花', qty: 155, trend: 'up', change: '12.3%' },
+  { dish: '番茄炒蛋', qty: 317, trend: 'up', change: '3.5%' },
+  { dish: '糖醋排骨', qty: 263, trend: 'up', change: '1.6%' },
+  { dish: '回锅肉', qty: 219, trend: 'down', change: '2.4%' },
 ];
 
 const purchaseData = [
-  { item: '西兰花', reason: '高纤维，补充全校膳食纤维缺口', amount: 145, unit: 'kg', change: 'up', changePct: '+60%' },
-  { item: '菠菜', reason: '富含铁质与膳食纤维', amount: 105, unit: 'kg', change: 'up', changePct: '+45%' },
-  { item: '芹菜', reason: '高纤维蔬菜，降血压辅助', amount: 85, unit: 'kg', change: 'up', changePct: '+30%' },
-  { item: '鲈鱼', reason: '高蛋白低脂，优质蛋白来源', amount: 128, unit: 'kg', change: 'up', changePct: '+25%' },
-  { item: '猪五花肉', reason: '高脂食材，适当控制采购量', amount: 195, unit: 'kg', change: 'down', changePct: '-20%' },
-  { item: '鸡翅', reason: '高销量，维持库存', amount: 240, unit: 'kg', change: 'same', changePct: '持平' },
-  { item: '大米', reason: '主食刚需，按预测量采购', amount: 820, unit: 'kg', change: 'up', changePct: '2.1%' },
+  { item: '西兰花', reason: '高纤维，补充全校膳食纤维缺口', amount: 49, unit: 'kg', change: 'up', changePct: '+60%' },
+  { item: '菠菜', reason: '富含铁质与膳食纤维', amount: 35, unit: 'kg', change: 'up', changePct: '+45%' },
+  { item: '芹菜', reason: '高纤维蔬菜，降血压辅助', amount: 29, unit: 'kg', change: 'up', changePct: '+30%' },
+  { item: '鲈鱼', reason: '高蛋白低脂，优质蛋白来源', amount: 43, unit: 'kg', change: 'up', changePct: '+25%' },
+  { item: '猪五花肉', reason: '高脂食材，适当控制采购量', amount: 66, unit: 'kg', change: 'down', changePct: '-20%' },
+  { item: '鸡翅', reason: '高销量，维持库存', amount: 81, unit: 'kg', change: 'same', changePct: '持平' },
+  { item: '大米', reason: '主食刚需，按预测量采购', amount: 277, unit: 'kg', change: 'up', changePct: '2.1%' },
 ];
 
 const newDishData = [
@@ -201,9 +201,9 @@ const newDishData = [
 ];
 
 const fiberDist = {
-  labels: ['严重不足 (<10g) · 3,320人', '摄入不足 (10-20g) · 5,217人', '基本达标 (>20g) · 3,319人'],
+  labels: ['严重不足 (<10g) · 1,120人', '摄入不足 (10-20g) · 1,760人', '基本达标 (>20g) · 1,120人'],
   data: [28, 44, 28],
-  counts: [3320, 5217, 3319],
+  counts: [1120, 1760, 1120],
 };
 
 const monthlyTrend = {
@@ -213,12 +213,12 @@ const monthlyTrend = {
 };
 
 const systemStatus = {
-  studentCount: 11856,
-  mealCount: 12680,
+  studentCount: 4000,
+  mealCount: 4278,
   dishCount: 127,
   dishCategories: 23,
   accuracy: 91.4,
-  recordCount: 386000,
+  recordCount: 130229,
   nutritionCoverage: 98.7,
 };
 
