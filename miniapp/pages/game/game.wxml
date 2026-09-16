@@ -1,34 +1,541 @@
-<!-- 智慧膳系统-冒险 · 营养闯关 - 页面骨架
-     结构按区块拆到 ./templates/ 下；<include> 是原地展开，数据作用域与拆分前完全一致：
-       particles.wxml   背景粒子画布 + 地图装饰
-       nav-bar.wxml     自定义导航栏 + 主题切换
-       tab-map / tab-status / tab-shop / tab-profile   四个 Tab 内容
-       tabbar.wxml      底部 TabBar
-       modals.wxml      7 个模态框
-       toast.wxml       轻提示
--->
+<!-- 智慧膳系统-冒险 · 营养闯关 - 主页面 -->
 <view class="app" data-theme="{{currentTheme}}" style="{{themeStyle}}">
 
-  <include src="./templates/particles.wxml" />
+  <!-- 粒子画布 -->
+  <canvas type="2d" id="particles" class="particles-canvas" disable-scroll></canvas>
 
-  <include src="./templates/nav-bar.wxml" />
+  <!-- 地图装饰（根级，position:fixed 在 scroll-view 内有兼容问题） -->
+  <view class="map-decos" wx:if="{{currentTab === 0}}">
+    <view class="map-deco" style="top:15%;left:5%;width:120rpx;height:120rpx;opacity:0.04"></view>
+    <view class="map-deco" style="top:30%;right:10%;width:160rpx;height:160rpx;opacity:0.03"></view>
+    <view class="map-deco" style="bottom:25%;left:20%;width:100rpx;height:100rpx;opacity:0.05"></view>
+    <view class="map-deco" style="top:50%;left:50%;width:80rpx;height:80rpx;opacity:0.03"></view>
+    <view class="map-deco" style="bottom:40%;right:15%;width:140rpx;height:140rpx;opacity:0.04"></view>
+  </view>
+
+  <!-- ===== 自定义导航栏 ===== -->
+  <view class="nav-bar" style="padding-top:{{statusBarHeight}}px">
+    <view class="nav-content">
+      <view class="nav-left">
+        <view class="back-btn" bindtap="goBack">‹</view>
+        <text class="lv-badge">{{levelText}}</text>
+      </view>
+      <text class="nav-title">智慧膳系统-冒险</text>
+      <view class="nav-right">
+        <view class="theme-picker">
+          <view class="theme-btn" bindtap="toggleThemePanel">🎨</view>
+          <view class="theme-panel {{showThemePanel ? 'open' : ''}}" catchtap="">
+            <view class="theme-section-label">🌙 深色</view>
+            <view class="theme-dots">
+              <view class="theme-dot-wrap" wx:for="{{darkThemeDots}}" wx:key="key">
+                <view class="theme-dot {{currentTheme === item.key ? 'active' : ''}}"
+                      style="background:{{item.gradient}};box-shadow:inset 0 0 0 4rpx {{item.inset}},0 0 12rpx {{item.glow}}"
+                      bindtap="setTheme" data-t="{{item.key}}"></view>
+                <text class="theme-dot-label">{{item.label}}</text>
+              </view>
+            </view>
+            <view class="theme-section-label">☀️ 浅色</view>
+            <view class="theme-dots">
+              <view class="theme-dot-wrap" wx:for="{{lightThemeDots}}" wx:key="key">
+                <view class="theme-dot {{currentTheme === item.key ? 'active' : ''}}"
+                      style="background:{{item.gradient}};box-shadow:inset 0 0 0 4rpx {{item.inset}},0 0 12rpx {{item.glow}}"
+                      bindtap="setTheme" data-t="{{item.key}}"></view>
+                <text class="theme-dot-label">{{item.label}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <text class="coin">💰 {{coins}}</text>
+        <text class="energy">⚡ {{energy}}</text>
+      </view>
+    </view>
+  </view>
 
   <!-- ===== 可滚动内容区（Flex:1, 每个 Tab 一个 scroll-view） ===== -->
   <view class="app-body" style="padding-top:{{navBarHeight}}px">
 
-    <include src="./templates/tab-map.wxml" />
+    <!-- Tab 0：冒险地图 -->
+    <scroll-view scroll-y enhanced show-scrollbar="{{false}}" class="page-scroll" wx:if="{{currentTab === 0}}">
+      <view class="page-inner">
+        <view class="map-container">
+          <view class="map-canvas-wrap">
+            <canvas type="2d" id="mapCanvas" class="map-canvas" disable-scroll></canvas>
+            <view class="map-lines">
+              <view class="map-line {{item.cleared ? 'cleared' : ''}}"
+                    wx:for="{{mapLines}}" wx:key="id"
+                    style="left:{{item.left}};top:{{item.top}};width:{{item.width}};transform:rotate({{item.angle}})"
+              ></view>
+            </view>
+            <view class="map-nodes">
+              <view class="map-node {{item.cls}}"
+                    wx:for="{{mapNodes}}" wx:key="day"
+                    style="left:{{item.styleLeft}};top:{{item.styleTop}}"
+                    bindtap="onMapNodeTap" data-index="{{index}}">
+                <text class="node-day">{{item.dayLabel}}</text>
+                <text class="node-stars">{{item.starsText}}</text>
+              </view>
+            </view>
+            <view class="map-player" style="left:{{playerLeft}};top:{{playerTop}}">🧙</view>
+          </view>
+        </view>
+        <view class="map-info">
+          <text class="map-chapter">🏔️ 攀登健康之巅</text>
+          <text class="map-subtitle">周一至周日 · 从山脚到山顶 · 每日一关</text>
 
-    <include src="./templates/tab-status.wxml" />
+          <view class="stage-card">
+            <view class="stage-header">
+              <text class="stage-name">⚔️ 今日关卡</text>
+              <text class="stage-tag">🔥 连续{{streak}}天</text>
+            </view>
+            <view class="stage-quests">
+              <view class="quest-item" wx:for="{{quests}}" wx:key="name" bindtap="toggleQuest" data-idx="{{index}}">
+                <view class="quest-check {{item.done ? 'done' : ''}}">{{item.done ? '✓' : ''}}</view>
+                <view class="quest-text">
+                  <text class="quest-name">{{item.name}}</text>
+                  <text class="quest-reward">{{item.reward}}</text>
+                </view>
+                <view class="quest-progress">
+                  <view class="quest-progress-fill" style="{{item.barStyle}}"></view>
+                </view>
+              </view>
+            </view>
+          </view>
 
-    <include src="./templates/tab-shop.wxml" />
+          <view class="stage-card">
+            <view class="stage-header">
+              <text class="stage-name">🎒 今日装备</text>
+              <text class="stage-tag">已装{{todayEquipCount}}件</text>
+            </view>
+            <view class="today-equip-list">
+              <view class="today-equip-item" wx:for="{{todayEquipList}}" wx:key="label" wx:for-item="eq">
+                <text class="today-equip-icon">{{eq.icon}}</text>
+                <text class="today-equip-name">{{eq.label}}</text>
+                <text class="today-equip-buff">{{eq.buff}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
 
-    <include src="./templates/tab-profile.wxml" />
+    <!-- Tab 1：状态面板 -->
+    <scroll-view scroll-y enhanced show-scrollbar="{{false}}" class="page-scroll" wx:if="{{currentTab === 1}}">
+      <view class="page-inner">
+        <view class="hud-panel">
+          <view class="char-wrap">
+            <view class="char-avatar">🧙</view>
+            <view class="char-ring"></view>
+            <view class="char-lv">Lv.{{level}}</view>
+          </view>
+          <text class="char-name">健康勇者 · {{profileName}}</text>
+          <text class="char-exp">EXP {{exp}} / {{expMax}}</text>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">❤️</text> 生命值 & 魔力</view>
+          <view class="stat-bars">
+            <view class="stat-row" wx:for="{{stats}}" wx:key="label">
+              <text class="stat-icon">{{item.icon}}</text>
+              <view class="stat-info">
+                <view class="stat-head">
+                  <text class="stat-label" style="{{item.labelStyle}}">{{item.label}}</text>
+                  <text class="stat-val">{{item.current}} / {{item.max}} {{item.unit}}</text>
+                </view>
+                <view class="stat-bar">
+                  <view class="stat-fill {{item.color}}" style="{{item.barStyle}}"></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 本周营养趋势折线图 -->
+        <view class="card">
+          <view class="card-title"><text class="emoji">📈</text> 本周营养趋势</view>
+          <view class="chart-legend">
+            <text class="chart-legend-item"><view class="chart-dot" style="background:var(--hp)"></view><text style="color:var(--hp)">红色</text>：热量</text>
+            <text class="chart-legend-item"><view class="chart-dot" style="background:var(--mp)"></view><text style="color:var(--mp)">蓝色</text>：蛋白质</text>
+            <text class="chart-legend-item"><view class="chart-dot" style="background:var(--exp)"></view><text style="color:var(--exp)">绿色</text>：碳水</text>
+            <text class="chart-legend-item"><view class="chart-dot" style="background:#ab47bc"></view><text style="color:#ab47bc">紫色</text>：纤维</text>
+          </view>
+          <canvas type="2d" id="trendCanvas" class="trend-canvas" disable-scroll></canvas>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">✨</text> 状态效果</view>
+          <view class="buffs">
+            <text class="buff-tag {{item.type}}" wx:for="{{buffs}}" wx:key="text" bindtap="onBuffTap" data-idx="{{index}}">{{item.text}}</text>
+          </view>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">📊</text> 角色属性</view>
+          <view class="attr-grid">
+            <view class="attr-item" wx:for="{{attrs}}" wx:key="name" bindtap="onAttrTap" data-idx="{{index}}">
+              <text class="attr-icon">{{item.icon}}</text>
+              <text class="attr-name">{{item.name}}</text>
+              <text class="attr-val" style="{{item.valStyle}}">{{item.val}}</text>
+              <view class="attr-bar">
+                <view class="attr-bar-fill" style="{{item.barStyle}}"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- Tab 2：补给站 -->
+    <scroll-view scroll-y enhanced show-scrollbar="{{false}}" class="page-scroll" wx:if="{{currentTab === 2}}">
+      <view class="page-inner">
+        <view class="shop-header">
+          <text class="shop-title">🏪 冒险补给站</text>
+          <text class="shop-sub">选择你的战斗粮草，为健康之旅补给能量</text>
+        </view>
+
+        <view class="chest-area">
+          <view class="chest {{chestOpened ? 'open' : ''}}" bindtap="openChest">
+            <view class="chest-glow"></view>
+            <view class="chest-lid"></view>
+            <view class="chest-body"></view>
+            <view class="chest-lock"></view>
+          </view>
+          <text class="chest-label">{{chestLabel}}</text>
+        </view>
+
+        <view class="daily-special">
+          <view class="card-title"><text class="emoji">🌟</text> 每日传说 · 限时特供</view>
+          <view class="food-row">
+            <view class="food-card-h food-card-h-{{item.rarityClass}}"
+                  wx:for="{{dailyFoods}}" wx:key="name"
+                  bindtap="showFoodDetail" data-food="{{item}}">
+              <text class="food-emoji-h">{{item.emoji}}</text>
+              <view class="food-info-h">
+                <text class="food-name-h">{{item.name}}</text>
+                <text class="food-desc-h">{{item.desc}}</text>
+              </view>
+              <text class="food-rarity-h">{{item.rarityText}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">⚔️</text> 战斗补给推荐</view>
+          <view class="food-row">
+            <view class="food-card-h food-card-h-{{item.rarityClass}}"
+                  wx:for="{{recommendedFoods}}" wx:key="name"
+                  bindtap="showFoodDetail" data-food="{{item}}">
+              <text class="food-emoji-h">{{item.emoji}}</text>
+              <view class="food-info-h">
+                <text class="food-name-h">{{item.name}}</text>
+                <text class="food-desc-h">{{item.desc}}</text>
+              </view>
+              <text class="food-rarity-h">{{item.rarityText}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">🤖</text> AI 技能搭配方案</view>
+          <view class="ai-plan" style="border-color:rgba(124,77,255,0.2)">
+            <text class="ai-plan-title" style="color:var(--accent2)">🎯 增肌勇士方案</text>
+            <text class="ai-plan-desc">蛋白质不足 +7g · 推荐搭配：</text>
+            <view class="ai-plan-tags">
+              <text class="ai-tag" style="background:rgba(255,82,82,0.12);color:var(--hp)">🍗 骑士鸡腿</text>
+              <text class="ai-tag" style="background:rgba(171,71,188,0.12);color:#ce93d8">🥚 新手蒸蛋×2</text>
+            </view>
+          </view>
+          <view class="ai-plan" style="border-color:var(--glow4)">
+            <text class="ai-plan-title" style="color:var(--accent)">🌿 纤维守护方案</text>
+            <text class="ai-plan-desc">膳食纤维不足 -7g · 推荐搭配：</text>
+            <view class="ai-plan-tags">
+              <text class="ai-tag" style="background:rgba(105,240,174,0.12);color:var(--exp)">🥗 生命之树沙拉</text>
+              <text class="ai-tag" style="background:rgba(68,138,255,0.12);color:var(--mp)">🥦 守护者西兰花</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- Tab 3：冒险者档案 -->
+    <scroll-view scroll-y enhanced show-scrollbar="{{false}}" class="page-scroll" wx:if="{{currentTab === 3}}">
+      <view class="page-inner">
+        <view class="profile-banner">
+          <view class="profile-avatar">🧙</view>
+          <text class="profile-name">{{profileName}}</text>
+          <text class="profile-title">Lv.{{level}} 健康勇者 · {{profileCollege}}</text>
+          <view class="profile-stats">
+            <view class="profile-stat">
+              <text class="profile-stat-num">23</text>
+              <text class="profile-stat-label">🔥 通关天数</text>
+            </view>
+            <view class="profile-stat">
+              <text class="profile-stat-num">82</text>
+              <text class="profile-stat-label">⭐ 平均评分</text>
+            </view>
+            <view class="profile-stat">
+              <text class="profile-stat-num">{{coins}}</text>
+              <text class="profile-stat-label">💰 金币</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">🎒</text> 装备栏</view>
+          <view class="equip-row">
+            <view class="equip-slot {{item.filled ? 'filled' : ''}}" wx:for="{{equipSlots}}" wx:key="label">
+              <text class="eq-icon" style="{{item.filled ? '' : 'opacity:0.3'}}">{{item.icon}}</text>
+              <text class="eq-label">{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">📊</text> 角色属性</view>
+          <view class="attrs-panel">
+            <view class="attr-card" wx:for="{{profileAttrs}}" wx:key="name">
+              <text class="attr-icon">{{item.icon}}</text>
+              <text class="attr-name">{{item.name}}</text>
+              <text class="attr-val" style="{{item.valStyle}}">{{item.val}}</text>
+              <view class="attr-bar">
+                <view class="attr-bar-fill" style="{{item.barStyle}}"></view>
+              </view>
+            </view>
+          </view>
+          <view class="bmi-row">
+            <text class="bmi-label">BMI </text>
+            <text class="bmi-val">{{bmiVal}}</text>
+            <text class="bmi-status" style="color:{{bmiColor}}">{{bmiStatus}}</text>
+          </view>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">🏆</text> 成就收藏</view>
+          <view class="ach-grid">
+            <view class="ach-slot {{item.unlocked ? 'unlocked' : 'locked'}}" wx:for="{{achievements}}" wx:key="name">
+              <text class="ach-icon">{{item.icon}}</text>
+              <text class="ach-name">{{item.name}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="card" style="padding:16rpx">
+          <view class="menu-list">
+            <view class="menu-row" wx:for="{{menuItems}}" wx:key="name" bindtap="showModal" data-type="{{item.modal}}">
+              <text class="menu-icon">{{item.icon}}</text>
+              <view class="menu-text">
+                <text class="menu-name">{{item.name}}</text>
+                <text class="menu-desc">{{item.desc}}</text>
+              </view>
+              <text class="menu-arrow">›</text>
+            </view>
+          </view>
+        </view>
+
+        <text class="footer-text">智慧膳系统-冒险 v2.0 · 健康饮食 · 智慧校园</text>
+      </view>
+    </scroll-view>
 
   </view><!-- .app-body -->
 
-  <include src="./templates/tabbar.wxml" />
+  <!-- ===== TabBar ===== -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === index ? 'active' : ''}}"
+          wx:for="{{tabs}}" wx:key="label"
+          bindtap="switchTab" data-idx="{{index}}">
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </view>
 
-  <include src="./templates/modals.wxml" />
+  <!-- ===== 菜品详情模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'food' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">{{foodDetail.name}}</view>
+      <view class="food-detail-center">
+        <text class="food-detail-emoji">{{foodDetail.emoji}}</text>
+        <text class="food-rarity food-rarity-lg">{{foodDetail.rarityText}}</text>
+      </view>
+      <view class="food-nutrition-grid">
+        <view class="food-nut-item" style="background:rgba(255,82,82,0.08)">
+          <text class="food-nut-label">蛋白质</text>
+          <text class="food-nut-val" style="color:var(--hp)">{{foodDetail.protein}}</text>
+        </view>
+        <view class="food-nut-item" style="background:rgba(105,240,174,0.08)">
+          <text class="food-nut-label">碳水</text>
+          <text class="food-nut-val" style="color:var(--exp)">{{foodDetail.carb}}</text>
+        </view>
+        <view class="food-nut-item" style="background:rgba(68,138,255,0.08)">
+          <text class="food-nut-label">脂肪</text>
+          <text class="food-nut-val" style="color:var(--mp)">{{foodDetail.fat}}</text>
+        </view>
+      </view>
+      <view class="food-detail-desc-box">
+        <text class="food-detail-desc">{{foodDetail.detail}}</text>
+      </view>
+      <view class="btn btn-primary" bindtap="addFood">⚔️ 装备此补给</view>
+    </view>
+  </view>
 
-  <include src="./templates/toast.wxml" />
+  <!-- ===== 属性/状态详情模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'detail' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">
+        <text class="detail-icon">{{detailInfo.icon}}</text>
+        <text>{{detailInfo.title}}</text>
+      </view>
+      <view class="detail-content-box">
+        <text class="detail-content">{{detailInfo.content}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 编辑角色模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'profile' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">✏️ 编辑角色</view>
+      <view class="form-group">
+        <text class="form-label">角色名</text>
+        <input class="form-input" value="{{profileName}}" bindinput="onInputName" />
+      </view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">学号</text>
+          <input class="form-input" value="{{profileId}}" bindinput="onInputId" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">学院</text>
+          <input class="form-input" value="{{profileCollege}}" bindinput="onInputCollege" />
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">性别</text>
+          <view class="toggle-group">
+            <text class="toggle-chip {{profileGender === 'male' ? 'active' : ''}}" bindtap="setGender" data-val="male">♂ 男</text>
+            <text class="toggle-chip {{profileGender === 'female' ? 'active' : ''}}" bindtap="setGender" data-val="female">♀ 女</text>
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="form-label">年龄</text>
+          <input class="form-input" type="number" value="{{profileAge}}" bindinput="onInputAge" />
+        </view>
+      </view>
+      <view class="btn btn-primary" bindtap="saveProfile">💾 保存角色</view>
+    </view>
+  </view>
+
+  <!-- ===== 战斗目标模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'goal' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">🎯 战斗目标</view>
+      <view class="form-group">
+        <text class="form-label">目标类型</text>
+        <view class="toggle-group">
+          <text class="toggle-chip {{goalType === 'cut' ? 'active' : ''}}" bindtap="setGoal" data-type="cut">🗡️ 减脂塑形</text>
+          <text class="toggle-chip {{goalType === 'healthy' ? 'active' : ''}}" bindtap="setGoal" data-type="healthy">🛡️ 均衡饮食</text>
+          <text class="toggle-chip {{goalType === 'bulk' ? 'active' : ''}}" bindtap="setGoal" data-type="bulk">💪 健康增重</text>
+          <text class="toggle-chip {{goalType === 'muscle' ? 'active' : ''}}" bindtap="setGoal" data-type="muscle">🔥 增肌增重</text>
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">热量目标 (kcal)</text>
+        <input class="form-input" type="number" value="{{goalCal}}" bindinput="onInputGoalCal" />
+      </view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">蛋白质 (g)</text>
+          <input class="form-input" type="number" value="{{goalPro}}" bindinput="onInputGoalPro" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">碳水 (g)</text>
+          <input class="form-input" type="number" value="{{goalCarb}}" bindinput="onInputGoalCarb" />
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">脂肪 (g)</text>
+          <input class="form-input" type="number" value="{{goalFat}}" bindinput="onInputGoalFat" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">纤维 (g)</text>
+          <input class="form-input" type="number" value="{{goalFib}}" bindinput="onInputGoalFib" />
+        </view>
+      </view>
+      <view class="btn btn-primary" bindtap="saveGoal">💾 保存目标</view>
+    </view>
+  </view>
+
+  <!-- ===== 弱点防御模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'allergy' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">⚠️ 弱点防御</view>
+      <text class="allergy-hint">选择你的过敏源，系统将自动规避含该成分的补给</text>
+      <view class="toggle-group">
+        <text class="toggle-chip {{item.selected ? 'active' : ''}}"
+              wx:for="{{allergyList}}" wx:key="name"
+              bindtap="toggleAllergy" data-idx="{{index}}">
+          {{item.icon}} {{item.name}}
+        </text>
+      </view>
+      <view class="btn btn-primary" style="margin-top:28rpx" bindtap="saveAllergy">💾 保存防御</view>
+    </view>
+  </view>
+
+  <!-- ===== 体质鉴定模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'body' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">📐 体质鉴定</view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">身高 (cm)</text>
+          <input class="form-input" type="digit" value="{{bodyHeight}}" bindinput="onInputHeight" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">体重 (kg)</text>
+          <input class="form-input" type="digit" value="{{bodyWeight}}" bindinput="onInputWeight" />
+        </view>
+      </view>
+      <view class="bmi-display">
+        <text class="bmi-big-val">{{bmiVal}}</text>
+        <text class="bmi-status-text" style="color:{{bmiColor}}">{{bmiStatus}}</text>
+        <view class="bmi-bar">
+          <view class="bmi-pointer" style="{{bmiPointerStyle}}"></view>
+        </view>
+        <view class="bmi-labels">
+          <text>偏瘦</text><text>正常</text><text>偏胖</text><text>肥胖</text>
+        </view>
+      </view>
+      <view class="btn btn-primary" bindtap="saveBody">💾 保存数据</view>
+    </view>
+  </view>
+
+  <!-- ===== 任务提醒模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'remind' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">🔔 任务提醒</view>
+      <view class="switch-row">
+        <text class="switch-label">🌅 早餐提醒 07:30</text>
+        <view class="switch {{reminders.breakfast ? 'on' : ''}}" bindtap="toggleReminder" data-key="breakfast"></view>
+      </view>
+      <view class="switch-row">
+        <text class="switch-label">☀️ 午餐提醒 11:30</text>
+        <view class="switch {{reminders.lunch ? 'on' : ''}}" bindtap="toggleReminder" data-key="lunch"></view>
+      </view>
+      <view class="switch-row">
+        <text class="switch-label">🌙 晚餐提醒 17:30</text>
+        <view class="switch {{reminders.dinner ? 'on' : ''}}" bindtap="toggleReminder" data-key="dinner"></view>
+      </view>
+      <view class="btn btn-primary" style="margin-top:28rpx" bindtap="saveReminders">💾 保存设置</view>
+    </view>
+  </view>
+
+  <!-- Toast -->
+  <view class="toast {{showToast ? 'show' : ''}}">{{toastMsg}}</view>
 </view>

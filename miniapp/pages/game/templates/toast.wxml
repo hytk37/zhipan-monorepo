@@ -1,5 +1,0 @@
-<!-- 轻提示 -->
-<!-- 由 pages/game/game.wxml 拆分而来（第 539-540 行） -->
-
-  <!-- Toast -->
-  <view class="toast {{showToast ? 'show' : ''}}">{{toastMsg}}</view>

@@ -31,7 +31,7 @@
     }
   },
   "compileType": "miniprogram",
-  "libVersion": "3.16.1",
+  "libVersion": "3.17.2",
   "appid": "wxdf5d9046cb774131",
   "projectname": "zhipan-miniapp",
   "condition": {},
