@@ -59,6 +59,7 @@ Page({
     bmiStatus: '正常',
     bmiColor: '#07C160',
     bmiPercent: 23,
+    bmiPointerStyle: 'left:23%',
     // 预计算索引（WXML 不能用 indexOf）
     genderIndex: 0,
     goalTypeIndex: 3,
@@ -187,6 +188,7 @@ Page({
       bodyGenderIndex: bgIdx >= 0 ? bgIdx : 0,
       allergyMap: map,
       bmiPercent: bmiPct,
+      bmiPointerStyle: 'left:' + bmiPct + '%',
       avatarIndex: aIdx >= 0 ? aIdx : 0,
       dietIndex: dIdx >= 0 ? dIdx : 0
     });

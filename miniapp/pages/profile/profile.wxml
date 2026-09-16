@@ -44,7 +44,7 @@
       <text class="more" wx:else>已满级！</text>
     </view>
     <view class="progress-bar level-bar">
-      <view class="progress-fill level-fill" style="width:{{levelInfo.progress}}%"></view>
+      <view class="progress-fill level-fill" style="{{levelInfo.progressStyle}}"></view>
     </view>
     <view class="level-text">{{levelInfo.progress}}% 进度</view>
   </view>
@@ -116,12 +116,12 @@
     <view class="allergy-tags">
       <text class="allergy-tag" wx:for="{{userInfo.allergyList}}" wx:key="*this">{{item}}</text>
     </view>
-    <view class="allergy-tip">HX系统会在推荐菜品时自动排除含过敏源的菜品</view>
+    <view class="allergy-tip">智慧膳系统会在推荐菜品时自动排除含过敏源的菜品</view>
   </view>
 
   <!-- 版本信息 -->
   <view class="version-info">
-    <text>HX系统 Smart Disk v2.0</text>
+    <text>智慧膳系统 v2.0</text>
     <text>健康饮食 · 智慧校园</text>
   </view>
 

@@ -1,0 +1,19 @@
+/* ===== 基础布局：page / .app / .app-body / .page-scroll / .page-inner + 粒子画布 ===== */
+/* 由 pages/game/game.wxss 拆分而来（第 271-287 行） */
+
+/* ===== 基础布局 ===== */
+page {
+  font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:#0a0e1a;
+}
+/* Flexbox 固定布局：100vh = nav-bar + 可滚动内容区 + tab-bar */
+.app{width:100%;height:100vh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg1);color:var(--text)}
+/* 内容区域：占据剩余高度，内部 scroll-view 填充 */
+.app-body{flex:1;overflow:hidden;position:relative}
+/* scroll-view 必须设置显式高度才能滚动 */
+.page-scroll{height:100%}
+/* scroll-view 内边距（底部留出 tab-bar 空间） */
+.page-inner{padding:0 28rpx 140rpx;min-height:100%}
+
+/* ===== 粒子画布 ===== */
+.particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}

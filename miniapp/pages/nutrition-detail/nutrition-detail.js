@@ -2,6 +2,17 @@
 const api = require('../../utils/api');
 const app = getApp();
 
+// 进度条宽度拼成 style 字符串：WXML 里写 "{{pct}}%" 会被样式校验报 semi-colon expected
+const BAR_COLORS = {
+  cal: '#FF9500', pro: '#FF6B35', car: '#07C160', fat: '#007AFF', fib: '#AF52DE'
+};
+function attachBarStyles(n) {
+  Object.keys(BAR_COLORS).forEach(function (k) {
+    n[k + 'BarStyle'] = 'width:' + n[k + 'Pct'] + '%;background:' + BAR_COLORS[k];
+  });
+  return n;
+}
+
 Page({
   data: {
     date: '',
@@ -32,6 +43,7 @@ Page({
     n.carPct = Math.min(Math.round((n.carbs / n.carbsTarget) * 100), 100);
     n.fatPct = Math.min(Math.round((n.fat / n.fatTarget) * 100), 100);
     n.fibPct = Math.min(Math.round((n.fiber / n.fiberTarget) * 100), 100);
+    attachBarStyles(n);
     this.setData({
       nutrition: n,
       history: [
@@ -59,6 +71,7 @@ Page({
           nData.carPct = Math.min(Math.round((nData.carbs / nData.carbsTarget) * 100), 100);
           nData.fatPct = Math.min(Math.round((nData.fat / nData.fatTarget) * 100), 100);
           nData.fibPct = Math.min(Math.round((nData.fiber / nData.fiberTarget) * 100), 100);
+          attachBarStyles(nData);
           this.setData({ nutrition: nData });
         }
       }.bind(this)).catch(function() {});

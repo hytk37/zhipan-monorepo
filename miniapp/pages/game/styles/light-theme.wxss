@@ -1,0 +1,272 @@
+/* ===== 浅色主题覆盖：背景纯色、无花纹装饰、无渐变、无发光 ===== */
+/* 由 pages/game/game.wxss 拆分而来（第 1-269 行） */
+
+/* ===== 智慧膳系统-冒险 · 营养闯关 - 样式 ===== */
+/* 按键比例全面优化：最小触摸目标88rpx(44pt)，字号下限22rpx */
+
+/* ===== 浅色主题覆盖 ===== */
+/* 浅色主题核心原则：背景纯色、无花纹装饰、无渐变、无发光效果 */
+
+/* 粒子画布隐藏 */
+[data-theme="dawn"] .particles-canvas,
+[data-theme="mint"] .particles-canvas,
+[data-theme="lavender"] .particles-canvas,
+[data-theme="snow"] .particles-canvas{display:none}
+
+/* 地图节点 */
+[data-theme="dawn"] .map-node.cleared,
+[data-theme="mint"] .map-node.cleared,
+[data-theme="lavender"] .map-node.cleared,
+[data-theme="snow"] .map-node.cleared{box-shadow:none;background:#e8f5e9;border-color:#66bb6a}
+[data-theme="dawn"] .map-node.current,
+[data-theme="mint"] .map-node.current,
+[data-theme="lavender"] .map-node.current,
+[data-theme="snow"] .map-node.current{box-shadow:0 4rpx 16rpx rgba(255,109,0,0.2);background:#fff3e0;border-color:#ff6d00}
+[data-theme="dawn"] .map-node.locked,
+[data-theme="mint"] .map-node.locked,
+[data-theme="lavender"] .map-node.locked,
+[data-theme="snow"] .map-node.locked{border-color:rgba(0,0,0,0.08);opacity:0.45}
+[data-theme="dawn"] .map-node .node-day,
+[data-theme="mint"] .map-node .node-day,
+[data-theme="lavender"] .map-node .node-day,
+[data-theme="snow"] .map-node .node-day{color:#333}
+
+/* 状态条（无发光） */
+[data-theme="dawn"] .stat-fill.hp,
+[data-theme="mint"] .stat-fill.hp,
+[data-theme="lavender"] .stat-fill.hp,
+[data-theme="snow"] .stat-fill.hp{box-shadow:none}
+[data-theme="dawn"] .stat-fill.mp,
+[data-theme="mint"] .stat-fill.mp,
+[data-theme="lavender"] .stat-fill.mp,
+[data-theme="snow"] .stat-fill.mp{box-shadow:none}
+[data-theme="dawn"] .stat-fill.exp,
+[data-theme="mint"] .stat-fill.exp,
+[data-theme="lavender"] .stat-fill.exp,
+[data-theme="snow"] .stat-fill.exp{box-shadow:none}
+[data-theme="dawn"] .stat-fill.fiber,
+[data-theme="mint"] .stat-fill.fiber,
+[data-theme="lavender"] .stat-fill.fiber,
+[data-theme="snow"] .stat-fill.fiber{box-shadow:none}
+
+/* Buff标签（纯色背景） */
+[data-theme="dawn"] .buff-tag.good,
+[data-theme="mint"] .buff-tag.good,
+[data-theme="lavender"] .buff-tag.good,
+[data-theme="snow"] .buff-tag.good{background:rgba(46,125,50,0.1);border-color:rgba(46,125,50,0.2)}
+[data-theme="dawn"] .buff-tag.warn,
+[data-theme="mint"] .buff-tag.warn,
+[data-theme="lavender"] .buff-tag.warn,
+[data-theme="snow"] .buff-tag.warn{background:rgba(239,108,0,0.1);border-color:rgba(239,108,0,0.2)}
+[data-theme="dawn"] .buff-tag.bad,
+[data-theme="mint"] .buff-tag.bad,
+[data-theme="lavender"] .buff-tag.bad,
+[data-theme="snow"] .buff-tag.bad{background:rgba(198,40,40,0.1);border-color:rgba(198,40,40,0.2)}
+
+/* 模态框 */
+[data-theme="dawn"] .modal-overlay,
+[data-theme="mint"] .modal-overlay,
+[data-theme="lavender"] .modal-overlay,
+[data-theme="snow"] .modal-overlay{background:rgba(0,0,0,0.35)}
+[data-theme="dawn"] .modal-close,
+[data-theme="mint"] .modal-close,
+[data-theme="lavender"] .modal-close,
+[data-theme="snow"] .modal-close{background:rgba(0,0,0,0.06)}
+[data-theme="dawn"] .modal,
+[data-theme="mint"] .modal,
+[data-theme="lavender"] .modal,
+[data-theme="snow"] .modal{background:var(--bg2)}
+
+/* 开关/芯片 */
+[data-theme="dawn"] .switch,
+[data-theme="mint"] .switch,
+[data-theme="lavender"] .switch,
+[data-theme="snow"] .switch{background:rgba(0,0,0,0.12)}
+[data-theme="dawn"] .toggle-chip,
+[data-theme="mint"] .toggle-chip,
+[data-theme="lavender"] .toggle-chip,
+[data-theme="snow"] .toggle-chip{background:rgba(0,0,0,0.04)}
+
+/* BMI/成就 */
+[data-theme="dawn"] .bmi-pointer,
+[data-theme="mint"] .bmi-pointer,
+[data-theme="lavender"] .bmi-pointer,
+[data-theme="snow"] .bmi-pointer{border-color:var(--bg3);box-shadow:none}
+[data-theme="dawn"] .ach-slot.unlocked .ach-icon,
+[data-theme="mint"] .ach-slot.unlocked .ach-icon,
+[data-theme="lavender"] .ach-slot.unlocked .ach-icon,
+[data-theme="snow"] .ach-slot.unlocked .ach-icon{filter:none}
+[data-theme="dawn"] .map-player,
+[data-theme="mint"] .map-player,
+[data-theme="lavender"] .map-player,
+[data-theme="snow"] .map-player{filter:drop-shadow(0 4rpx 8rpx rgba(0,0,0,0.2))}
+
+/* ★ 卡片无花纹：隐藏 ::before 发光线 */
+[data-theme="dawn"] .card::before,
+[data-theme="mint"] .card::before,
+[data-theme="lavender"] .card::before,
+[data-theme="snow"] .card::before{display:none}
+
+/* ★ 卡片背景纯色（去掉半透明） */
+[data-theme="dawn"] .card,
+[data-theme="mint"] .card,
+[data-theme="lavender"] .card,
+[data-theme="snow"] .card{background:#fff;box-shadow:0 2rpx 8rpx rgba(0,0,0,0.06)}
+[data-theme="dawn"] .attr-item,
+[data-theme="mint"] .attr-item,
+[data-theme="lavender"] .attr-item,
+[data-theme="snow"] .attr-item{background:#f7f7f7;border-color:rgba(0,0,0,0.06)}
+[data-theme="dawn"] .quest-item,
+[data-theme="mint"] .quest-item,
+[data-theme="lavender"] .quest-item,
+[data-theme="snow"] .quest-item{background:#f5f5f5;border-color:rgba(0,0,0,0.04)}
+
+/* ★ 今日关卡：纯色背景（无渐变无装饰） */
+[data-theme="dawn"] .stage-card,
+[data-theme="mint"] .stage-card,
+[data-theme="lavender"] .stage-card,
+[data-theme="snow"] .stage-card{background:#fff3e0;border-color:rgba(255,109,0,0.2);box-shadow:0 2rpx 8rpx rgba(0,0,0,0.04)}
+[data-theme="dawn"] .stage-card::after,
+[data-theme="mint"] .stage-card::after,
+[data-theme="lavender"] .stage-card::after,
+[data-theme="snow"] .stage-card::after{display:none}
+[data-theme="dawn"] .today-equip-item,
+[data-theme="mint"] .today-equip-item,
+[data-theme="lavender"] .today-equip-item,
+[data-theme="snow"] .today-equip-item{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.06)}
+
+/* ★ 每日特供：纯色背景 */
+[data-theme="dawn"] .daily-special,
+[data-theme="mint"] .daily-special,
+[data-theme="lavender"] .daily-special,
+[data-theme="snow"] .daily-special{background:#fffde7;border-color:rgba(255,215,64,0.25);box-shadow:0 2rpx 8rpx rgba(0,0,0,0.04)}
+
+/* ★ 角色头像：纯色背景（无渐变） */
+[data-theme="dawn"] .char-avatar,
+[data-theme="mint"] .char-avatar,
+[data-theme="lavender"] .char-avatar,
+[data-theme="snow"] .char-avatar{background:#f0f0f0;box-shadow:0 4rpx 16rpx rgba(0,0,0,0.08)}
+[data-theme="dawn"] .char-ring,
+[data-theme="mint"] .char-ring,
+[data-theme="lavender"] .char-ring,
+[data-theme="snow"] .char-ring{border-top-color:var(--accent);opacity:0.5}
+
+/* ★ 冒险者档案 banner：纯色背景（无渐变无装饰圆） */
+[data-theme="dawn"] .profile-banner,
+[data-theme="mint"] .profile-banner,
+[data-theme="lavender"] .profile-banner,
+[data-theme="snow"] .profile-banner{background:var(--accent)}
+[data-theme="dawn"] .profile-banner::before,
+[data-theme="mint"] .profile-banner::before,
+[data-theme="lavender"] .profile-banner::before,
+[data-theme="snow"] .profile-banner::before{display:none}
+
+/* ★ 宝箱：纯色（无渐变） */
+[data-theme="dawn"] .chest-body,
+[data-theme="mint"] .chest-body,
+[data-theme="lavender"] .chest-body,
+[data-theme="snow"] .chest-body{background:#8d6e63}
+[data-theme="dawn"] .chest-lid,
+[data-theme="mint"] .chest-lid,
+[data-theme="lavender"] .chest-lid,
+[data-theme="snow"] .chest-lid{background:#a1887f}
+
+/* ★ 食物卡：纯色白底 */
+[data-theme="dawn"] .food-card,
+[data-theme="mint"] .food-card,
+[data-theme="lavender"] .food-card,
+[data-theme="snow"] .food-card{background:#fff;box-shadow:0 2rpx 8rpx rgba(0,0,0,0.06)}
+
+/* ★ 传说稀有度：纯色边框（无渐变背景） */
+[data-theme="dawn"] .rarity-legend,
+[data-theme="mint"] .rarity-legend,
+[data-theme="lavender"] .rarity-legend,
+[data-theme="snow"] .rarity-legend{background:#fff;border-color:rgba(255,109,0,0.35);box-shadow:0 2rpx 8rpx rgba(255,109,0,0.08)}
+
+/* ★ 属性面板：纯色 */
+[data-theme="dawn"] .attr-card,
+[data-theme="mint"] .attr-card,
+[data-theme="lavender"] .attr-card,
+[data-theme="snow"] .attr-card{background:#fff;box-shadow:0 2rpx 8rpx rgba(0,0,0,0.04)}
+
+/* ★ 导航栏 */
+[data-theme="dawn"] .nav-bar,
+[data-theme="mint"] .nav-bar,
+[data-theme="lavender"] .nav-bar,
+[data-theme="snow"] .nav-bar{box-shadow:0 2rpx 16rpx rgba(0,0,0,0.06);background:var(--bar-bg)}
+[data-theme="dawn"] .nav-title,
+[data-theme="mint"] .nav-title,
+[data-theme="lavender"] .nav-title,
+[data-theme="snow"] .nav-title{color:var(--text)}
+[data-theme="dawn"] .coin,
+[data-theme="mint"] .coin,
+[data-theme="lavender"] .coin,
+[data-theme="snow"] .coin,
+[data-theme="dawn"] .energy,
+[data-theme="mint"] .energy,
+[data-theme="lavender"] .energy,
+[data-theme="snow"] .energy{color:var(--text2)}
+[data-theme="dawn"] .lv-badge,
+[data-theme="mint"] .lv-badge,
+[data-theme="lavender"] .lv-badge,
+[data-theme="snow"] .lv-badge{border-color:rgba(0,0,0,0.1);background:rgba(0,0,0,0.04);color:var(--accent)}
+[data-theme="dawn"] .avatar-frame,
+[data-theme="mint"] .avatar-frame,
+[data-theme="lavender"] .avatar-frame,
+[data-theme="snow"] .avatar-frame{box-shadow:0 2rpx 8rpx rgba(0,0,0,0.08)}
+
+/* ★ 表单输入框 */
+[data-theme="dawn"] .form-input,
+[data-theme="mint"] .form-input,
+[data-theme="lavender"] .form-input,
+[data-theme="snow"] .form-input{background:rgba(0,0,0,0.03);color:var(--text)}
+
+/* ★ TabBar 无毛玻璃模糊 */
+[data-theme="dawn"] .tab-bar,
+[data-theme="mint"] .tab-bar,
+[data-theme="lavender"] .tab-bar,
+[data-theme="snow"] .tab-bar{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--bar-bg);box-shadow:0 -2rpx 8rpx rgba(0,0,0,0.04)}
+[data-theme="dawn"] .tab-item.active .tab-icon,
+[data-theme="mint"] .tab-item.active .tab-icon,
+[data-theme="lavender"] .tab-item.active .tab-icon,
+[data-theme="snow"] .tab-item.active .tab-icon{filter:none}
+
+/* ★ AI计划：纯色 */
+[data-theme="dawn"] .ai-plan,
+[data-theme="mint"] .ai-plan,
+[data-theme="lavender"] .ai-plan,
+[data-theme="snow"] .ai-plan{background:#f8f8f8}
+
+/* ★ 主按钮：纯色（无渐变） */
+[data-theme="dawn"] .btn-primary,
+[data-theme="mint"] .btn-primary,
+[data-theme="lavender"] .btn-primary,
+[data-theme="snow"] .btn-primary{background:var(--accent);box-shadow:0 2rpx 12rpx rgba(0,0,0,0.12)}
+
+/* ★ 装备槽 */
+[data-theme="dawn"] .equip-slot,
+[data-theme="mint"] .equip-slot,
+[data-theme="lavender"] .equip-slot,
+[data-theme="snow"] .equip-slot{background:#fff;box-shadow:0 2rpx 8rpx rgba(0,0,0,0.04)}
+
+/* ★ 菜品行 */
+[data-theme="dawn"] .menu-row,
+[data-theme="mint"] .menu-row,
+[data-theme="lavender"] .menu-row,
+[data-theme="snow"] .menu-row{background:#fff}
+
+/* ★ 成就槽 */
+[data-theme="dawn"] .ach-slot,
+[data-theme="mint"] .ach-slot,
+[data-theme="lavender"] .ach-slot,
+[data-theme="snow"] .ach-slot{background:#fff;box-shadow:0 2rpx 8rpx rgba(0,0,0,0.04)}
+
+/* ★ 状态条底色 */
+[data-theme="dawn"] .stat-bar,
+[data-theme="mint"] .stat-bar,
+[data-theme="lavender"] .stat-bar,
+[data-theme="snow"] .stat-bar{background:rgba(0,0,0,0.06)}
+[data-theme="dawn"] .attr-bar,
+[data-theme="mint"] .attr-bar,
+[data-theme="lavender"] .attr-bar,
+[data-theme="snow"] .attr-bar{background:rgba(0,0,0,0.06)}

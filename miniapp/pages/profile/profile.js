@@ -23,6 +23,7 @@ Page({
       name: '营养达人',
       nextLevel: 'Lv.4',
       progress: 65,
+      progressStyle: 'width:65%',
       needDays: 7
     },
     // 菜单列表
@@ -113,7 +114,7 @@ Page({
 
       this.setData({
         userInfo: Object.assign({}, this.data.userInfo, saved, { bmi }),
-        levelInfo: { name: levelName, nextLevel, progress, needDays },
+        levelInfo: { name: levelName, nextLevel, progress, progressStyle: 'width:' + progress + '%', needDays },
         achievements,
         weekCheck: weekCheck,
         weekCheckCount: checkCnt,
@@ -162,7 +163,7 @@ Page({
   // 分享
   onShareAppMessage() {
     return {
-      title: 'HX系统 - 校园营养管家',
+      title: '智慧膳系统 - 校园营养管家',
       path: '/pages/index/index'
     };
   }

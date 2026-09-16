@@ -1,0 +1,63 @@
+/* ===== 模态框、表单控件、按钮、开关、BMI 指示条、Toast ===== */
+/* 由 pages/game/game.wxss 拆分而来（第 551-611 行） */
+
+/* ===== 模态框（加大关闭按钮和主按钮） ===== */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;padding:32rpx}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:2rpx solid var(--border);border-radius:36rpx;padding:48rpx 40rpx;width:100%;max-width:720rpx;max-height:80vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:24rpx;right:24rpx;width:64rpx;height:64rpx;border-radius:50%;background:rgba(255,255,255,0.06);color:var(--text2);font-size:36rpx;display:flex;align-items:center;justify-content:center;z-index:10}
+.modal-title{font-size:34rpx;font-weight:700;margin-bottom:32rpx;display:flex;align-items:center;gap:12rpx}
+
+/* 菜品详情 */
+.food-detail-center{text-align:center;margin-bottom:32rpx}
+.food-detail-emoji{font-size:136rpx;display:block;margin-bottom:16rpx}
+.food-nutrition-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16rpx;margin-bottom:28rpx}
+.food-nut-item{text-align:center;padding:20rpx;border-radius:16rpx}
+.food-nut-label{font-size:22rpx;color:var(--text3);display:block}
+.food-nut-val{font-size:32rpx;font-weight:700;display:block}
+.food-detail-desc-box{padding:24rpx;background:rgba(124,77,255,0.08);border-radius:16rpx;margin-bottom:28rpx;border:2rpx solid rgba(124,77,255,0.15)}
+.food-detail-desc{font-size:26rpx;color:var(--accent2);display:block}
+
+/* 属性/状态详情弹窗 */
+.detail-icon{font-size:40rpx;margin-right:8rpx}
+.detail-content-box{padding:28rpx;background:var(--glow3);border-radius:20rpx;border:2rpx solid var(--border)}
+.detail-content{font-size:28rpx;color:var(--text);line-height:1.8;display:block}
+
+/* 表单（加大输入框和按钮） */
+.form-group{margin-bottom:28rpx}
+.form-label{font-size:26rpx;color:var(--text2);margin-bottom:10rpx;display:block}
+.form-input{width:100%;padding:24rpx 28rpx;background:var(--glow3);border:2rpx solid var(--border);border-radius:20rpx;color:var(--text);font-size:30rpx;min-height:88rpx;box-sizing:border-box}
+.form-input:focus{border-color:var(--accent)}
+.form-row{display:flex;gap:16rpx}
+.form-row .form-group{flex:1}
+/* 主按钮（加大高度确保触摸友好） */
+.btn{padding:28rpx 48rpx;border-radius:24rpx;border:none;font-size:30rpx;font-weight:700;width:100%;text-align:center;min-height:96rpx;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+.btn-primary{background:var(--accent2);color:#fff;box-shadow:0 0 32rpx var(--glow2)}
+.btn-primary:active{transform:scale(0.97)}
+/* 选项芯片（加大触摸区域） */
+.toggle-group{display:flex;flex-wrap:wrap;gap:16rpx}
+.toggle-chip{padding:16rpx 32rpx;border-radius:20rpx;font-size:26rpx;background:rgba(255,255,255,0.04);border:2rpx solid var(--border);color:var(--text2);min-height:72rpx;display:flex;align-items:center;box-sizing:border-box}
+.toggle-chip.active{background:var(--glow3);border-color:var(--accent);color:var(--accent)}
+
+/* 过敏提示 */
+.allergy-hint{font-size:26rpx;color:var(--text2);margin-bottom:20rpx;display:block}
+
+/* 开关（加大） */
+.switch-row{display:flex;justify-content:space-between;align-items:center;padding:20rpx 0;min-height:88rpx}
+.switch-label{font-size:28rpx}
+.switch{width:100rpx;height:56rpx;border-radius:28rpx;background:rgba(255,255,255,0.1);position:relative;transition:background .2s}
+.switch.on{background:var(--accent)}
+.switch::after{content:'';width:48rpx;height:48rpx;border-radius:50%;background:#fff;position:absolute;top:4rpx;left:4rpx;transition:left .2s}
+.switch.on::after{left:48rpx}
+
+/* BMI */
+.bmi-display{text-align:center;margin:32rpx 0}
+.bmi-big-val{font-size:80rpx;font-weight:900;display:block}
+.bmi-status-text{font-size:28rpx;font-weight:700;display:block}
+.bmi-bar{height:20rpx;border-radius:10rpx;background:linear-gradient(90deg,#448aff,#69f0ae,#ffd740,#ff6d00,#ff5252);margin:20rpx 0 8rpx;position:relative}
+.bmi-pointer{width:28rpx;height:28rpx;border-radius:50%;background:#fff;border:4rpx solid var(--bg1);position:absolute;top:-4rpx;transition:left .5s;box-shadow:0 0 12rpx rgba(255,255,255,0.5)}
+.bmi-labels{display:flex;justify-content:space-between;font-size:22rpx;color:var(--text3)}
+
+/* Toast */
+.toast{position:fixed;top:120rpx;left:50%;transform:translateX(-50%);background:var(--accent2);color:#fff;padding:24rpx 52rpx;border-radius:24rpx;font-size:28rpx;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8rpx 40rpx rgba(124,77,255,0.4);white-space:nowrap}
+.toast.show{opacity:1}

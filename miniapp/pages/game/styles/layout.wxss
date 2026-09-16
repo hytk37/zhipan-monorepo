@@ -1,0 +1,21 @@
+/* ===== TabBar、页面容器、通用卡片 ===== */
+/* 由 pages/game/game.wxss 拆分而来（第 312-330 行） */
+
+/* ===== TabBar（加大触摸区域） ===== */
+.tab-bar{position:fixed;bottom:0;left:0;width:100%;z-index:100;display:flex;justify-content:space-around;padding:16rpx 0 env(safe-area-inset-bottom);background:linear-gradient(0deg,var(--bar-bg),var(--bar-bg2));border-top:2rpx solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.tab-item{display:flex;flex-direction:column;align-items:center;gap:6rpx;padding:12rpx 24rpx;position:relative;min-width:140rpx}
+.tab-icon{font-size:52rpx;transition:all .25s}
+.tab-label{font-size:22rpx;color:var(--text3);transition:all .25s}
+.tab-item.active .tab-icon{transform:scale(1.15);filter:drop-shadow(0 0 12rpx var(--accent))}
+.tab-item.active .tab-label{color:var(--accent);font-weight:700}
+.tab-item.active::before{content:'';position:absolute;top:-2rpx;left:50%;transform:translateX(-50%);width:56rpx;height:4rpx;background:var(--accent);border-radius:2rpx;box-shadow:0 0 16rpx var(--accent)}
+
+/* ===== 页面容器（由 wx:if 控制显示，不再用 display:none/block） ===== */
+.page{display:none}
+.page.active{display:block}
+
+/* ===== 通用卡片 ===== */
+.card{background:var(--card);border:2rpx solid var(--border);border-radius:28rpx;padding:32rpx;margin-bottom:20rpx;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2rpx;background:linear-gradient(90deg,transparent,var(--glow),transparent)}
+.card-title{font-size:30rpx;font-weight:700;color:var(--text);margin-bottom:24rpx;display:flex;align-items:center;gap:12rpx}
+.card-title .emoji{font-size:34rpx}

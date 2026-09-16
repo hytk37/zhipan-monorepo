@@ -28,7 +28,7 @@
       <text
         class="diet-tag"
         wx:for="{{dietTags}}"
-        wx:key="*this"
+        wx:key="label"
         style="font-size:11px;padding:2px 10px;border-radius:100px;{{item.style}}"
       >{{item.label}}</text>
     </view>

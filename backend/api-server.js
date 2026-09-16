@@ -1,5 +1,5 @@
 // ============================================
-// HX系统 · API Server 入口
+// 智慧膳系统 · API Server 入口
 // ============================================
 const express = require('express');
 const cors = require('cors');
@@ -86,7 +86,7 @@ function startServer(port) {
   server.on('listening', () => {
     const actual = (server.address() && server.address().port) || PORT;
     console.log('');
-    console.log('  HX系统 · API Server 已启动 (v2.1)');
+    console.log('  智慧膳系统 · API Server 已启动 (v2.1)');
     console.log('  ------------------------------------------------');
     console.log('  地址:      http://localhost:' + actual + (actual === 3000 ? '  (局域网可用)' : ''));
     console.log('  admin:     http://localhost:' + actual + '/admin');

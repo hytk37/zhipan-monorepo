@@ -9,6 +9,7 @@ Page({
     // 营养数据
     nutrition: {
       calories: 1680, caloriesTarget: 2200, calPct: 76,
+      calBarStyle: 'width:76%;background:#FF9500',
       protein: 68, proteinTarget: 75,
       carbs: 210, carbsTarget: 280,
       fat: 48, fatTarget: 65,
@@ -17,20 +18,20 @@ Page({
     },
     // 进度条
     bars: [
-      { label: '蛋白质', pct: 90, color: '#FF6B35', val: '68/75g' },
-      { label: '碳水', pct: 75, color: '#07C160', val: '210/280g' },
-      { label: '脂肪', pct: 74, color: '#007AFF', val: '48/65g' },
-      { label: '膳食纤维', pct: 72, color: '#AF52DE', val: '18/25g' }
+      { label: '蛋白质', pct: 90, color: '#FF6B35', val: '68/75g', barStyle: 'width:90%;background:#FF6B35' },
+      { label: '碳水', pct: 75, color: '#07C160', val: '210/280g', barStyle: 'width:75%;background:#07C160' },
+      { label: '脂肪', pct: 74, color: '#007AFF', val: '48/65g', barStyle: 'width:74%;background:#007AFF' },
+      { label: '膳食纤维', pct: 72, color: '#AF52DE', val: '18/25g', barStyle: 'width:72%;background:#AF52DE' }
     ],
-    // 本周趋势（barHeight / calText 在 WXML 预计算，避免模板里写复杂表达式）
+    // 本周趋势（barHeight / calText / barStyle 预计算好，WXML 里只做取值）
     weekTrend: [
-      { day: '周一', cal: 1950, calText: '1.9k', barHeight: 89, active: false },
-      { day: '周二', cal: 1820, calText: '1.8k', barHeight: 83, active: false },
-      { day: '周三', cal: 2100, calText: '2.1k', barHeight: 95, active: false },
-      { day: '周四', cal: 1680, calText: '1.7k', barHeight: 76, active: true },
-      { day: '周五', cal: 0, calText: '', barHeight: 3, active: false },
-      { day: '周六', cal: 0, calText: '', barHeight: 3, active: false },
-      { day: '周日', cal: 0, calText: '', barHeight: 3, active: false }
+      { day: '周一', cal: 1950, calText: '1.9k', barHeight: 89, barStyle: 'height:89%', active: false },
+      { day: '周二', cal: 1820, calText: '1.8k', barHeight: 83, barStyle: 'height:83%', active: false },
+      { day: '周三', cal: 2100, calText: '2.1k', barHeight: 95, barStyle: 'height:95%', active: false },
+      { day: '周四', cal: 1680, calText: '1.7k', barHeight: 76, barStyle: 'height:76%', active: true },
+      { day: '周五', cal: 0, calText: '', barHeight: 3, barStyle: 'height:3%', active: false },
+      { day: '周六', cal: 0, calText: '', barHeight: 3, barStyle: 'height:3%', active: false },
+      { day: '周日', cal: 0, calText: '', barHeight: 3, barStyle: 'height:3%', active: false }
     ],
     // 今日推荐菜品
     todayFoods: [
@@ -102,14 +103,17 @@ Page({
   _applyNutrition(n) {
     const pct = v => Math.min(Math.round((n[v] / n[v + 'Target']) * 100), 100);
     n.calPct = Math.min(Math.round((n.calories / n.caloriesTarget) * 100), 100);
+    // 进度条宽度直接拼成 style 字符串：WXML 里写 "{{pct}}%" 会被样式校验报 semi-colon expected
+    const bar = (p, color) => 'width:' + p + '%;background:' + color;
     this.setData({
       nutrition: n,
       checked: n.checked || false,
+      'nutrition.calBarStyle': bar(n.calPct, '#FF9500'),
       bars: [
-        { label: '蛋白质', pct: pct('protein'), color: '#FF6B35', val: n.protein + '/' + n.proteinTarget + 'g' },
-        { label: '碳水', pct: pct('carbs'), color: '#07C160', val: n.carbs + '/' + n.carbsTarget + 'g' },
-        { label: '脂肪', pct: pct('fat'), color: '#007AFF', val: n.fat + '/' + n.fatTarget + 'g' },
-        { label: '膳食纤维', pct: pct('fiber'), color: '#AF52DE', val: n.fiber + '/' + n.fiberTarget + 'g' }
+        { label: '蛋白质', pct: pct('protein'), color: '#FF6B35', val: n.protein + '/' + n.proteinTarget + 'g', barStyle: bar(pct('protein'), '#FF6B35') },
+        { label: '碳水', pct: pct('carbs'), color: '#07C160', val: n.carbs + '/' + n.carbsTarget + 'g', barStyle: bar(pct('carbs'), '#07C160') },
+        { label: '脂肪', pct: pct('fat'), color: '#007AFF', val: n.fat + '/' + n.fatTarget + 'g', barStyle: bar(pct('fat'), '#007AFF') },
+        { label: '膳食纤维', pct: pct('fiber'), color: '#AF52DE', val: n.fiber + '/' + n.fiberTarget + 'g', barStyle: bar(pct('fiber'), '#AF52DE') }
       ],
       maxCal: n.caloriesTarget
     });

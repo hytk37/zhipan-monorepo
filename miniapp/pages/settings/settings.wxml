@@ -110,7 +110,7 @@
   <block wx:if="{{type === 'allergy'}}">
     <view class="card">
       <view class="card-title"><text>⚠️ 过敏源设置</text></view>
-      <view class="allergy-tip-text">选择你的过敏食物，HX系统会在推荐时自动排除</view>
+      <view class="allergy-tip-text">选择你的过敏食物，智慧膳系统会在推荐时自动排除</view>
       <view class="allergy-grid">
         <view
           class="allergy-chip {{allergyMap[item] ? 'active' : ''}}"
@@ -221,7 +221,7 @@
           <view class="bmi-bar-seg seg-high"></view>
           <view class="bmi-bar-seg seg-obese"></view>
         </view>
-        <view class="bmi-pointer" style="left:{{bmiPercent}}%"></view>
+        <view class="bmi-pointer" style="{{bmiPointerStyle}}"></view>
       </view>
       <view class="bmi-scale">
         <view class="bmi-range bmi-low">体重偏低 &lt;18.5</view>

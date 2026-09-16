@@ -1,5 +1,5 @@
 // ============================================
-// HX系统 · 接口冒烟测试
+// 智慧膳系统 · 接口冒烟测试
 // ============================================
 // 用法：node scripts/smoke-test.js
 // 作用：在随机端口启动一次 API，逐个探测全部接口，输出通过/失败汇总。
@@ -129,7 +129,7 @@ function expect(name, res, code, extra) {
   server.close();
 
   console.log('');
-  console.log('══════════ HX系统 接口冒烟测试 ══════════');
+  console.log('══════════ 智慧膳系统 接口冒烟测试 ══════════');
   results.forEach((r) => console.log((r.ok ? '  PASS  ' : '  FAIL  ') + r.name + (r.ok ? '' : '   → ' + r.detail)));
   const failed = results.filter((r) => !r.ok);
   console.log('════════════════════════════════════════');

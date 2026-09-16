@@ -1,0 +1,69 @@
+<!-- Tab 1：状态面板 -->
+<!-- 由 pages/game/game.wxml 拆分而来（第 121-185 行） -->
+
+    <!-- Tab 1：状态面板 -->
+    <scroll-view scroll-y enhanced show-scrollbar="{{false}}" class="page-scroll" wx:if="{{currentTab === 1}}">
+      <view class="page-inner">
+        <view class="hud-panel">
+          <view class="char-wrap">
+            <view class="char-avatar">🧙</view>
+            <view class="char-ring"></view>
+            <view class="char-lv">Lv.{{level}}</view>
+          </view>
+          <text class="char-name">健康勇者 · {{profileName}}</text>
+          <text class="char-exp">EXP {{exp}} / {{expMax}}</text>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">❤️</text> 生命值 & 魔力</view>
+          <view class="stat-bars">
+            <view class="stat-row" wx:for="{{stats}}" wx:key="label">
+              <text class="stat-icon">{{item.icon}}</text>
+              <view class="stat-info">
+                <view class="stat-head">
+                  <text class="stat-label" style="{{item.labelStyle}}">{{item.label}}</text>
+                  <text class="stat-val">{{item.current}} / {{item.max}} {{item.unit}}</text>
+                </view>
+                <view class="stat-bar">
+                  <!-- 宽度用 JS 预拼的 barStyle：模板里写 "{{item.pct}}%" 会被 WXML 样式校验报 semi-colon expected -->
+                  <view class="stat-fill {{item.color}}" style="{{item.barStyle}}"></view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 本周营养趋势折线图 -->
+        <view class="card">
+          <view class="card-title"><text class="emoji">📈</text> 本周营养趋势</view>
+          <view class="chart-legend">
+            <text class="chart-legend-item"><view class="chart-dot" style="background:var(--hp)"></view><text style="color:var(--hp)">红色</text>：热量</text>
+            <text class="chart-legend-item"><view class="chart-dot" style="background:var(--mp)"></view><text style="color:var(--mp)">蓝色</text>：蛋白质</text>
+            <text class="chart-legend-item"><view class="chart-dot" style="background:var(--exp)"></view><text style="color:var(--exp)">绿色</text>：碳水</text>
+            <text class="chart-legend-item"><view class="chart-dot" style="background:#ab47bc"></view><text style="color:#ab47bc">紫色</text>：纤维</text>
+          </view>
+          <canvas type="2d" id="trendCanvas" class="trend-canvas" disable-scroll></canvas>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">✨</text> 状态效果</view>
+          <view class="buffs">
+            <text class="buff-tag {{item.type}}" wx:for="{{buffs}}" wx:key="text" bindtap="onBuffTap" data-idx="{{index}}">{{item.text}}</text>
+          </view>
+        </view>
+
+        <view class="card">
+          <view class="card-title"><text class="emoji">📊</text> 角色属性</view>
+          <view class="attr-grid">
+            <view class="attr-item" wx:for="{{attrs}}" wx:key="name" bindtap="onAttrTap" data-idx="{{index}}">
+              <text class="attr-icon">{{item.icon}}</text>
+              <text class="attr-name">{{item.name}}</text>
+              <text class="attr-val" style="{{item.valStyle}}">{{item.val}}</text>
+              <view class="attr-bar">
+                <view class="attr-bar-fill" style="{{item.barStyle}}"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>

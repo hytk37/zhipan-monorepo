@@ -12,23 +12,23 @@
     <view class="card-title"><text>📈 营养素详情</text></view>
     <view class="detail-item">
       <view class="detail-head"><text class="detail-label">🔥 热量</text><text class="detail-val">{{nutrition.calories}}/{{nutrition.caloriesTarget}} kcal</text></view>
-      <view class="progress-bar"><view class="progress-fill" style="width:{{nutrition.calPct}}%;background:#FF9500"></view></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.calBarStyle}}"></view></view>
     </view>
     <view class="detail-item">
       <view class="detail-head"><text class="detail-label">🥩 蛋白质</text><text class="detail-val">{{nutrition.protein}}/{{nutrition.proteinTarget}}g</text></view>
-      <view class="progress-bar"><view class="progress-fill" style="width:{{nutrition.proPct}}%;background:#FF6B35"></view></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.proBarStyle}}"></view></view>
     </view>
     <view class="detail-item">
       <view class="detail-head"><text class="detail-label">🍞 碳水化合物</text><text class="detail-val">{{nutrition.carbs}}/{{nutrition.carbsTarget}}g</text></view>
-      <view class="progress-bar"><view class="progress-fill" style="width:{{nutrition.carPct}}%;background:#07C160"></view></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.carBarStyle}}"></view></view>
     </view>
     <view class="detail-item">
       <view class="detail-head"><text class="detail-label">🧈 脂肪</text><text class="detail-val">{{nutrition.fat}}/{{nutrition.fatTarget}}g</text></view>
-      <view class="progress-bar"><view class="progress-fill" style="width:{{nutrition.fatPct}}%;background:#007AFF"></view></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.fatBarStyle}}"></view></view>
     </view>
     <view class="detail-item">
       <view class="detail-head"><text class="detail-label">🥬 膳食纤维</text><text class="detail-val">{{nutrition.fiber}}/{{nutrition.fiberTarget}}g</text></view>
-      <view class="progress-bar"><view class="progress-fill" style="width:{{nutrition.fibPct}}%;background:#AF52DE"></view></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.fibBarStyle}}"></view></view>
     </view>
   </view>
 

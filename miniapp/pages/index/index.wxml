@@ -28,7 +28,7 @@
             <text class="bar-val">{{item.val}}</text>
           </view>
           <view class="progress-bar">
-            <view class="progress-fill" style="width:{{item.pct}}%;background:{{item.color}}"></view>
+            <view class="progress-fill" style="{{item.barStyle}}"></view>
           </view>
         </view>
       </view>
@@ -36,7 +36,7 @@
     <view class="cal-row">
       <text class="cal-text">热量 {{nutrition.calories}} / {{nutrition.caloriesTarget}} kcal</text>
       <view class="progress-bar cal-bar">
-        <view class="progress-fill" style="width:{{nutrition.calPct}}%;background:#FF9500"></view>
+        <view class="progress-fill" style="{{nutrition.calBarStyle}}"></view>
       </view>
     </view>
   </view>
@@ -74,7 +74,7 @@
       <view class="trend-col" wx:for="{{weekTrend}}" wx:key="day">
         <view class="trend-val" wx:if="{{item.cal > 0}}">{{item.calText}}</view>
         <view class="trend-bar-wrap">
-          <view class="trend-bar {{item.active ? 'active' : ''}}" style="height:{{item.barHeight}}%"></view>
+          <view class="trend-bar {{item.active ? 'active' : ''}}" style="{{item.barStyle}}"></view>
         </view>
         <view class="trend-label {{item.active ? 'active' : ''}}">{{item.day}}</view>
       </view>

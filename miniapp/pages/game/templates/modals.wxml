@@ -1,0 +1,192 @@
+<!-- 7 个模态框 -->
+<!-- 由 pages/game/game.wxml 拆分而来（第 350-537 行） -->
+
+  <!-- ===== 菜品详情模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'food' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">{{foodDetail.name}}</view>
+      <view class="food-detail-center">
+        <text class="food-detail-emoji">{{foodDetail.emoji}}</text>
+        <text class="food-rarity food-rarity-lg">{{foodDetail.rarityText}}</text>
+      </view>
+      <view class="food-nutrition-grid">
+        <view class="food-nut-item" style="background:rgba(255,82,82,0.08)">
+          <text class="food-nut-label">蛋白质</text>
+          <text class="food-nut-val" style="color:var(--hp)">{{foodDetail.protein}}</text>
+        </view>
+        <view class="food-nut-item" style="background:rgba(105,240,174,0.08)">
+          <text class="food-nut-label">碳水</text>
+          <text class="food-nut-val" style="color:var(--exp)">{{foodDetail.carb}}</text>
+        </view>
+        <view class="food-nut-item" style="background:rgba(68,138,255,0.08)">
+          <text class="food-nut-label">脂肪</text>
+          <text class="food-nut-val" style="color:var(--mp)">{{foodDetail.fat}}</text>
+        </view>
+      </view>
+      <view class="food-detail-desc-box">
+        <text class="food-detail-desc">{{foodDetail.detail}}</text>
+      </view>
+      <view class="btn btn-primary" bindtap="addFood">⚔️ 装备此补给</view>
+    </view>
+  </view>
+
+  <!-- ===== 属性/状态详情模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'detail' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">
+        <text class="detail-icon">{{detailInfo.icon}}</text>
+        <text>{{detailInfo.title}}</text>
+      </view>
+      <view class="detail-content-box">
+        <text class="detail-content">{{detailInfo.content}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 编辑角色模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'profile' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">✏️ 编辑角色</view>
+      <view class="form-group">
+        <text class="form-label">角色名</text>
+        <input class="form-input" value="{{profileName}}" bindinput="onInputName" />
+      </view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">学号</text>
+          <input class="form-input" value="{{profileId}}" bindinput="onInputId" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">学院</text>
+          <input class="form-input" value="{{profileCollege}}" bindinput="onInputCollege" />
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">性别</text>
+          <view class="toggle-group">
+            <text class="toggle-chip {{profileGender === 'male' ? 'active' : ''}}" bindtap="setGender" data-val="male">♂ 男</text>
+            <text class="toggle-chip {{profileGender === 'female' ? 'active' : ''}}" bindtap="setGender" data-val="female">♀ 女</text>
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="form-label">年龄</text>
+          <input class="form-input" type="number" value="{{profileAge}}" bindinput="onInputAge" />
+        </view>
+      </view>
+      <view class="btn btn-primary" bindtap="saveProfile">💾 保存角色</view>
+    </view>
+  </view>
+
+  <!-- ===== 战斗目标模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'goal' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">🎯 战斗目标</view>
+      <view class="form-group">
+        <text class="form-label">目标类型</text>
+        <view class="toggle-group">
+          <text class="toggle-chip {{goalType === 'cut' ? 'active' : ''}}" bindtap="setGoal" data-type="cut">🗡️ 减脂塑形</text>
+          <text class="toggle-chip {{goalType === 'healthy' ? 'active' : ''}}" bindtap="setGoal" data-type="healthy">🛡️ 均衡饮食</text>
+          <text class="toggle-chip {{goalType === 'bulk' ? 'active' : ''}}" bindtap="setGoal" data-type="bulk">💪 健康增重</text>
+          <text class="toggle-chip {{goalType === 'muscle' ? 'active' : ''}}" bindtap="setGoal" data-type="muscle">🔥 增肌增重</text>
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="form-label">热量目标 (kcal)</text>
+        <input class="form-input" type="number" value="{{goalCal}}" bindinput="onInputGoalCal" />
+      </view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">蛋白质 (g)</text>
+          <input class="form-input" type="number" value="{{goalPro}}" bindinput="onInputGoalPro" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">碳水 (g)</text>
+          <input class="form-input" type="number" value="{{goalCarb}}" bindinput="onInputGoalCarb" />
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">脂肪 (g)</text>
+          <input class="form-input" type="number" value="{{goalFat}}" bindinput="onInputGoalFat" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">纤维 (g)</text>
+          <input class="form-input" type="number" value="{{goalFib}}" bindinput="onInputGoalFib" />
+        </view>
+      </view>
+      <view class="btn btn-primary" bindtap="saveGoal">💾 保存目标</view>
+    </view>
+  </view>
+
+  <!-- ===== 弱点防御模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'allergy' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">⚠️ 弱点防御</view>
+      <text class="allergy-hint">选择你的过敏源，系统将自动规避含该成分的补给</text>
+      <view class="toggle-group">
+        <text class="toggle-chip {{item.selected ? 'active' : ''}}"
+              wx:for="{{allergyList}}" wx:key="name"
+              bindtap="toggleAllergy" data-idx="{{index}}">
+          {{item.icon}} {{item.name}}
+        </text>
+      </view>
+      <view class="btn btn-primary" style="margin-top:28rpx" bindtap="saveAllergy">💾 保存防御</view>
+    </view>
+  </view>
+
+  <!-- ===== 体质鉴定模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'body' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">📐 体质鉴定</view>
+      <view class="form-row">
+        <view class="form-group">
+          <text class="form-label">身高 (cm)</text>
+          <input class="form-input" type="digit" value="{{bodyHeight}}" bindinput="onInputHeight" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">体重 (kg)</text>
+          <input class="form-input" type="digit" value="{{bodyWeight}}" bindinput="onInputWeight" />
+        </view>
+      </view>
+      <view class="bmi-display">
+        <text class="bmi-big-val">{{bmiVal}}</text>
+        <text class="bmi-status-text" style="color:{{bmiColor}}">{{bmiStatus}}</text>
+        <view class="bmi-bar">
+          <!-- 指针位置用 JS 预拼的 bmiPointerStyle，避免 "{{bmiPct}}%" 触发样式校验 -->
+          <view class="bmi-pointer" style="{{bmiPointerStyle}}"></view>
+        </view>
+        <view class="bmi-labels">
+          <text>偏瘦</text><text>正常</text><text>偏胖</text><text>肥胖</text>
+        </view>
+      </view>
+      <view class="btn btn-primary" bindtap="saveBody">💾 保存数据</view>
+    </view>
+  </view>
+
+  <!-- ===== 任务提醒模态 ===== -->
+  <view class="modal-overlay {{currentModal === 'remind' ? 'show' : ''}}" bindtap="closeModalBg">
+    <view class="modal" catchtap="">
+      <view class="modal-close" bindtap="closeModal">✕</view>
+      <view class="modal-title">🔔 任务提醒</view>
+      <view class="switch-row">
+        <text class="switch-label">🌅 早餐提醒 07:30</text>
+        <view class="switch {{reminders.breakfast ? 'on' : ''}}" bindtap="toggleReminder" data-key="breakfast"></view>
+      </view>
+      <view class="switch-row">
+        <text class="switch-label">☀️ 午餐提醒 11:30</text>
+        <view class="switch {{reminders.lunch ? 'on' : ''}}" bindtap="toggleReminder" data-key="lunch"></view>
+      </view>
+      <view class="switch-row">
+        <text class="switch-label">🌙 晚餐提醒 17:30</text>
+        <view class="switch {{reminders.dinner ? 'on' : ''}}" bindtap="toggleReminder" data-key="dinner"></view>
+      </view>
+      <view class="btn btn-primary" style="margin-top:28rpx" bindtap="saveReminders">💾 保存设置</view>
+    </view>
+  </view>

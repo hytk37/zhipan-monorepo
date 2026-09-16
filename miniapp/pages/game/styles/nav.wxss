@@ -1,0 +1,26 @@
+/* ===== 自定义导航栏 + 主题切换面板 ===== */
+/* 由 pages/game/game.wxss 拆分而来（第 288-310 行） */
+
+/* ===== 自定义导航栏 ===== */
+.nav-bar{position:fixed;top:0;left:0;width:100%;z-index:100;background:var(--bar-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-content{display:flex;align-items:center;justify-content:space-between;height:96rpx;padding:0 24rpx}
+.nav-left{display:flex;align-items:center;gap:16rpx}
+.back-btn{width:72rpx;height:72rpx;border-radius:50%;border:3rpx solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:44rpx;color:var(--accent);font-weight:300;line-height:1}
+.nav-title{font-size:36rpx;font-weight:800;color:var(--accent);letter-spacing:2rpx;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-right{display:flex;gap:16rpx;align-items:center;margin-left:auto}
+.avatar-frame{width:72rpx;height:72rpx;border-radius:50%;border:3rpx solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:36rpx;background:var(--bg3);box-shadow:0 0 12rpx var(--glow2)}
+.lv-badge{font-size:22rpx;color:var(--accent);font-weight:700;background:var(--glow3);padding:6rpx 16rpx;border-radius:20rpx;border:2rpx solid var(--glow4)}
+.coin{font-size:24rpx;color:var(--gold);font-weight:700;display:flex;align-items:center;gap:4rpx}
+.energy{font-size:24rpx;color:var(--fire);font-weight:700;display:flex;align-items:center;gap:4rpx}
+
+/* ===== 主题切换 ===== */
+.theme-picker{position:relative}
+.theme-btn{width:64rpx;height:64rpx;border-radius:50%;border:3rpx solid var(--accent);background:transparent;display:flex;align-items:center;justify-content:center;font-size:30rpx;box-shadow:0 0 12rpx var(--glow2)}
+.theme-panel{position:absolute;top:84rpx;right:0;background:var(--bg2);border:2rpx solid var(--border);border-radius:28rpx;padding:32rpx;display:none;z-index:200;min-width:520rpx;box-shadow:0 16rpx 64rpx rgba(0,0,0,0.5)}
+.theme-panel.open{display:block}
+.theme-dots{display:flex;gap:24rpx;justify-content:center;flex-wrap:wrap}
+.theme-dot-wrap{display:flex;flex-direction:column;align-items:center}
+.theme-dot{width:72rpx;height:72rpx;border-radius:50%;border:5rpx solid transparent;transition:all .2s}
+.theme-dot.active{border-color:var(--text);box-shadow:0 0 24rpx var(--accent)}
+.theme-dot-label{font-size:22rpx;color:var(--text3);text-align:center;margin-top:8rpx}
+.theme-section-label{font-size:24rpx;color:var(--text3);text-align:center;margin:16rpx 0 8rpx;font-weight:600;letter-spacing:2rpx}

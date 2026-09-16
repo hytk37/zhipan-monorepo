@@ -1,0 +1,12 @@
+<!-- 底部 TabBar -->
+<!-- 由 pages/game/game.wxml 拆分而来（第 340-348 行） -->
+
+  <!-- ===== TabBar ===== -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === index ? 'active' : ''}}"
+          wx:for="{{tabs}}" wx:key="label"
+          bindtap="switchTab" data-idx="{{index}}">
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </view>
