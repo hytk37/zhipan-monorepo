@@ -8,10 +8,12 @@ App({
       this.globalData.currentStudentId = parseInt(savedId);
     }
 
-    // 检查登录状态，未登录跳转登录页
+    // 检查登录状态
+    // 注意：pages[0] 本来就是 pages/login/login，未登录时应用已经停留在登录页，
+    // 这里**不能**再 wx.redirectTo 到登录页——那等于把正在渲染的启动页关掉再打开，
+    // 冷启动时会偶发「标题栏在、页面内容空白」。登录成功后的跳转由 login.js 负责。
     const token = wx.getStorageSync('token');
     if (!token) {
-      wx.redirectTo({ url: '/pages/login/login' });
       return;
     }
 
