@@ -14,7 +14,9 @@ Page({
     },
     // 日期选择器
     showDatePicker: false,
-    selectedDate: ''
+    selectedDate: '',
+    weekScore: 0,
+    weekLevel: ''
   },
 
   onLoad() {
@@ -36,13 +38,13 @@ Page({
     // 第1步：从本地缓存加载即时显示
     this._loadFromLocal();
 
-    // 第2步：后台从服务器拉取最新数据
+    // 第2步：后台从服务器拉取本周真实用餐记录（逐餐真实菜品名）
     const studentId = app.globalData.currentStudentId;
     if (studentId) {
-      api.student.getNutritionHistory(studentId, 5).then(function(history) {
-        if (history && history.length > 0) {
-          wx.setStorageSync('mealHistory', history);
-          this._renderHistory(history);
+      api.ai.getWeekMeals(studentId).then(function(res) {
+        if (res && res.week && res.week.days && res.week.days.length) {
+          wx.setStorageSync('mealWeek', res);
+          this._renderWeek(res);
         }
       }.bind(this)).catch(function() {
         console.log('服务器未连接，使用本地用餐数据');
@@ -51,12 +53,66 @@ Page({
   },
 
   _loadFromLocal() {
-    const cached = wx.getStorageSync('mealHistory');
-    if (cached && cached.length > 0) {
-      this._renderHistory(cached);
-    } else {
-      this._loadMockRecords();
+    const cached = wx.getStorageSync('mealWeek');
+    if (cached && cached.week && cached.week.days && cached.week.days.length) {
+      this._renderWeek(cached);
+      return;
     }
+    const history = wx.getStorageSync('mealHistory');
+    if (history && history.length > 0) {
+      this._renderHistory(history);
+      return;
+    }
+    this._loadMockRecords();
+  },
+
+  // ─── 渲染本周真实用餐记录（菜品名来自第13周真实菜单）──
+  _renderWeek(res) {
+    const week = res.week || {};
+    const days = week.days || [];
+    if (!days.length) return;
+
+    const records = days.map(function(d) {
+      const meals = (d.meals || []).map(function(m) {
+        const names = (m.items || []).map(function(i) { return i.name; });
+        const shown = names.slice(0, 5);
+        const itemsText = shown.join('、') + (names.length > 5 ? ' 等 ' + names.length + ' 道' : '');
+        return {
+          type: m.meal,
+          time: m.time || '',
+          items: itemsText,
+          cal: m.totalCal,
+          protein: m.totalProtein,
+          emoji: (m.items && m.items[0] && m.items[0].emoji) || '🍽️',
+          self: !!m.self
+        };
+      });
+      const dateStr = (function(date) {
+        const parts = String(date || '').split('-');
+        if (parts.length < 3) return date;
+        return parseInt(parts[1], 10) + '月' + parseInt(parts[2], 10) + '日';
+      })(d.date);
+
+      return {
+        date: dateStr,
+        weekday: d.weekday || d.day || '',
+        meals: meals,
+        totalCal: d.totalCal,
+        score: (res.stats && (res.stats.daily || []).filter(function(x) { return x.date === d.date; })[0] || {}).score || 70
+      };
+    });
+
+    const stats = res.stats || {};
+    const avgCal = records.length ? Math.round(records.reduce(function(s, r) { return s + r.totalCal; }, 0) / records.length) : 0;
+    const avgScore = records.length ? Math.round(records.reduce(function(s, r) { return s + r.score; }, 0) / records.length) : 0;
+
+    this.setData({
+      records: records,
+      currentMonth: '本周',
+      monthStats: { checkDays: records.length, avgCal: avgCal, avgScore: avgScore },
+      weekScore: stats.score || avgScore,
+      weekLevel: stats.level || ''
+    });
   },
 
   _renderHistory(history) {
@@ -70,9 +126,9 @@ Page({
       return {
         date: dateStr, weekday: weekday,
         meals: [
-          { type: '早餐', time: '08:00', items: '面包+牛奶+鸡蛋', cal: Math.round(h.calories * 0.25), protein: Math.round(h.protein * 0.25), emoji: '🥪' },
-          { type: '午餐', time: '12:00', items: '营养午餐', cal: Math.round(h.calories * 0.4), protein: Math.round(h.protein * 0.4), emoji: '🍗' },
-          { type: '晚餐', time: '18:00', items: '均衡晚餐', cal: Math.round(h.calories * 0.35), protein: Math.round(h.protein * 0.35), emoji: '🍜' }
+          { type: '早餐', time: '07:30', items: '玉米粥、营养蛋、学生纯牛奶', cal: Math.round(h.calories * 0.25), protein: Math.round(h.protein * 0.25), emoji: '🥣' },
+          { type: '午餐', time: '12:05', items: '玉米饭、干锅排骨、碎肉豌豆、酱烧茄子、银耳汤', cal: Math.round(h.calories * 0.4), protein: Math.round(h.protein * 0.4), emoji: '🍖' },
+          { type: '晚餐', time: '18:10', items: '红豆饭、胡萝卜烧肘子、莲白肉片、青瓜三鲜汤', cal: Math.round(h.calories * 0.35), protein: Math.round(h.protein * 0.35), emoji: '🍲' }
         ],
         totalCal: h.calories,
         score: h.score || 80

@@ -50,24 +50,22 @@ const MEAL_RECIPE = {
 
 const MEAL_TYPES = ['早餐', '午餐', '晚餐'];
 
-// ─── 从菜单某一天取候选菜品（已过安全过滤）─────
-function candidatesOfDay(dayData, student) {
+// ─── 取某天某一餐的候选菜品（只取该餐次供应的，且已过安全过滤）──
+function candidatesOfMeal(dayData, mealType, student) {
+  const md = (dayData.meals || []).find((m) => m.meal === mealType);
+  if (!md) return null;               // 这天不供应这一餐（如周日只有晚餐）
   const picked = new Set();
   const out = [];
-  dayData.meals.forEach((m) => {
-    if (MEAL_TYPES.indexOf(m.meal) < 0) return; // 夜宵不计入正餐分析
-    m.lines.forEach((l) => {
-      l.items.forEach((item) => {
-        if (picked.has(item)) return;
-        const dish = findDish(item);
-        if (!dish) return;
-        picked.add(item);
-        const safe = isSafeForStudent(dish, student);
-        if (safe.ok) out.push(dish);
-      });
+  md.lines.forEach((l) => {
+    l.items.forEach((item) => {
+      if (picked.has(item)) return;
+      const dish = findDish(item);
+      if (!dish) return;
+      picked.add(item);
+      if (isSafeForStudent(dish, student).ok) out.push(dish);
     });
   });
-  return { safe: out };
+  return out;
 }
 
 // ─── 生成一个学生的整周记录 ─────────────────────
@@ -78,16 +76,35 @@ function buildStudentWeek(studentId) {
   const days = [];
 
   weeklyMenu.days.forEach((dayData, di) => {
-    const { safe } = candidatesOfDay(dayData, profile);
     const meals = [];
     const dayUsed = new Set();   // 同一天内不重复同一道菜
 
     MEAL_TYPES.forEach((mealType) => {
       const recipe = MEAL_RECIPE[mealType];
+      const safe = candidatesOfMeal(dayData, mealType, profile);
+      if (!safe || !safe.length) return;   // 这天没有这一餐，跳过
       const chosen = [];
       const used = new Set();
 
-      recipe.want.forEach((cat) => {
+      let want = recipe.want.slice();
+
+      // 先定主食：若主食本身已是「一份吃饱」的整餐（盖浇饭/炒饭/面/米线等），
+      // 则减掉一道荤菜，避免一顿里出现两个主食 + 两道硬菜的超量搭配
+      if (mealType !== '早餐') {
+        const staples = safe.filter((d) => d.cat === '主食' && !dayUsed.has(d.id) && !used.has(d.id));
+        if (staples.length) {
+          const staple = shuffle(staples, rnd)[0];
+          used.add(staple.id); dayUsed.add(staple.id);
+          chosen.push({ dish: staple, qty: 1 });
+          if (/盖浇饭|炒饭|拌饭|炒面|炒刀削|米线|馄饨|水饺|蒸饺|面$/.test(staple.name)) {
+            const i = want.indexOf('荤菜');
+            if (i >= 0) want.splice(i, 1);
+          }
+        }
+        want = want.filter((c) => c !== '主食');
+      }
+
+      want.forEach((cat) => {
         const fresh = safe.filter((d) => d.cat === cat && !used.has(d.id) && !dayUsed.has(d.id));
         const anySameCat = safe.filter((d) => d.cat === cat && !used.has(d.id));
         const pool = fresh.length ? fresh : anySameCat;
@@ -276,6 +293,20 @@ function addMeal(studentId, payload) {
 // ─── 周健康统计（确定性，供 AI 与降级模板共用）──
 const FRIED_KEYWORDS = ['炸', '干锅', '红烧', '干煸', '脆皮', '香辣', '奥尔良', '粉蒸', '卤'];
 
+// 单日健康评分（与周评分同一套规则，供「用餐记录」页逐日展示）
+function dayScore(d, t) {
+  let s = 100;
+  const fatRatio = d.totalFat / t.fat;
+  if (fatRatio > 1) s -= Math.round((fatRatio - 1) * 60);
+  const fiberRatio = d.totalFiber / t.fiber;
+  if (fiberRatio < 1) s -= Math.round((1 - fiberRatio) * 40);
+  const proRatio = d.totalProtein / t.protein;
+  if (proRatio < 0.9) s -= Math.round((1 - proRatio) * 30);
+  const calRatio = d.totalCal / t.cal;
+  if (calRatio > 1.15) s -= 12; else if (calRatio < 0.8) s -= 8;
+  return Math.max(35, Math.min(98, Math.round(s)));
+}
+
 function computeWeekStats(studentId) {
   const week = getWeek(studentId);
   const t = week.targets;
@@ -294,6 +325,7 @@ function computeWeekStats(studentId) {
     proteinPct: Math.round((d.totalProtein / t.protein) * 100),
     fatPct: Math.round((d.totalFat / t.fat) * 100),
     fiberPct: Math.round((d.totalFiber / t.fiber) * 100),
+    score: dayScore(d, t),
   }));
 
   const countIf = (fn) => daily.filter(fn).length;

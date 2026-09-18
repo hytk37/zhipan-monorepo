@@ -28,8 +28,7 @@
 
   <!-- 本月统计 -->
   <view class="card stats-card">
-    <view class="card-title"><text>📊 {{currentMonth}}统计</text></view>
-    <view class="stats-row">
+    <view class="card-title"><text>📊 {{currentMonth}}统计</text></view>    <view class="stats-row">
       <view class="stat-item">
         <view class="stat-num" style="color:#07C160;">{{monthStats.checkDays}}</view>
         <view class="stat-label">打卡天数</view>
