@@ -478,7 +478,7 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
         <div class="stat-card">
           <div class="glow" style="background:var(--blue)"></div>
           <div class="label">🏆 最受欢迎菜品</div>
-          <div class="value" style="color:var(--blue);font-size:22px">红烧排骨</div>
+          <div class="value" style="color:var(--blue);font-size:22px">干锅排骨</div>
           <div class="change up">今日售 421 份</div>
         </div>
         <div class="stat-card">
@@ -775,9 +775,9 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
         <div class="chart-box">
           <div class="chart-header"><div class="chart-title"><span class="dot"></span>今日就餐记录</div></div>
           <div id="meal-timeline">
-            <div class="timeline-row"><span class="timeline-time">07:35</span><span class="timeline-meal">早餐</span><span class="timeline-items">米饭、猪肉包、豆浆</span><span class="timeline-cal">480 千卡</span></div>
-            <div class="timeline-row"><span class="timeline-time">11:48</span><span class="timeline-meal">午餐</span><span class="timeline-items">米饭、红烧肉、可乐鸡翅</span><span class="timeline-cal">1280 千卡</span></div>
-            <div class="timeline-row"><span class="timeline-time">17:22</span><span class="timeline-meal">晚餐</span><span class="timeline-items">米饭、糖醋排骨、炒土豆丝</span><span class="timeline-cal">1220 千卡</span></div>
+            <div class="timeline-row"><span class="timeline-time">07:35</span><span class="timeline-meal">早餐</span><span class="timeline-items">玉米粥、莲白肉包、煎荷包蛋、学生纯牛奶</span><span class="timeline-cal">480 千卡</span></div>
+            <div class="timeline-row"><span class="timeline-time">11:48</span><span class="timeline-meal">午餐</span><span class="timeline-items">玉米饭、干锅排骨、碎肉豌豆、酱烧茄子</span><span class="timeline-cal">1280 千卡</span></div>
+            <div class="timeline-row"><span class="timeline-time">17:22</span><span class="timeline-meal">晚餐</span><span class="timeline-items">红豆饭、胡萝卜烧肘子、莲白肉片、青瓜三鲜汤</span><span class="timeline-cal">1220 千卡</span></div>
           </div>
           <div class="dash-divider"></div>
           <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text2)">全日合计</span><span style="color:var(--orange);font-weight:500">2980 千卡（超标 730 千卡）</span></div>
@@ -803,8 +803,8 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
           <span class="li"><span class="lswatch" style="background:var(--green)"></span>当前营养缺口：纤维 -22g、蛋白质 -13g；超标：脂肪 +35g、热量 +730千卡</span>
         </div>
         <div style="display:flex;gap:16px;flex-wrap:wrap">
-          <div class="rec-card" style="flex:1;min-width:200px"><div class="rec-rank r1">1</div><div class="rec-info"><h4>清蒸鲈鱼</h4><p>高蛋白(22g/份)、低脂肪(4g/份)，精准弥补蛋白质缺口。</p><div class="rec-tags"><span class="rec-tag">蛋白质 +22g</span><span class="rec-tag g">低脂</span></div></div></div>
-          <div class="rec-card" style="flex:1;min-width:200px"><div class="rec-rank r2">2</div><div class="rec-info"><h4>咖喱蔬菜配鹰嘴豆</h4><p>膳食纤维 5.1g/份，南亚风味高蛋白素食。</p><div class="rec-tags"><span class="rec-tag o">纤维 +5g</span><span class="rec-tag g">低热量</span></div></div></div>
+          <div class="rec-card" style="flex:1;min-width:200px"><div class="rec-rank r1">1</div><div class="rec-info"><h4>豆花龙利鱼</h4><p>高蛋白(24g/份)、低脂肪(12g/份)，精准弥补蛋白质缺口。</p><div class="rec-tags"><span class="rec-tag">蛋白质 +24g</span><span class="rec-tag g">低脂</span></div></div></div>
+          <div class="rec-card" style="flex:1;min-width:200px"><div class="rec-rank r2">2</div><div class="rec-info"><h4>双椒玉米</h4><p>膳食纤维 3g/份，粗粮低GI素菜。</p><div class="rec-tags"><span class="rec-tag o">纤维 +3g</span><span class="rec-tag g">低热量</span></div></div></div>
           <div class="rec-card" style="flex:1;min-width:200px"><div class="rec-rank r3">3</div><div class="rec-info"><h4>番茄炒蛋</h4><p>营养均衡，蛋白质12g/份，维生素C丰富。</p><div class="rec-tags"><span class="rec-tag">蛋白质 +12g</span><span class="rec-tag g">VC 丰富</span></div></div></div>
         </div>
       </div>
@@ -848,10 +848,10 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
         <div class="chart-box">
           <div class="chart-header"><div class="chart-title"><span class="dot" style="background:var(--orange)"></span>明日销量预测（LSTM模型）</div></div>
           <div id="forecast-list">
-            <div class="forecast-row"><span class="forecast-dish">🍚 米饭</span><span class="forecast-qty">1,242 份</span><span class="forecast-trend trend-up">▲ 2.1%</span></div>
-            <div class="forecast-row"><span class="forecast-dish">🥩 红烧肉</span><span class="forecast-qty">378 份</span><span class="forecast-trend trend-up">▲ 4.8%</span></div>
-            <div class="forecast-row"><span class="forecast-dish">🐟 清蒸鲈鱼</span><span class="forecast-qty">420 份</span><span class="forecast-trend trend-dn">▼ 0.8%</span></div>
-            <div class="forecast-row"><span class="forecast-dish">🥦 清炒西兰花</span><span class="forecast-qty">460 份</span><span class="forecast-trend trend-up">▲ 12.3%</span></div>
+            <div class="forecast-row"><span class="forecast-dish">🍚 玉米饭</span><span class="forecast-qty">1,242 份</span><span class="forecast-trend trend-up">▲ 2.1%</span></div>
+            <div class="forecast-row"><span class="forecast-dish">🍖 土豆排骨</span><span class="forecast-qty">378 份</span><span class="forecast-trend trend-up">▲ 4.8%</span></div>
+            <div class="forecast-row"><span class="forecast-dish">🐟 豆花龙利鱼</span><span class="forecast-qty">420 份</span><span class="forecast-trend trend-dn">▼ 0.8%</span></div>
+            <div class="forecast-row"><span class="forecast-dish">🥦 蒜蓉西兰花</span><span class="forecast-qty">460 份</span><span class="forecast-trend trend-up">▲ 12.3%</span></div>
             <div class="forecast-row"><span class="forecast-dish">🍅 番茄炒蛋</span><span class="forecast-qty">940 份</span><span class="forecast-trend trend-up">▲ 3.5%</span></div>
           </div>
         </div>
@@ -864,11 +864,11 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
           <div style="font-size:12px;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:6px">📦 基于销量预测 × 库存现状 × 群体营养优化</div>
           <div id="purchase-list">
             <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🥦 西兰花</div><div style="font-size:11px;color:var(--text3)">高纤维，补充全校纤维缺口 · 素食✓</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">145 kg</strong></div><span class="pchange up">↑ +60%</span></div>
-            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🐟 鲈鱼</div><div style="font-size:11px;color:var(--text3)">高蛋白低脂 · 清真✓</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">128 kg</strong></div><span class="pchange up">↑ +25%</span></div>
-            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🫘 鹰嘴豆</div><div style="font-size:11px;color:var(--text3)">高蛋白高纤维素食，满足留学生及素食需求</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">45 kg</strong></div><span class="pchange up">↑ +120%</span></div>
-            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🍗 清真鸡胸肉</div><div style="font-size:11px;color:var(--text3)">高蛋白，满足回族/维吾尔族等清真饮食需求</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">85 kg</strong></div><span class="pchange up">↑ +45%</span></div>
-            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🥓 猪五花肉</div><div style="font-size:11px;color:var(--text3)">高脂食材，适当控制</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--yellow)">195 kg</strong></div><span class="pchange down">↓ -20%</span></div>
-            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🍚 大米</div><div style="font-size:11px;color:var(--text3)">主食刚需</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--blue)">820 kg</strong></div><span class="pchange same">↑ 2.1%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🐟 龙利鱼</div><div style="font-size:11px;color:var(--text3)">高蛋白低脂 · 豆花龙利鱼主料</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">128 kg</strong></div><span class="pchange up">↑ +25%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🥚 鲜鸡蛋</div><div style="font-size:11px;color:var(--text3)">营养蛋/蒸蛋/炒蛋，早餐每日刚需</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">96 kg</strong></div><span class="pchange up">↑ +120%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🍗 鸡腿</div><div style="font-size:11px;color:var(--text3)">脆皮鸡腿/卤鸡腿/香辣鸡排，高销量维持库存</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--green)">85 kg</strong></div><span class="pchange up">↑ +45%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🍖 猪排骨</div><div style="font-size:11px;color:var(--text3)">干锅排骨/土豆排骨主料，控制脂肪摄入</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--yellow)">66 kg</strong></div><span class="pchange down">↓ -20%</span></div>
+            <div class="purchase-item"><div style="flex:1"><div style="font-weight:600">🍚 大米</div><div style="font-size:11px;color:var(--text3)">主食刚需（玉米饭/红薯饭/红豆饭等）</div></div><div style="color:var(--text);font-size:14px;font-weight:600">建议 <strong style="color:var(--blue)">277 kg</strong></div><span class="pchange same">↑ 2.1%</span></div>
           </div>
         </div>
         <div class="chart-box">
@@ -877,8 +877,8 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
             <table>
               <thead><tr><th>菜品</th><th>解决痛点</th><th>预估接受度</th><th>饮食适配</th></tr></thead>
               <tbody>
-                <tr><td>🥘 爆炒猪肝</td><td>补铁、补蛋白</td><td><span class="chip chip-ok">高 87%</span></td><td><span class="chip chip-info">无限制</span></td></tr>
-                <tr><td>🍛 咖喱鸡（清真）</td><td>高蛋白、异域风味</td><td><span class="chip chip-ok">高 82%</span></td><td><span class="chip chip-ok">清真✓</span></td></tr>
+                <tr><td>🐟 清蒸鲈鱼</td><td>优质蛋白不足</td><td><span class="chip chip-ok">高 87%</span></td><td><span class="chip chip-info">无限制</span></td></tr>
+                <tr><td>🥢 凉拌木耳</td><td>补铁、高纤维</td><td><span class="chip chip-ok">高 82%</span></td><td><span class="chip chip-info">素食✓ 清真✓</span></td></tr>
                 <tr><td>🥗 藜麦蔬菜碗</td><td>高纤维、低卡</td><td><span class="chip chip-info">中 73%</span></td><td><span class="chip chip-ok">素食✓ 无麸质✓</span></td></tr>
                 <tr><td>🥢 凉拌木耳</td><td>补铁、高纤维</td><td><span class="chip chip-ok">高 82%</span></td><td><span class="chip chip-info">素食✓ 清真✓</span></td></tr>
                 <tr><td>🥙 鸡胸肉沙拉</td><td>高蛋白低脂</td><td><span class="chip chip-info">中 69%</span></td><td><span class="chip chip-ok">清真可选</span></td></tr>
@@ -886,7 +886,7 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
             </table>
           </div>
           <div style="margin-top:16px">
-            <div class="dash-alert warn"><div class="aicon">!</div><div><strong>菜单替换建议</strong> — 周午餐：将「糖醋排骨」替换为「清蒸鲈鱼」，可降低全校均值脂肪 8%</div></div>
+            <div class="dash-alert warn"><div class="aicon">!</div><div><strong>菜单替换建议</strong> — 周一午餐：将「红烧狮子头」替换为「豆花龙利鱼」，可降低全校均值脂肪 8%</div></div>
             <div class="dash-alert ok"><div class="aicon">✓</div><div><strong>搭配优化</strong> — 周五：搭配「番茄鸡蛋汤」，营养均衡度提升，预测日销量超 940 份</div></div>
           </div>
         </div>
@@ -905,7 +905,7 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
     <h3 id="modal-food-title">➕ 添加菜品</h3>
     <div class="form-row">
       <div class="form-group"><label>Emoji 图标</label><input id="f-emoji" placeholder="🥩" maxlength="2" /></div>
-      <div class="form-group"><label>菜品名称</label><input id="f-name" placeholder="如：红烧排骨" /></div>
+      <div class="form-group"><label>菜品名称</label><input id="f-name" placeholder="如：干锅排骨" /></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label>分类</label><select id="f-cat"><option>荤菜</option><option>素菜</option><option>汤品</option><option>主食</option><option>小吃</option><option>饮品</option></select></div>
@@ -1052,7 +1052,7 @@ charts.categoryRadar = new Chart(document.getElementById('chart-category-radar')
 
 // ===== 售卖分析页 =====
 // 菜品销量TOP10
-const foodNames = ['红烧排骨','宫保鸡丁','麻婆豆腐','西红柿鸡蛋','清炒时蔬','糖醋里脊','青椒肉丝','土豆丝','紫菜蛋花汤','米饭'];
+const foodNames = ['干锅排骨','土豆排骨','麻婆豆腐','西红柿炒蛋','蒜蓉西兰花','糖醋里脊','鱼香肉丝','金钩冬瓜','青瓜三鲜汤','玉米饭'];
 const foodSales = [421,372,333,319,301,289,274,259,243,2294];
 charts.foodRank = new Chart(document.getElementById('chart-food-rank'),{
   type:'bar',data:{labels:foodNames,datasets:[{label:'销量(份)',data:foodSales,backgroundColor:foodSales.map((_,i)=>i<3?C.green:i<6?C.blue:C.text+'40'),borderRadius:6}]},
@@ -1106,11 +1106,11 @@ charts.dailySales = new Chart(document.getElementById('chart-daily-sales'),{
 
 // 售卖表格
 const salesData = [
-  {name:'红烧排骨',cat:'荤菜',sold:421,remain:18,rate:96,status:'热销'},
-  {name:'宫保鸡丁',cat:'荤菜',sold:372,remain:33,rate:92,status:'热销'},
+  {name:'干锅排骨',cat:'荤菜',sold:421,remain:18,rate:96,status:'热销'},
+  {name:'土豆排骨',cat:'荤菜',sold:372,remain:33,rate:92,status:'热销'},
   {name:'麻婆豆腐',cat:'素菜',sold:333,remain:38,rate:90,status:'正常'},
-  {name:'西红柿鸡蛋',cat:'素菜',sold:319,remain:19,rate:95,status:'正常'},
-  {name:'清炒时蔬',cat:'素菜',sold:301,remain:70,rate:81,status:'正常'},
+  {name:'西红柿炒蛋',cat:'素菜',sold:319,remain:19,rate:95,status:'正常'},
+  {name:'蒜蓉西兰花',cat:'素菜',sold:301,remain:70,rate:81,status:'正常'},
   {name:'糖醋里脊',cat:'荤菜',sold:289,remain:15,rate:95,status:'热销'},
   {name:'紫菜蛋花汤',cat:'汤品',sold:243,remain:61,rate:80,status:'正常'},
   {name:'米饭',cat:'主食',sold:2294,remain:0,rate:100,status:'售罄'},
@@ -1216,24 +1216,24 @@ document.getElementById('risk-table-body').innerHTML = riskStudents.map(r =>
   `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.college}</td><td style="color:${r.score<50?C.red:r.score<60?C.yellow:C.green};font-weight:700">${r.score}</td><td>${r.days}天</td><td>${r.lack.split('/').map(l=>'<span class="tag tag-orange">'+l+'</span>').join(' ')}</td><td><span class="tag ${levelColors[r.level]}">${r.level}</span></td><td><button style="padding:4px 10px;border-radius:6px;border:1px solid var(--green);background:transparent;color:var(--green);font-size:12px;cursor:pointer" onclick="alert('已发送营养建议通知给学生')">发送建议</button></td></tr>`
 ).join('');
 
-// ===== 菜品管理页 =====
+// ===== 菜品管理页（第13周真实食谱） =====
 const foodList = [
-  {emoji:'🥩',name:'红烧排骨',cat:'荤菜',cal:380,pro:25,carb:30,fat:15,fiber:2,rarity:'rare',tags:[]},
-  {emoji:'🍗',name:'宫保鸡丁',cat:'荤菜',cal:320,pro:22,carb:25,fat:12,fiber:3,rarity:'rare',tags:['halal']},
-  {emoji:'🥘',name:'麻婆豆腐',cat:'素菜',cal:180,pro:12,carb:10,fat:10,fiber:4,rarity:'common',tags:['veg']},
-  {emoji:'🍳',name:'西红柿鸡蛋',cat:'素菜',cal:160,pro:10,carb:12,fat:8,fiber:3,rarity:'common',tags:['veg']},
-  {emoji:'🥬',name:'清炒时蔬',cat:'素菜',cal:80,pro:4,carb:8,fat:3,fiber:5,rarity:'common',tags:['veg','gf']},
-  {emoji:'🍖',name:'糖醋里脊',cat:'荤菜',cal:360,pro:20,carb:28,fat:14,fiber:1,rarity:'rare',tags:[]},
-  {emoji:'🥕',name:'青椒肉丝',cat:'荤菜',cal:240,pro:15,carb:14,fat:10,fiber:4,rarity:'common',tags:[]},
-  {emoji:'🥔',name:'酸辣土豆丝',cat:'素菜',cal:120,pro:3,carb:18,fat:5,fiber:4,rarity:'common',tags:['veg','gf']},
-  {emoji:'🍲',name:'紫菜蛋花汤',cat:'汤品',cal:40,pro:3,carb:2,fat:2,fiber:1,rarity:'common',tags:[]},
-  {emoji:'🍚',name:'米饭',cat:'主食',cal:230,pro:4,carb:50,fat:0.5,fiber:1,rarity:'common',tags:['gf']},
-  {emoji:'🐟',name:'清蒸鲈鱼',cat:'荤菜',cal:200,pro:28,carb:0,fat:8,fiber:0,rarity:'epic',tags:['halal']},
-  {emoji:'🥗',name:'沙拉拼盘',cat:'素菜',cal:100,pro:5,carb:12,fat:4,fiber:6,rarity:'rare',tags:['veg','gf']},
-  {emoji:'🥟',name:'手工水饺',cat:'主食',cal:280,pro:12,carb:32,fat:10,fiber:2,rarity:'rare',tags:[]},
-  {emoji:'🧆',name:'五谷杂粮粥',cat:'主食',cal:140,pro:4,carb:28,fat:1,fiber:5,rarity:'epic',tags:['veg']},
-  {emoji:'🥩',name:'黑椒牛排',cat:'荤菜',cal:420,pro:35,carb:5,fat:22,fiber:1,rarity:'legend',tags:['halal']},
-  {emoji:'🥦',name:'西兰花虾仁',cat:'荤菜',cal:160,pro:18,carb:6,fat:5,fiber:4,rarity:'epic',tags:['low']}
+  {emoji:'🍖',name:'干锅排骨',cat:'荤菜',cal:420,pro:24,carb:18,fat:28,fiber:2,rarity:'epic',tags:[]},
+  {emoji:'🥩',name:'番茄牛腩',cat:'荤菜',cal:340,pro:26,carb:14,fat:18,fiber:2,rarity:'rare',tags:['halal']},
+  {emoji:'🥘',name:'麻婆豆腐',cat:'素菜',cal:240,pro:13,carb:10,fat:16,fiber:2,rarity:'common',tags:['veg']},
+  {emoji:'🍅',name:'西红柿炒蛋',cat:'素菜',cal:190,pro:9,carb:9,fat:13,fiber:1,rarity:'common',tags:['veg']},
+  {emoji:'🥦',name:'蒜蓉西兰花',cat:'素菜',cal:85,pro:4,carb:8,fat:4,fiber:4.5,rarity:'common',tags:['veg','gf','low']},
+  {emoji:'🍖',name:'糖醋里脊',cat:'荤菜',cal:400,pro:20,carb:34,fat:18,fiber:1,rarity:'rare',tags:[]},
+  {emoji:'🥘',name:'鱼香肉丝',cat:'荤菜',cal:320,pro:16,carb:22,fat:18,fiber:2,rarity:'rare',tags:[]},
+  {emoji:'🥬',name:'醋溜大白菜',cat:'素菜',cal:75,pro:2,carb:9,fat:4,fiber:2,rarity:'common',tags:['veg','gf']},
+  {emoji:'🍲',name:'青瓜三鲜汤',cat:'汤品',cal:55,pro:4,carb:5,fat:2,fiber:1,rarity:'common',tags:['veg','gf']},
+  {emoji:'🍚',name:'玉米饭',cat:'主食',cal:260,pro:7,carb:54,fat:2,fiber:4,rarity:'common',tags:['gf']},
+  {emoji:'🐟',name:'豆花龙利鱼',cat:'荤菜',cal:240,pro:24,carb:10,fat:12,fiber:0,rarity:'epic',tags:['halal','low']},
+  {emoji:'🥗',name:'拌卤素什锦',cat:'素菜',cal:120,pro:5,carb:11,fat:7,fiber:4,rarity:'rare',tags:['veg','gf']},
+  {emoji:'🥟',name:'煮水饺',cat:'主食',cal:420,pro:17,carb:60,fat:12,fiber:2,rarity:'rare',tags:[]},
+  {emoji:'🥣',name:'蔬菜瘦肉粥',cat:'粥品',cal:130,pro:6,carb:22,fat:2,fiber:1.5,rarity:'epic',tags:['veg']},
+  {emoji:'🦆',name:'甜皮鸭',cat:'荤菜',cal:390,pro:26,carb:14,fat:24,fiber:1,rarity:'legend',tags:[]},
+  {emoji:'🍤',name:'虾仁绍子蒸蛋',cat:'荤菜',cal:180,pro:15,carb:5,fat:11,fiber:0,rarity:'epic',tags:['low']}
 ];
 const rarityInfo = {common:{label:'普通',class:'rarity-common',stars:'☆'},rare:{label:'稀有',class:'rarity-rare',stars:'★'},epic:{label:'史诗',class:'rarity-epic',stars:'★'},legend:{label:'传说',class:'rarity-legend',stars:'★'}};
 const tagLabels = {halal:'清真',veg:'素食',gf:'无麸质',low:'低敏'};
@@ -1731,7 +1731,7 @@ function initDashCharts() {
 function initDashHeatmap() {
   var hm = document.getElementById('dash-heatmap');
   if (!hm || hm.children.length > 0) return;
-  var dishes = ['米饭','红烧肉','可乐鸡翅','清蒸鲈鱼','番茄炒蛋','西兰花','糖醋排骨'];
+  var dishes = ['玉米饭','土豆排骨','鱼香肉丝','番茄炒蛋','红烧狮子头','豆花龙利鱼','蒜蓉西兰花'];
   var SCALE = ['#0f172a','#1e2a4a','#1e3a6a','#1d4ed8','#2563eb','#3b82f6','#60a5fa'];
   dishes.forEach(function(dish) {
     var header = document.createElement('div');

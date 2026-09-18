@@ -87,9 +87,9 @@ Page({
       {
         date: '6月4日', weekday: '今天',
         meals: [
-          { type: '早餐', time: '07:30', items: '全麦面包+牛奶+水煮蛋', cal: 480, protein: 22, emoji: '🥪' },
-          { type: '午餐', time: '12:00', items: '红烧鸡腿+米饭+蒜蓉西兰花', cal: 720, protein: 38, emoji: '🍗' },
-          { type: '晚餐', time: '18:15', items: '牛肉面+凉拌黄瓜', cal: 660, protein: 32, emoji: '🍜' }
+          { type: '早餐', time: '07:30', items: '蔬菜瘦肉粥+营养蛋+学生纯牛奶', cal: 480, protein: 22, emoji: '🥣' },
+          { type: '午餐', time: '12:00', items: '土豆排骨+鱼香肉丝+南瓜饭', cal: 720, protein: 38, emoji: '🍖' },
+          { type: '晚餐', time: '18:15', items: '魔芋烧鱼+蒜蓉西兰花+胡萝卜饭', cal: 660, protein: 32, emoji: '🐟' }
         ],
         totalCal: 1860,
         score: 85
@@ -107,9 +107,9 @@ Page({
       {
         date: '6月2日', weekday: '周一',
         meals: [
-          { type: '早餐', time: '07:45', items: '燕麦+香蕉+酸奶', cal: 380, protein: 12, emoji: '🥣' },
-          { type: '午餐', time: '12:05', items: '宫保鸡丁+杂粮饭+菠菜', cal: 700, protein: 35, emoji: '🍗' },
-          { type: '晚餐', time: '18:00', items: '番茄鸡蛋面+苹果', cal: 520, protein: 16, emoji: '🍝' }
+          { type: '早餐', time: '07:45', items: '玉米粥+莲白肉包+煎荷包蛋', cal: 380, protein: 12, emoji: '🥣' },
+          { type: '午餐', time: '12:05', items: '干锅排骨+碎肉豌豆+玉米饭', cal: 700, protein: 35, emoji: '🍖' },
+          { type: '晚餐', time: '18:00', items: '西红柿鸡蛋面+拌卤素什锦', cal: 520, protein: 16, emoji: '🍝' }
         ],
         totalCal: 1600,
         score: 90
@@ -117,8 +117,8 @@ Page({
       {
         date: '6月1日', weekday: '周日',
         meals: [
-          { type: '午餐', time: '12:30', items: '黄焖鸡+米饭+酸辣土豆丝', cal: 850, protein: 40, emoji: '🍲' },
-          { type: '晚餐', time: '19:00', items: '沙县拌面+炖罐', cal: 710, protein: 22, emoji: '🍜' }
+          { type: '午餐', time: '12:30', items: '土豆排骨盖浇饭+红油水饺', cal: 850, protein: 40, emoji: '🍲' },
+          { type: '晚餐', time: '19:00', items: '酸汤肉丝河粉+香辣翅根', cal: 710, protein: 22, emoji: '🍜' }
         ],
         totalCal: 1560,
         score: 65
@@ -126,9 +126,9 @@ Page({
       {
         date: '5月31日', weekday: '周六',
         meals: [
-          { type: '早餐', time: '09:00', items: '煎饼果子+豆浆', cal: 520, protein: 14, emoji: '🫓' },
-          { type: '午餐', time: '12:00', items: '水煮鱼+米饭+白菜', cal: 780, protein: 42, emoji: '🐟' },
-          { type: '晚餐', time: '18:30', items: '盖浇饭（青椒肉丝）', cal: 680, protein: 24, emoji: '🍚' }
+          { type: '早餐', time: '09:00', items: '红薯粥+营养蛋+蒸红薯', cal: 520, protein: 14, emoji: '🫓' },
+          { type: '午餐', time: '12:00', items: '番茄牛腩+蒜蓉菠菜+燕麦饭', cal: 780, protein: 42, emoji: '🥩' },
+          { type: '晚餐', time: '18:30', items: '台式卤肉盖浇饭', cal: 680, protein: 24, emoji: '🍚' }
         ],
         totalCal: 1980,
         score: 82

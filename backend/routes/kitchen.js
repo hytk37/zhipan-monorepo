@@ -5,8 +5,11 @@ const { Router } = require('express');
 const router = Router();
 const {
   kitchenKPI, groupRadar, heatmapData,
-  forecastData, purchaseData, newDishData,
+  forecastData, purchaseData, newDishData, systemStatus, weeklyMenu,
 } = require('../models/data');
+
+// 一周菜单（学生食谱第13周，真实食谱）
+router.get('/menu/week', (req, res) => { res.json(weeklyMenu); });
 
 // 后厨KPI
 router.get('/kpi', (req, res) => { res.json(kitchenKPI); });
@@ -28,15 +31,15 @@ router.get('/new-dishes', (req, res) => { res.json(newDishData); });
 
 // 后厨概览（简化版）
 router.get('/overview', (req, res) => {
-  res.json({ mealCount: 4278, avgCal: 2340, avgScore: 82, dishCount: 127, studentCount: 4000 });
+  res.json({ mealCount: 4278, avgCal: 2340, avgScore: 82, dishCount: systemStatus.dishCount, studentCount: 4000 });
 });
 
 // 销量预测（简化版）
 router.get('/sales-forecast', (req, res) => {
   res.json([
-    { dish: '红烧肉', qty: 1120, trend: 'up' },
-    { dish: '可乐鸡翅', qty: 870, trend: 'up' },
-    { dish: '清蒸鲈鱼', qty: 420, trend: 'down' },
+    { dish: '玉米饭', qty: 1242, trend: 'up' },
+    { dish: '土豆排骨', qty: 870, trend: 'up' },
+    { dish: '豆花龙利鱼', qty: 420, trend: 'down' },
     { dish: '番茄炒蛋', qty: 940, trend: 'up' },
   ]);
 });
@@ -53,9 +56,9 @@ router.get('/alerts', (req, res) => {
 // 菜单优化建议
 router.get('/menu-optimize', (req, res) => {
   res.json([
-    { day: '周一', meal: '午餐', from: '糖醋排骨', to: '清蒸鲈鱼', fatReduce: 8, proteinIncrease: 12, 受益人数: 320 },
-    { day: '周三', meal: '晚餐', action: '增加清炒西兰花作为固定配菜', fiberIncrease: 15, 受益人数: 600 },
-    { day: '周五', meal: '午餐', action: '搭配番茄鸡蛋汤', balance: '提升', forecastSales: 940 },
+    { day: '周一', meal: '午餐', from: '红烧狮子头', to: '豆花龙利鱼', fatReduce: 8, proteinIncrease: 12, 受益人数: 320 },
+    { day: '周三', meal: '晚餐', action: '增加蒜蓉西兰花作为固定配菜', fiberIncrease: 15, 受益人数: 600 },
+    { day: '周五', meal: '午餐', action: '搭配西红柿蛋花汤', balance: '提升', forecastSales: 940 },
   ]);
 });
 

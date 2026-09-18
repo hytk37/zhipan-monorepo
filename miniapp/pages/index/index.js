@@ -33,11 +33,11 @@ Page({
       { day: '周六', cal: 0, calText: '', barHeight: 3, barStyle: 'height:3%', active: false },
       { day: '周日', cal: 0, calText: '', barHeight: 3, barStyle: 'height:3%', active: false }
     ],
-    // 今日推荐菜品
+    // 今日推荐菜品（来自第13周真实食谱）
     todayFoods: [
-      { id: 1, emoji: '🍗', name: '红烧鸡腿', desc: '蛋白质 28g · 热量 320kcal', tags: [{ text: '高蛋白', type: 'green' }, { text: '低脂', type: 'green' }, { text: '嘌呤较高', type: 'orange' }] },
-      { id: 2, emoji: '🥦', name: '蒜蓉西兰花', desc: '膳食纤维 5g · 热量 80kcal', tags: [{ text: '高纤维', type: 'green' }, { text: '低卡', type: 'blue' }] },
-      { id: 3, emoji: '🍚', name: '杂粮米饭', desc: '碳水 45g · 热量 210kcal', tags: [{ text: '低GI', type: 'green' }, { text: '粗粮', type: 'blue' }] }
+      { id: 1, emoji: '🍖', name: '干锅排骨', desc: '蛋白质 24g · 热量 420kcal', tags: [{ text: '高蛋白', type: 'green' }, { text: '人气王', type: 'green' }, { text: '脂肪较高', type: 'orange' }] },
+      { id: 2, emoji: '🥦', name: '蒜蓉西兰花', desc: '膳食纤维 4.5g · 热量 85kcal', tags: [{ text: '高纤维', type: 'green' }, { text: '低卡', type: 'blue' }] },
+      { id: 3, emoji: '🍚', name: '玉米饭', desc: '碳水 54g · 热量 260kcal', tags: [{ text: '低GI', type: 'green' }, { text: '粗粮', type: 'blue' }] }
     ],
     // AI 预警
     aiWarning: '检测到您本周蔬菜摄入偏少，建议午餐增加一份绿叶菜 🥬',
@@ -159,11 +159,11 @@ Page({
     wx.showLoading({ title: '换一批...' });
     setTimeout(() => {
       const allFoods = [
-        { id: 4, emoji: '🥩', name: '酱牛肉', desc: '蛋白质 35g · 热量 380kcal', tags: [{ text: '高蛋白', type: 'green' }, { text: '补铁', type: 'blue' }] },
-        { id: 5, emoji: '🥬', name: '清炒菠菜', desc: '膳食纤维 4g · 热量 60kcal', tags: [{ text: '低卡', type: 'blue' }, { text: '补铁', type: 'green' }] },
-        { id: 6, emoji: '🍜', name: '牛肉拉面', desc: '蛋白质 32g · 热量 580kcal', tags: [{ text: '人气王', type: 'green' }, { text: '高蛋白', type: 'green' }] },
-        { id: 7, emoji: '🥚', name: '蒸蛋羹', desc: '蛋白质 12g · 热量 120kcal', tags: [{ text: '易消化', type: 'blue' }, { text: '低卡', type: 'blue' }] },
-        { id: 8, emoji: '🌽', name: '蒸玉米', desc: '碳水 30g · 热量 180kcal', tags: [{ text: '粗粮', type: 'blue' }, { text: '低GI', type: 'green' }] }
+        { id: 17, emoji: '🥩', name: '番茄牛腩', desc: '蛋白质 26g · 热量 340kcal', tags: [{ text: '高蛋白', type: 'green' }, { text: '补铁', type: 'blue' }] },
+        { id: 2, emoji: '🥬', name: '蒜蓉西兰花', desc: '膳食纤维 4.5g · 热量 85kcal', tags: [{ text: '低卡', type: 'blue' }, { text: '高纤维', type: 'green' }] },
+        { id: 10, emoji: '🍜', name: '素椒杂酱面', desc: '碳水 72g · 热量 520kcal', tags: [{ text: '人气王', type: 'green' }, { text: '主食', type: 'blue' }] },
+        { id: 13, emoji: '🍤', name: '虾仁绍子蒸蛋', desc: '蛋白质 15g · 热量 180kcal', tags: [{ text: '易消化', type: 'blue' }, { text: '高蛋白', type: 'green' }] },
+        { id: 15, emoji: '🌽', name: '双椒玉米', desc: '碳水 19g · 热量 130kcal', tags: [{ text: '粗粮', type: 'blue' }, { text: '低GI', type: 'green' }] }
       ];
       // 随机选3个
       const shuffled = allFoods.sort(() => 0.5 - Math.random());

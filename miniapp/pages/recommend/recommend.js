@@ -21,32 +21,32 @@ Page({
       goal: '健康增重',
       lackNutrient: '蛋白质、膳食纤维'
     },
-    // AI 个性化推荐方案
+    // AI 个性化推荐方案（菜品来自第13周真实食谱）
     aiPlan: {
       title: '增重营养方案',
       totalCal: 2500,
       foods: [
-        { id: 101, emoji: '🍗', name: '红烧鸡胸肉', cal: '320kcal', protein: '35g', reason: '高蛋白低脂肪，增肌首选' },
-        { id: 102, emoji: '🥚', name: '水煮蛋×2', cal: '150kcal', protein: '12g', reason: '优质蛋白质来源' },
-        { id: 103, emoji: '🍚', name: '糙米饭', cal: '210kcal', protein: '5g', reason: '低GI，持续供能' },
-        { id: 104, emoji: '🥦', name: '清炒西兰花', cal: '80kcal', protein: '4g', reason: '补充膳食纤维和维生素C' }
+        { id: 101, emoji: '🍗', name: '粉蒸鸡腿', cal: '420kcal', protein: '27g', reason: '高蛋白，蒸制少油，增肌首选' },
+        { id: 102, emoji: '🥚', name: '营养蛋×2', cal: '150kcal', protein: '14g', reason: '优质蛋白质来源，早餐每日供应' },
+        { id: 103, emoji: '🍚', name: '红薯饭', cal: '250kcal', protein: '5g', reason: '粗粮低GI，持续供能' },
+        { id: 104, emoji: '🥦', name: '蒜蓉西兰花', cal: '85kcal', protein: '4g', reason: '补充膳食纤维和维生素C' }
       ]
     },
-    // 食堂精选
+    // 食堂精选（全部来自本周真实食谱）
     chefPicks: [
-      { id: 10, emoji: '🍜', name: '牛肉拉面', desc: '蛋白质 35g · 热量 580kcal', tags: [{ text: '人气王', type: 'green' }, { text: '高蛋白', type: 'green' }], cat: 'high-protein', diet: [] },
-      { id: 11, emoji: '🥗', name: '轻食沙拉套餐', desc: '热量 320kcal · 适合控制体重', tags: [{ text: '低卡', type: 'blue' }, { text: '轻食', type: 'green' }], cat: 'low-cal', diet: [] },
-      { id: 12, emoji: '🍲', name: '番茄炖牛腩', desc: '蛋白质 42g · 补充铁和锌', tags: [{ text: '补铁', type: 'blue' }, { text: '高蛋白', type: 'green' }], cat: 'high-protein', diet: [] },
-      { id: 13, emoji: '🥬', name: '素炒时蔬拼盘', desc: '膳食纤维 8g · 热量 120kcal', tags: [{ text: '素食', type: 'green' }, { text: '低卡', type: 'blue' }], cat: 'veggie', diet: ['素食'] },
-      { id: 14, emoji: '🥩', name: '黑椒牛排', desc: '蛋白质 48g · 热量 420kcal', tags: [{ text: '增肌', type: 'green' }, { text: '高蛋白', type: 'green' }], cat: 'muscle', diet: [] },
-      { id: 15, emoji: '🌽', name: '玉米山药粥', desc: '碳水 40g · 热量 260kcal', tags: [{ text: '素食', type: 'green' }, { text: '养胃', type: 'blue' }], cat: 'veggie', diet: ['素食'] },
-      { id: 16, emoji: '🍛', name: '咖喱蔬菜配鹰嘴豆', desc: '蛋白质 18g · 热量 320kcal · 南亚风味', tags: [{ text: '素食', type: 'green' }, { text: '高纤维', type: 'blue' }], cat: 'culture', diet: ['素食', '清真', '无麸质'] },
-      { id: 17, emoji: '🐟', name: '清蒸鲈鱼', desc: '蛋白质 45g · 热量 280kcal · 低脂', tags: [{ text: '高蛋白', type: 'green' }, { text: '低脂', type: 'blue' }], cat: 'high-protein', diet: ['清真'] },
-      { id: 18, emoji: '🥟', name: '清真牛肉蒸饺', desc: '蛋白质 20g · 热量 350kcal · 清真认证', tags: [{ text: '清真', type: 'green' }, { text: '人气王', type: 'green' }], cat: 'halal', diet: ['清真'] },
-      { id: 19, emoji: '🥘', name: '咖喱鸡肉（清真）', desc: '蛋白质 42g · 热量 420kcal · 异域风味', tags: [{ text: '清真', type: 'green' }, { text: '高蛋白', type: 'green' }], cat: 'halal', diet: ['清真'] },
-      { id: 20, emoji: '🥣', name: '藜麦蔬菜碗', desc: '膳食纤维 10g · 热量 280kcal · 无麸质', tags: [{ text: '素食', type: 'green' }, { text: '无麸质', type: 'orange' }], cat: 'culture', diet: ['素食', '无麸质', '低敏'] },
-      { id: 21, emoji: '🥜', name: '凉拌木耳菠菜', desc: '膳食纤维 6g · 热量 150kcal · 清爽开胃', tags: [{ text: '素食', type: 'green' }, { text: '低卡', type: 'blue' }], cat: 'veggie', diet: ['素食', '清真', '无麸质', '低敏'] },
-      { id: 22, emoji: '🍝', name: '番茄鸡蛋炒意面', desc: '碳水 55g · 热量 390kcal · 蛋奶素', tags: [{ text: '蛋奶素', type: 'purple' }, { text: '均衡', type: 'blue' }], cat: 'culture', diet: ['蛋奶素'] }
+      { id: 1, emoji: '🍖', name: '干锅排骨', desc: '蛋白质 24g · 热量 420kcal · 周一午餐招牌', tags: [{ text: '人气王', type: 'green' }, { text: '高蛋白', type: 'green' }], cat: 'high-protein', diet: [] },
+      { id: 17, emoji: '🥩', name: '番茄牛腩', desc: '蛋白质 26g · 补充铁和锌', tags: [{ text: '补铁', type: 'blue' }, { text: '高蛋白', type: 'green' }], cat: 'high-protein', diet: [] },
+      { id: 19, emoji: '🐟', name: '豆花龙利鱼', desc: '蛋白质 24g · 热量 240kcal · 低脂', tags: [{ text: '高蛋白', type: 'green' }, { text: '低脂', type: 'blue' }], cat: 'high-protein', diet: [] },
+      { id: 2, emoji: '🥦', name: '蒜蓉西兰花', desc: '膳食纤维 4.5g · 热量 85kcal', tags: [{ text: '素食', type: 'green' }, { text: '低卡', type: 'blue' }], cat: 'veggie', diet: ['素食', '低敏'] },
+      { id: 15, emoji: '🌽', name: '双椒玉米', desc: '碳水 19g · 热量 130kcal · 粗粮', tags: [{ text: '素食', type: 'green' }, { text: '粗粮', type: 'blue' }], cat: 'veggie', diet: ['素食'] },
+      { id: 3, emoji: '🍚', name: '玉米饭', desc: '碳水 54g · 膳食纤维 4g', tags: [{ text: '粗粮', type: 'green' }, { text: '低GI', type: 'blue' }], cat: 'veggie', diet: ['素食'] },
+      { id: 9, emoji: '🍗', name: '卤鸡腿', desc: '蛋白质 26g · 热量 310kcal', tags: [{ text: '增肌', type: 'green' }, { text: '高蛋白', type: 'green' }], cat: 'muscle', diet: [] },
+      { id: 16, emoji: '🌶️', name: '水煮肉片', desc: '蛋白质 26g · 川味经典', tags: [{ text: '高蛋白', type: 'green' }, { text: '人气王', type: 'blue' }], cat: 'muscle', diet: [] },
+      { id: 21, emoji: '🥩', name: '萝卜烧牛腩', desc: '蛋白质 24g · 热量 350kcal · 清炖少油', tags: [{ text: '清真', type: 'green' }, { text: '高蛋白', type: 'green' }], cat: 'halal', diet: ['清真'] },
+      { id: 20, emoji: '🐰', name: '山椒兔', desc: '蛋白质 26g · 热量 260kcal · 高蛋白低脂', tags: [{ text: '清真', type: 'green' }, { text: '低脂', type: 'blue' }], cat: 'halal', diet: ['清真'] },
+      { id: 10, emoji: '🍜', name: '素椒杂酱面', desc: '碳水 72g · 热量 520kcal · 干拌川味', tags: [{ text: '人气王', type: 'green' }, { text: '主食', type: 'blue' }], cat: 'culture', diet: [] },
+      { id: 14, emoji: '🍛', name: '台式卤肉盖浇饭', desc: '蛋白质 22g · 热量 680kcal · 分量足', tags: [{ text: '人气王', type: 'green' }, { text: '主食', type: 'blue' }], cat: 'culture', diet: [] },
+      { id: 5, emoji: '🍲', name: '银耳汤', desc: '热量 60kcal · 低卡润燥', tags: [{ text: '素食', type: 'green' }, { text: '低卡', type: 'blue' }], cat: 'low-cal', diet: ['素食', '低敏'] }
     ],
     // 营养知识
     tips: [
