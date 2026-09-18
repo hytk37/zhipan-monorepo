@@ -6,6 +6,7 @@
     "pages/recommend/recommend",
     "pages/profile/profile",
     "pages/nutrition-detail/nutrition-detail",
+    "pages/week-health/week-health",
     "pages/food-detail/food-detail",
     "pages/settings/settings",
     "pages/game/game"

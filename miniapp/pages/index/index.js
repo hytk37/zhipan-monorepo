@@ -154,6 +154,11 @@ Page({
     wx.navigateTo({ url: '/pages/nutrition-detail/nutrition-detail' });
   },
 
+  // 跳转 AI 本周饮食健康分析
+  goWeekHealth() {
+    wx.navigateTo({ url: '/pages/week-health/week-health' });
+  },
+
   // 换一批推荐
   refreshFoods() {
     wx.showLoading({ title: '换一批...' });

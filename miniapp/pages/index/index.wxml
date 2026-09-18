@@ -46,6 +46,16 @@
     <text>⚠️ {{aiWarning}}</text>
   </view>
 
+  <!-- AI 本周饮食健康分析入口 -->
+  <view class="ai-entry" bindtap="goWeekHealth">
+    <view class="ai-entry-badge">AI</view>
+    <view class="ai-entry-body">
+      <view class="ai-entry-title">本周饮食健康分析</view>
+      <view class="ai-entry-sub">按你这周吃过的菜，看健康程度并给出改进建议</view>
+    </view>
+    <view class="ai-entry-arrow">›</view>
+  </view>
+
   <!-- 今日智能推荐 -->
   <view class="card">
     <view class="card-title">

@@ -76,6 +76,26 @@ const kitchenApi = {
   getAlerts() { return request('/api/kitchen/alerts'); }
 };
 
+// ========== AI 能力相关 ==========
+const aiApi = {
+  /** AI 配置与用量状态 */
+  getStatus() { return request('/api/ai/status'); },
+  /** 本周用餐记录（逐日逐餐菜品 + 统计） */
+  getWeekMeals(studentId) { return request('/api/ai/week-meals/' + studentId); },
+  /** 本周饮食健康分析（AI，含降级兜底） */
+  getWeekHealth(studentId, refresh) {
+    return request('/api/ai/health/week/' + studentId + (refresh ? '?refresh=1' : ''));
+  },
+  /** 追问对话 */
+  chat(studentId, question, history) { return request('/api/ai/chat', 'POST', { studentId, question, history }); },
+  /** 拍照识别一餐 */
+  recognizeMeal(studentId, payload) { return request('/api/ai/recognize-meal', 'POST', Object.assign({ studentId }, payload)); },
+  /** 手动记一餐 */
+  logMeal(studentId, payload) { return request('/api/ai/meal-log', 'POST', Object.assign({ studentId }, payload)); },
+  /** 可记餐的菜品候选（已过禁忌过滤） */
+  getCandidates(studentId) { return request('/api/ai/candidates/' + studentId); }
+};
+
 // ========== 登录相关 ==========
 const authApi = {
   /** 学生登录 */
@@ -93,5 +113,6 @@ module.exports = {
   student: studentApi,
   food: foodApi,
   kitchen: kitchenApi,
+  ai: aiApi,
   auth: authApi
 };

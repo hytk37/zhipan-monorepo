@@ -198,6 +198,39 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
 .modal-actions button.primary{background:linear-gradient(145deg,var(--green),#00b87a);color:#fff;border:none;font-weight:500}
 .modal-actions button:hover{opacity:.88;transform:translateY(-1px)}
 .modal-actions button:active{transform:translateY(0)}
+/* AI 分析面板 */
+.ai-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.ai-toolbar select{flex:1;padding:9px 12px;border-radius:10px;background:var(--bg3);
+  border:1px solid var(--border);color:var(--text);font-size:13px}
+.ai-toolbar button{padding:9px 16px;border-radius:10px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:13px;cursor:pointer}
+.ai-source{font-size:12px;color:var(--text3);white-space:nowrap}
+.ai-loading{padding:40px 0;text-align:center;color:var(--text3);font-size:13px}
+.ai-score-row{display:flex;align-items:center;gap:18px;padding:16px;
+  background:var(--bg3);border-radius:14px;margin-bottom:16px}
+.ai-score{font-size:40px;font-weight:700;color:var(--green);line-height:1}
+.ai-score small{font-size:13px;color:var(--text2);margin-left:4px;font-weight:400}
+.ai-score-meta{display:flex;flex-direction:column;gap:4px}
+.ai-level{font-size:13px;font-weight:600;color:var(--text)}
+.ai-muted{font-size:12px;color:var(--text3);line-height:1.6}
+.ai-block{margin-bottom:16px}
+.ai-block-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;
+  padding-left:8px;border-left:3px solid var(--green)}
+.ai-summary{font-size:13px;color:var(--text2);line-height:1.75}
+.ai-list{display:flex;flex-direction:column;gap:8px}
+.ai-item{background:var(--bg3);border-radius:10px;padding:10px 12px;font-size:12.5px;
+  color:var(--text2);line-height:1.7}
+.ai-item b{color:var(--text);font-weight:600}
+.ai-item .ai-sug{display:block;margin-top:6px;color:var(--green)}
+.ai-chat{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.ai-bubble{max-width:86%;padding:9px 12px;border-radius:12px;font-size:12.5px;line-height:1.7}
+.ai-bubble.user{align-self:flex-end;background:rgba(0,214,143,.14);color:var(--text)}
+.ai-bubble.bot{align-self:flex-start;background:var(--bg3);color:var(--text2)}
+.ai-chat-row{display:flex;gap:8px}
+.ai-chat-row input{flex:1;padding:9px 12px;border-radius:10px;background:var(--bg3);
+  border:1px solid var(--border);color:var(--text);font-size:13px}
+.ai-chat-row button{padding:9px 18px;border-radius:10px;border:none;cursor:pointer;
+  background:linear-gradient(145deg,var(--green),#00b87a);color:#fff;font-size:13px}
 
 /* ===== 时段热力 ===== */
 .heatmap-grid{display:grid;grid-template-columns:80px repeat(6,1fr);gap:3px;font-size:11px;text-align:center}
@@ -937,6 +970,74 @@ tbody tr:hover{background:rgba(0,214,143,.03)}
   </div>
 </div>
 
+<!-- ===== AI 智能分析（本周饮食健康分析 + 追问）===== -->
+<div class="modal-overlay" id="modal-ai">
+  <div class="modal" style="width:720px">
+    <h3>🤖 AI 本周饮食健康分析</h3>
+
+    <div class="ai-toolbar">
+      <select id="ai-student">
+        <option value="0">张三 · 健康增重 · 无限制</option>
+        <option value="1">李梅 · 均衡饮食 · 清真</option>
+        <option value="2">王博 · 增肌增重 · 无限制</option>
+        <option value="3">陈雨 · 均衡饮食 · 蛋奶素</option>
+        <option value="4">赵磊 · 健康增重 · 无麸质</option>
+        <option value="5">刘芳 · 减脂塑形 · 低敏</option>
+      </select>
+      <button id="ai-refresh">🔄 重新分析</button>
+      <span id="ai-source" class="ai-source">—</span>
+    </div>
+
+    <div id="ai-loading" class="ai-loading">正在生成分析…</div>
+
+    <div id="ai-body" style="display:none">
+      <div class="ai-score-row">
+        <div class="ai-score"><span id="ai-score-num">0</span><small>分</small></div>
+        <div class="ai-score-meta">
+          <div id="ai-level" class="ai-level">—</div>
+          <div id="ai-week" class="ai-muted">—</div>
+          <div id="ai-avg" class="ai-muted">—</div>
+        </div>
+      </div>
+
+      <div class="ai-block">
+        <div class="ai-block-title">整体评价</div>
+        <p id="ai-summary" class="ai-summary">—</p>
+      </div>
+
+      <div class="ai-block">
+        <div class="ai-block-title">需要改进</div>
+        <div id="ai-problems" class="ai-list"></div>
+      </div>
+
+      <div class="ai-block">
+        <div class="ai-block-title">按菜品逐餐点评</div>
+        <div id="ai-meals" class="ai-list"></div>
+      </div>
+
+      <div class="ai-block">
+        <div class="ai-block-title">下周建议</div>
+        <div id="ai-advice" class="ai-list"></div>
+      </div>
+
+      <div class="ai-block">
+        <div class="ai-block-title">追问 AI</div>
+        <div id="ai-chat" class="ai-chat"></div>
+        <div class="ai-chat-row">
+          <input id="ai-question" placeholder="例如：这位同学脂肪为什么偏高？" />
+          <button id="ai-send" class="primary">发送</button>
+        </div>
+      </div>
+
+      <div id="ai-disclaimer" class="ai-muted" style="margin-top:10px"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button id="ai-close">关闭</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== 删除确认模态框 ===== -->
 <div class="modal-overlay" id="modal-delete-food">
   <div class="modal" style="width:380px;text-align:center">
@@ -1422,7 +1523,111 @@ document.getElementById('btn-refresh').addEventListener('click',function(){
 });
 document.getElementById('btn-export').addEventListener('click',()=>alert('报告已生成，正在下载...'));
 document.getElementById('btn-ai').addEventListener('click',()=>{
-  alert('🤖 AI 智能分析\n\n基于近30天数据分析：\n\n1. 蛋白质摄入不足问题集中在计算机学院和工程学院\n2. 建议在2号窗口增加高蛋白菜品\n3. 午餐时段纤维供给缺口最大，建议增加沙拉/粗粮选项\n4. 预计调整后全校营养达标率可提升12%');
+  document.getElementById('modal-ai').classList.add('show');
+  loadAiAnalysis(document.getElementById('ai-student').value, false);
+});
+
+// ===== AI 本周饮食健康分析（真实接口）=====
+let aiChatHistory = [];
+let aiCurrentId = '0';
+
+function aiEsc(s){ return String(s==null?'':s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+async function loadAiAnalysis(studentId, refresh){
+  aiCurrentId = String(studentId);
+  aiChatHistory = [];
+  document.getElementById('ai-chat').innerHTML = '';
+  document.getElementById('ai-loading').style.display = 'block';
+  document.getElementById('ai-body').style.display = 'none';
+  document.getElementById('ai-source').textContent = '生成中…';
+  try{
+    const url = API_BASE + '/api/ai/health/week/' + studentId + (refresh ? '?refresh=1' : '');
+    const res = await fetch(url);
+    const d = await res.json();
+    renderAiAnalysis(d);
+  }catch(e){
+    document.getElementById('ai-loading').textContent = '加载失败：请确认后端服务已启动（' + API_BASE + '）';
+  }
+}
+
+function renderAiAnalysis(d){
+  if(!d || typeof d.score !== 'number'){
+    document.getElementById('ai-loading').textContent = '分析数据异常，请稍后重试';
+    return;
+  }
+  document.getElementById('ai-loading').style.display = 'none';
+  document.getElementById('ai-body').style.display = 'block';
+  document.getElementById('ai-source').textContent =
+    (d.source === 'ai' ? 'DeepSeek 生成' : '规则模板（未配置 API Key）') + ' · 评分由系统计算';
+
+  document.getElementById('ai-score-num').textContent = d.score;
+  document.getElementById('ai-level').textContent = d.level + ' · ' + ((d.student && d.student.name) || '');
+  document.getElementById('ai-week').textContent = d.week + '（' + d.dateRange + '）';
+  const a = d.avg || {}, t = d.targets || {};
+  document.getElementById('ai-avg').textContent =
+    '日均 ' + a.cal + '/' + t.cal + ' kcal · 蛋白 ' + a.protein + '/' + t.protein + 'g · 脂肪 '
+    + a.fat + '/' + t.fat + 'g · 纤维 ' + a.fiber + '/' + t.fiber + 'g';
+
+  const an = d.analysis || {};
+  document.getElementById('ai-summary').textContent = an.summary || '';
+
+  document.getElementById('ai-problems').innerHTML = (an.problems || []).map(p =>
+    '<div class="ai-item"><b>' + aiEsc(p.title) + '</b> — ' + aiEsc(p.detail)
+    + (p.suggestion ? '<span class="ai-sug">→ ' + aiEsc(p.suggestion) + '</span>' : '') + '</div>'
+  ).join('') || '<div class="ai-item">本周没有明显问题项</div>';
+
+  document.getElementById('ai-meals').innerHTML = (an.mealComments || []).map(m =>
+    '<div class="ai-item"><b>' + aiEsc(m.date) + ' · ' + aiEsc(m.meal) + '</b> — ' + aiEsc(m.comment) + '</div>'
+  ).join('') || '<div class="ai-item">暂无逐餐点评</div>';
+
+  document.getElementById('ai-advice').innerHTML = (an.advice || []).map((x,i) =>
+    '<div class="ai-item"><b>' + (i+1) + '.</b> ' + aiEsc(x) + '</div>'
+  ).join('') || '<div class="ai-item">暂无建议</div>';
+
+  document.getElementById('ai-disclaimer').textContent = d.disclaimer || '';
+}
+
+async function askAi(){
+  const input = document.getElementById('ai-question');
+  const q = (input.value || '').trim();
+  if(!q) return;
+  const box = document.getElementById('ai-chat');
+  box.innerHTML += '<div class="ai-bubble user">' + aiEsc(q) + '</div>';
+  input.value = '';
+  box.scrollTop = box.scrollHeight;
+  const pending = document.createElement('div');
+  pending.className = 'ai-bubble bot';
+  pending.textContent = '思考中…';
+  box.appendChild(pending);
+  try{
+    const res = await fetch(API_BASE + '/api/ai/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId: parseInt(aiCurrentId, 10), question: q, history: aiChatHistory })
+    });
+    const d = await res.json();
+    const ans = (d && d.answer) || '暂时没能回答，请稍后再试。';
+    pending.textContent = ans + (d && d.source === 'fallback' ? '（规则模板）' : '');
+    aiChatHistory.push({ role: 'user', content: q }, { role: 'assistant', content: ans });
+    if(aiChatHistory.length > 6) aiChatHistory = aiChatHistory.slice(-6);
+    box.scrollTop = box.scrollHeight;
+  }catch(e){
+    pending.textContent = '网络异常，暂时回答不了。';
+  }
+}
+
+document.getElementById('ai-student').addEventListener('change', function(){
+  loadAiAnalysis(this.value, false);
+});
+document.getElementById('ai-refresh').addEventListener('click', function(){
+  loadAiAnalysis(aiCurrentId, true);
+});
+document.getElementById('ai-send').addEventListener('click', askAi);
+document.getElementById('ai-question').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') askAi();
+});
+document.getElementById('ai-close').addEventListener('click', function(){
+  document.getElementById('modal-ai').classList.remove('show');
 });
 
 // ===== 登录功能 =====

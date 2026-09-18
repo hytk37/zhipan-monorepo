@@ -16,6 +16,16 @@
     </view>
   </view>
 
+  <!-- AI 周分析入口 -->
+  <view class="ai-bar" bindtap="goWeekHealth">
+    <view class="ai-bar-badge">AI</view>
+    <view class="ai-bar-body">
+      <view class="ai-bar-title">按本周菜品分析健康程度</view>
+      <view class="ai-bar-sub">逐餐点评 + 改进建议 + 可追问</view>
+    </view>
+    <view class="ai-bar-arrow">›</view>
+  </view>
+
   <!-- 本月统计 -->
   <view class="card stats-card">
     <view class="card-title"><text>📊 {{currentMonth}}统计</text></view>

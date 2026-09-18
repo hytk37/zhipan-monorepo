@@ -1,0 +1,119 @@
+/* 智慧膳系统 · 本周饮食健康分析（AI 交互页） */
+.page{padding:24rpx 24rpx 60rpx;background:#F5F5F5;min-height:100vh;box-sizing:border-box}
+
+/* ── AI 能力条 ── */
+.ai-banner{display:flex;align-items:center;gap:18rpx;padding:24rpx 28rpx;border-radius:24rpx;
+  background:#0B1B33;margin-bottom:24rpx}
+.ai-badge{width:64rpx;height:64rpx;border-radius:18rpx;background:#07C160;color:#fff;
+  font-size:26rpx;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-banner-text{flex:1;display:flex;flex-direction:column;gap:6rpx;min-width:0}
+.ai-banner-title{font-size:30rpx;font-weight:600;color:#fff}
+.ai-banner-sub{font-size:22rpx;color:#8AA8CC}
+.ai-refresh{font-size:24rpx;color:#4FD8B0;border:1rpx solid rgba(79,216,176,.5);
+  border-radius:999rpx;padding:8rpx 20rpx;flex-shrink:0}
+
+.loading-wrap{padding:120rpx 0;text-align:center;font-size:26rpx;color:#999}
+.err-card{background:#fff;border-radius:24rpx;padding:48rpx 32rpx;text-align:center}
+.err-text{font-size:26rpx;color:#FF3B30;display:block;line-height:1.7;margin-bottom:28rpx}
+
+/* ── 评分卡 ── */
+.score-card{background:linear-gradient(160deg,#16305A,#0B1B33)}
+.score-head{display:flex;align-items:center;gap:28rpx}
+.score-num-wrap{display:flex;align-items:baseline;gap:4rpx}
+.score-num{font-size:88rpx;font-weight:700;color:#4FD8B0;line-height:1}
+.score-unit{font-size:26rpx;color:#8AA8CC}
+.score-meta{display:flex;flex-direction:column;gap:10rpx;flex:1;min-width:0}
+.lv-tag{align-self:flex-start;font-size:24rpx;padding:6rpx 20rpx;border-radius:999rpx;color:#fff}
+.lv-excellent{background:#07C160}
+.lv-good{background:#2F80ED}
+.lv-normal{background:#FF9500}
+.lv-warn{background:#FF3B30}
+.score-week{font-size:24rpx;color:#C6D9EE}
+.score-sub{font-size:22rpx;color:#8AA8CC}
+.score-track{height:14rpx;background:rgba(255,255,255,.14);border-radius:999rpx;margin:28rpx 0 24rpx;overflow:hidden}
+.score-fill{height:100%;border-radius:999rpx}
+.metric-row{display:flex;justify-content:space-between;gap:8rpx}
+.metric-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:6rpx}
+.metric-v{font-size:30rpx;font-weight:600;color:#fff}
+.metric-l{font-size:20rpx;color:#8AA8CC;text-align:center}
+
+/* ── 卡片 ── */
+.card{background:#fff;border-radius:24rpx;padding:28rpx;margin-bottom:24rpx}
+.card-title{display:flex;align-items:center;justify-content:space-between;
+  font-size:30rpx;font-weight:600;color:#18232F;margin-bottom:20rpx}
+.tag-ai{font-size:20rpx;color:#0B7A66;background:#EAF8F3;border:1rpx solid #CFEFE4;
+  border-radius:999rpx;padding:4rpx 16rpx;font-weight:400}
+.summary-text{font-size:27rpx;color:#3B4C5E;line-height:1.8;display:block}
+.warn-note{margin-top:18rpx;font-size:22rpx;color:#8A6D3B;background:#FFF8E6;
+  border-radius:12rpx;padding:14rpx 18rpx;line-height:1.6}
+
+.sub-block{margin-top:28rpx}
+.sub-title{font-size:26rpx;font-weight:600;color:#18232F;margin-bottom:16rpx}
+.hl-item{display:flex;gap:14rpx;padding:14rpx 0;border-bottom:1rpx solid #F0F4F8}
+.hl-item:last-child{border-bottom:none}
+.hl-dot{width:14rpx;height:14rpx;border-radius:50%;background:#07C160;margin-top:12rpx;flex-shrink:0}
+.hl-body{display:flex;flex-direction:column;gap:6rpx;flex:1;min-width:0}
+.hl-t{font-size:26rpx;font-weight:600;color:#0B7A66}
+.hl-d{font-size:23rpx;color:#66788C;line-height:1.6}
+
+.pb-item{background:#FBFDFF;border:1rpx solid #E6ECF3;border-left:6rpx solid #FF9500;
+  border-radius:16rpx;padding:20rpx 22rpx;margin-bottom:16rpx}
+.pb-head{display:flex;align-items:center;margin-bottom:10rpx}
+.pb-t{font-size:26rpx;font-weight:600;color:#18232F}
+.pb-d{font-size:23rpx;color:#66788C;line-height:1.6;display:block}
+.pb-sug{margin-top:14rpx;background:#EAF8F3;border-radius:12rpx;padding:14rpx 18rpx;display:flex;gap:12rpx}
+.pb-sug-label{font-size:22rpx;color:#0B7A66;font-weight:600;flex-shrink:0}
+.pb-sug-text{font-size:23rpx;color:#0C5F51;line-height:1.6;flex:1}
+
+/* ── 逐餐点评 ── */
+.mc-item{padding:18rpx 0;border-bottom:1rpx solid #F0F4F8}
+.mc-item:last-child{border-bottom:none}
+.mc-head{display:flex;align-items:center;gap:14rpx;margin-bottom:8rpx}
+.mc-date{font-size:25rpx;font-weight:600;color:#18232F}
+.mc-meal{font-size:21rpx;color:#2F80ED;background:#EDF4FE;border-radius:8rpx;padding:3rpx 12rpx}
+.mc-text{font-size:24rpx;color:#66788C;line-height:1.7;display:block}
+
+/* ── 逐日 ── */
+.day-item{padding:18rpx 0;border-bottom:1rpx solid #F0F4F8}
+.day-item:last-child{border-bottom:none}
+.day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12rpx}
+.day-name{font-size:26rpx;font-weight:600;color:#18232F}
+.day-cal{font-size:22rpx;color:#66788C}
+.day-bars{display:flex;flex-direction:column;gap:8rpx}
+.bar-row{display:flex;align-items:center;gap:12rpx}
+.bar-label{font-size:21rpx;color:#93A4B8;width:56rpx;flex-shrink:0}
+.bar-track{flex:1;height:12rpx;background:#EEF3F8;border-radius:999rpx;overflow:hidden}
+.bar-fill{height:100%;border-radius:999rpx}
+
+/* ── 建议 ── */
+.adv-item{display:flex;gap:16rpx;padding:14rpx 0;align-items:flex-start}
+.adv-no{width:40rpx;height:40rpx;border-radius:50%;background:#EAF8F3;color:#0B7A66;
+  font-size:23rpx;font-weight:600;text-align:center;line-height:40rpx;flex-shrink:0}
+.adv-text{font-size:25rpx;color:#3B4C5E;line-height:1.7;flex:1}
+
+/* ── 对话 ── */
+.quick-row{display:flex;flex-wrap:wrap;gap:14rpx;margin-bottom:22rpx}
+.quick-chip{font-size:22rpx;color:#2F80ED;background:#EDF4FE;border-radius:999rpx;padding:10rpx 22rpx}
+.chat-list{max-height:640rpx;margin-bottom:20rpx}
+.msg{display:flex;margin-bottom:18rpx}
+.msg-user{justify-content:flex-end}
+.msg-ai{justify-content:flex-start}
+.msg-bubble{max-width:80%;border-radius:18rpx;padding:18rpx 22rpx;position:relative}
+.msg-user .msg-bubble{background:#07C160}
+.msg-ai .msg-bubble{background:#F4F8FB;border:1rpx solid #E6ECF3}
+.msg-text{font-size:25rpx;line-height:1.7;display:block}
+.msg-user .msg-text{color:#fff}
+.msg-ai .msg-text{color:#3B4C5E}
+.msg-tag{font-size:19rpx;color:#93A4B8;margin-top:8rpx;display:block}
+.chat-empty{padding:36rpx 0;text-align:center;font-size:23rpx;color:#93A4B8}
+.chat-input-row{display:flex;align-items:center;gap:14rpx}
+.chat-input{flex:1;height:76rpx;background:#F4F8FB;border:1rpx solid #E6ECF3;border-radius:999rpx;
+  padding:0 28rpx;font-size:25rpx;color:#18232F}
+.chat-send{background:#07C160;color:#fff;font-size:25rpx;border-radius:999rpx;
+  padding:0 32rpx;height:76rpx;line-height:76rpx;flex-shrink:0}
+.chat-send-disabled{background:#B7DCC7}
+
+.hint-text{font-size:23rpx;color:#66788C;line-height:1.7;display:block;margin-bottom:20rpx}
+.btn-primary{background:#07C160;color:#fff;font-size:27rpx;border-radius:999rpx;
+  height:80rpx;line-height:80rpx;text-align:center}
+.foot-note{font-size:21rpx;color:#93A4B8;line-height:1.7;text-align:center;padding:8rpx 20rpx 20rpx}

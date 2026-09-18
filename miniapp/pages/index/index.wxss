@@ -1,6 +1,27 @@
 /* pages/index/index.wxss */
 .page-home { min-height: 100vh; padding-bottom: calc(100rpx + env(safe-area-inset-bottom, 0)); }
 
+/* AI 周分析入口 */
+.ai-entry {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx 26rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #16305A, #0B1B33);
+  box-shadow: 0 8rpx 24rpx -12rpx rgba(11, 27, 51, 0.6);
+}
+.ai-entry-badge {
+  width: 64rpx; height: 64rpx; border-radius: 18rpx;
+  background: #07C160; color: #fff; font-size: 26rpx; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ai-entry-body { flex: 1; min-width: 0; }
+.ai-entry-title { font-size: 29rpx; font-weight: 600; color: #ffffff; }
+.ai-entry-sub { font-size: 22rpx; color: #8AA8CC; margin-top: 6rpx; }
+.ai-entry-arrow { color: #4FD8B0; font-size: 40rpx; line-height: 1; flex-shrink: 0; }
+
 /* 顶部问候 */
 .header {
   background: linear-gradient(135deg, #07C160, #05A14E);

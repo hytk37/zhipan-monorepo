@@ -119,6 +119,36 @@ function expect(name, res, code, extra) {
   expect('POST /api/admin/students/batch 空数据应 400', await request(port, 'POST', '/api/admin/students/batch',
     { students: [] }, adminToken), 400);
 
+  // ── routes/ai.js（AI 能力：无 Key 时应全部走降级且不报错）──
+  expect('GET  /api/ai/status AI 状态', await request(port, 'GET', '/api/ai/status'), 200,
+    (r) => !!(r.json && typeof r.json.configured === 'boolean'));
+  expect('GET  /api/ai/week-meals/0 本周用餐记录', await request(port, 'GET', '/api/ai/week-meals/0'), 200,
+    (r) => !!(r.json && r.json.week && r.json.stats && Array.isArray(r.json.week.days)));
+  expect('GET  /api/ai/week-meals/0 逐餐含真实菜品', await request(port, 'GET', '/api/ai/week-meals/0'), 200,
+    (r) => !!(r.json.week.days[0].meals[0].items.length > 0));
+  expect('GET  /api/ai/health/week/0 周健康分析', await request(port, 'GET', '/api/ai/health/week/0'), 200,
+    (r) => !!(r.json && typeof r.json.score === 'number' && r.json.analysis && r.json.analysis.summary));
+  expect('GET  /api/ai/health/week/0 分析含问题项与建议', await request(port, 'GET', '/api/ai/health/week/0'), 200,
+    (r) => !!(r.json.analysis.problems.length > 0 && r.json.analysis.advice.length > 0));
+  expect('GET  /api/ai/health/week/0 无 Key 时标记降级', await request(port, 'GET', '/api/ai/health/week/0'), 200,
+    (r) => (r.json.source === 'ai' || (r.json.source === 'fallback' && !!r.json.aiError)));
+  expect('GET  /api/ai/health/week/999 不存在应 404', await request(port, 'GET', '/api/ai/health/week/999'), 404);
+  expect('POST /api/ai/chat 追问对话', await request(port, 'POST', '/api/ai/chat',
+    { studentId: 0, question: '我这周脂肪为什么偏高？' }), 200,
+    (r) => !!(r.json && typeof r.json.answer === 'string' && r.json.answer.length > 10));
+  expect('POST /api/ai/meal-log 手动记一餐', await request(port, 'POST', '/api/ai/meal-log',
+    { studentId: 0, date: '2026-05-25', meal: '午餐', dishes: [{ name: '蒜蓉西兰花', qty: 1 }] }), 200,
+    (r) => !!(r.json && r.json.ok === true));
+  expect('POST /api/ai/meal-log 清真学生记猪肉应被拦', await request(port, 'POST', '/api/ai/meal-log',
+    { studentId: 1, date: '2026-05-25', meal: '午餐', dishes: [{ name: '干锅排骨' }] }), 400,
+    (r) => !!(r.json && r.json.blocked && r.json.blocked.length > 0));
+  expect('POST /api/ai/meal-log 空菜品应 400', await request(port, 'POST', '/api/ai/meal-log',
+    { studentId: 0, date: '2026-05-25', meal: '午餐', dishes: [] }), 400);
+  expect('GET  /api/ai/candidates/1 安全菜品候选', await request(port, 'GET', '/api/ai/candidates/1'), 200,
+    (r) => !!(r.json && r.json.total > 0 && Array.isArray(r.json.names)));
+  expect('GET  /api/ai/usage token 用量', await request(port, 'GET', '/api/ai/usage'), 200,
+    (r) => !!(r.json && r.json.today));
+
   // ── 静态托管与兜底 ──
   expect('GET  /admin 管理后台页面', await request(port, 'GET', '/admin'), 200, (r) => r.body.indexOf('<html') >= 0);
   expect('GET  /admin/ 管理后台页面', await request(port, 'GET', '/admin/'), 200, (r) => r.body.indexOf('<html') >= 0);

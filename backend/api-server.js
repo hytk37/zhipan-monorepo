@@ -45,6 +45,7 @@ app.get('/', (req, res) => { res.redirect('/admin'); });
 const overviewRoutes = require('./routes/overview');
 const kitchenRoutes = require('./routes/kitchen');
 const studentRoutes = require('./routes/student');
+const aiRoutes = require('./routes/ai');
 const { router: authRoutes } = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 
@@ -52,6 +53,7 @@ app.use('/api', overviewRoutes);
 app.use('/api', kitchenRoutes);
 app.use('/api/kitchen', kitchenRoutes);
 app.use('/api', studentRoutes);
+app.use('/api', aiRoutes);
 app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
 
@@ -95,8 +97,19 @@ function startServer(port) {
     console.log('  routes/overview.js  数据概览   5 个接口');
     console.log('  routes/kitchen.js   后厨管理  10 个接口  (/api 与 /api/kitchen)');
     console.log('  routes/student.js   学生业务  12 个接口');
+    console.log('  routes/ai.js        AI 能力    7 个接口  (周健康分析 / 追问 / 拍照识别)');
     console.log('  routes/auth.js      登录认证   3 个接口');
     console.log('  routes/admin.js     管理员     2 个接口  (需认证)');
+    console.log('  ------------------------------------------------');
+    try {
+      const { describe } = require('./config/deepseek');
+      const d = describe();
+      console.log('  AI: ' + (d.configured
+        ? '已启用  ' + d.models.flash + ' / ' + d.models.pro
+        : '未配置 Key（接口走规则模板降级，功能仍可用）'));
+    } catch (e) {
+      console.log('  AI: 配置读取失败 - ' + e.message);
+    }
     console.log('');
   });
 

@@ -141,6 +141,11 @@ Page({
     this.setData({ searchKey: e.detail.value });
   },
 
+  // 跳转 AI 本周饮食健康分析
+  goWeekHealth() {
+    wx.navigateTo({ url: '/pages/week-health/week-health' });
+  },
+
   onSearch() {
     const key = this.data.searchKey.trim();
     if (!key) return;
