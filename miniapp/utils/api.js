@@ -8,32 +8,36 @@ const app = getApp();
  * @param {string} url - 相对路径，如 '/api/students'
  * @param {string} method - GET/POST/PUT/DELETE
  * @param {object} data - 请求体
+ * @param {object} [opts] - 可选：{ silent: true } 静默模式——
+ *        不弹 toast、不打 console.error，用于「启动时校验 token」这类
+ *        失败属于正常情况的探测请求（避免每次冷启动都弹「请先登录」）
  * @returns {Promise}
  */
-function request(url, method = 'GET', data = {}) {
+function request(url, method = 'GET', data = {}, opts = {}) {
+  const silent = !!(opts && opts.silent);
   return new Promise((resolve, reject) => {
     const base = app.globalData.apiBase || 'http://localhost:3000';
+    const token = wx.getStorageSync('token');
     wx.request({
       url: base + url,
       method: method,
       data: data,
       header: {
         'content-type': 'application/json',
-        'Authorization': wx.getStorageSync('token') ? 'Bearer ' + wx.getStorageSync('token') : ''
+        'Authorization': token ? 'Bearer ' + token : ''
       },
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data);
         } else if (res.statusCode === 401) {
-          // 未授权，跳转登录
-          wx.showToast({ title: '请先登录', icon: 'none' });
-          reject({ statusCode: res.statusCode, data: res.data });
+          if (!silent) wx.showToast({ title: '请先登录', icon: 'none' });
+          reject({ statusCode: res.statusCode, silent: silent, data: res.data });
         } else {
-          reject({ statusCode: res.statusCode, data: res.data });
+          reject({ statusCode: res.statusCode, silent: silent, data: res.data });
         }
       },
       fail(err) {
-        wx.showToast({ title: '网络异常', icon: 'none' });
+        if (!silent) wx.showToast({ title: '网络异常', icon: 'none' });
         reject(err);
       }
     });
@@ -100,8 +104,12 @@ const aiApi = {
 const authApi = {
   /** 学生登录 */
   login(account, password) { return request('/api/student/login', 'POST', { account, password }); },
-  /** 验证 token */
-  verify() { return request('/api/student/verify'); }
+  /**
+   * 验证 token
+   * 传 { silent: true } 时失败不弹提示——启动时校验旧 token 属于正常探测，
+   * 失败只代表需要重新登录，不该打扰用户。
+   */
+  verify(opts) { return request('/api/student/verify', 'GET', {}, opts); }
 };
 
 module.exports = {
