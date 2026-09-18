@@ -89,7 +89,7 @@
 .adv-item{display:flex;gap:16rpx;padding:14rpx 0;align-items:flex-start}
 .adv-no{width:40rpx;height:40rpx;border-radius:50%;background:#EAF8F3;color:#0B7A66;
   font-size:23rpx;font-weight:600;text-align:center;line-height:40rpx;flex-shrink:0}
-.adv-text{font-size:25rpx;color:#3B4C5E;line-height:1.7;flex:1}
+.adv-text{font-size:25rpx;color:#3B4C5E;line-height:1.7;flex:1;min-width:0}
 
 /* ── 对话 ── */
 .quick-row{display:flex;flex-wrap:wrap;gap:14rpx;margin-bottom:22rpx}
@@ -107,7 +107,7 @@
 .msg-tag{font-size:19rpx;color:#93A4B8;margin-top:8rpx;display:block}
 .chat-empty{padding:36rpx 0;text-align:center;font-size:23rpx;color:#93A4B8}
 .chat-input-row{display:flex;align-items:center;gap:14rpx}
-.chat-input{flex:1;height:76rpx;background:#F4F8FB;border:1rpx solid #E6ECF3;border-radius:999rpx;
+.chat-input{flex:1;min-width:0;height:76rpx;background:#F4F8FB;border:1rpx solid #E6ECF3;border-radius:999rpx;
   padding:0 28rpx;font-size:25rpx;color:#18232F}
 .chat-send{background:#07C160;color:#fff;font-size:25rpx;border-radius:999rpx;
   padding:0 32rpx;height:76rpx;line-height:76rpx;flex-shrink:0}

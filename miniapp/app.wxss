@@ -118,7 +118,7 @@ page {
   margin-bottom: 12rpx;
 }
 .food-emoji { font-size: 64rpx; margin-right: 20rpx; }
-.food-info { flex: 1; }
+.food-info { flex: 1; min-width: 0; }
 .food-name { font-size: 28rpx; font-weight: 600; margin-bottom: 6rpx; }
 .food-desc { font-size: 22rpx; color: #999; line-height: 1.4; }
 .food-tags { margin-top: 8rpx; }

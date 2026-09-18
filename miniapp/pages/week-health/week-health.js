@@ -100,6 +100,15 @@ Page({
     const id = this.data.studentId;
     const score = a.score || 0;
     const source = a.source || 'fallback';
+    // 展示用：均值取整，避免「100.7」这类小数在窄列里挤行
+    const rawAvg = a.avg || {};
+    const avg = {
+      cal: Math.round(rawAvg.cal || 0),
+      protein: Math.round(rawAvg.protein || 0),
+      fat: Math.round(rawAvg.fat || 0),
+      carbs: Math.round(rawAvg.carbs || 0),
+      fiber: Math.round(rawAvg.fiber || 0)
+    };
 
     this.setData({
       loading: false,
@@ -118,7 +127,7 @@ Page({
       aiProblems: (a.analysis && a.analysis.problems) || [],
       mealComments: (a.analysis && a.analysis.mealComments) || [],
       advice: (a.analysis && a.analysis.advice) || [],
-      avg: a.avg || {},
+      avg: avg,
       targets: a.targets || {},
       counts: a.counts || {},
       daily: daily,

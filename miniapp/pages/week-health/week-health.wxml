@@ -42,11 +42,11 @@
       <view class="metric-row">
         <view class="metric-item">
           <text class="metric-v">{{avg.cal}}</text>
-          <text class="metric-l">日均热量 /{{targets.cal}}</text>
+          <text class="metric-l">热量 /{{targets.cal}}</text>
         </view>
         <view class="metric-item">
           <text class="metric-v">{{avg.protein}}</text>
-          <text class="metric-l">蛋白质 /{{targets.protein}}g</text>
+          <text class="metric-l">蛋白 /{{targets.protein}}g</text>
         </view>
         <view class="metric-item">
           <text class="metric-v">{{avg.fat}}</text>

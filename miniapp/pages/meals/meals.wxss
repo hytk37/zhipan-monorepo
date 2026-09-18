@@ -14,6 +14,7 @@
 .search-icon { font-size: 28rpx; margin-right: 12rpx; }
 .search-input {
   flex: 1;
+  min-width: 0;
   font-size: 28rpx;
   color: #333;
   border: none;
@@ -42,10 +43,11 @@
   border-bottom: 1rpx solid #F0F0F0;
   margin-bottom: 12rpx;
 }
-.record-date { display: flex; align-items: baseline; gap: 8rpx; }
+.record-date { display: flex; align-items: baseline; gap: 8rpx; flex: 1; min-width: 0; }
 .date-text { font-size: 30rpx; font-weight: 600; color: #333; }
 .weekday-text { font-size: 24rpx; color: #999; }
-.record-score { display: flex; align-items: baseline; }
+/* 与下方 .meal-cal 同宽，保证「评分」和「热量」两列右边缘对齐 */
+.record-score { display: flex; align-items: baseline; justify-content: flex-end; flex-shrink: 0; min-width: 116rpx; white-space: nowrap; }
 .score-num { font-size: 36rpx; font-weight: 700; }
 .score-unit { font-size: 22rpx; color: #999; margin-left: 4rpx; }
 
@@ -53,23 +55,41 @@
 .meal-list { margin-bottom: 12rpx; }
 .meal-row {
   display: flex;
-  align-items: center;
-  padding: 12rpx 0;
+  align-items: flex-start;      /* 菜名换行时表情/热量与首行对齐 */
+  padding: 16rpx 0;
   border-bottom: 1rpx solid #F8F8F8;
 }
 .meal-row:last-child { border-bottom: none; }
-.meal-emoji { font-size: 40rpx; margin-right: 16rpx; }
-.meal-info { flex: 1; }
+.meal-emoji { font-size: 40rpx; margin-right: 16rpx; flex-shrink: 0; line-height: 1.35; }
+/* min-width:0 是关键：flex 子项默认 min-width:auto，长菜名会把右侧热量列顶出卡片，
+   造成数字与菜名重叠；加上后文本才能在列内换行/省略 */
+.meal-info { flex: 1; min-width: 0; }
 .meal-top {
   display: flex;
   align-items: center;
   gap: 12rpx;
-  margin-bottom: 4rpx;
+  margin-bottom: 6rpx;
 }
 .meal-type { font-size: 26rpx; font-weight: 600; color: #333; }
 .meal-time { font-size: 22rpx; color: #999; }
-.meal-items { font-size: 24rpx; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.meal-cal { text-align: right; flex-shrink: 0; }
+/* 菜名最多两行，超出省略；不再用 nowrap 单行截断，避免看不到吃了什么 */
+.meal-items {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  word-break: break-all;
+}
+.meal-cal {
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 116rpx;
+  padding-left: 16rpx;
+  white-space: nowrap;
+}
 .cal-num { font-size: 28rpx; font-weight: 600; color: #FF9500; }
 .cal-unit { font-size: 20rpx; color: #999; margin-left: 2rpx; }
 
