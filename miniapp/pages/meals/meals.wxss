@@ -23,6 +23,7 @@
 
 /* 统计卡片 */
 .stats-card { margin-top: 16rpx; }
+.week-range { font-size: 20rpx; color: #999; font-weight: 400; text-align: right; }
 .stats-row {
   display: flex;
   align-items: center;

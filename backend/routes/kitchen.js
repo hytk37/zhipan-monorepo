@@ -5,11 +5,12 @@ const { Router } = require('express');
 const router = Router();
 const {
   kitchenKPI, groupRadar, heatmapData,
-  forecastData, purchaseData, newDishData, systemStatus, weeklyMenu,
+  forecastData, purchaseData, newDishData, systemStatus,
 } = require('../models/data');
+const weekMeals = require('../services/weekMeals');
 
-// 一周菜单（学生食谱第13周，真实食谱）
-router.get('/menu/week', (req, res) => { res.json(weeklyMenu); });
+// 一周菜单（食谱内容取自第13周，日期按当前自然周自动同步）
+router.get('/menu/week', (req, res) => { res.json(weekMeals.currentWeekMenu()); });
 
 // 后厨KPI
 router.get('/kpi', (req, res) => { res.json(kitchenKPI); });

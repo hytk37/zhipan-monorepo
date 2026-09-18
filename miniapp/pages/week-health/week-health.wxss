@@ -30,6 +30,7 @@
 .lv-warn{background:#FF3B30}
 .score-week{font-size:24rpx;color:#C6D9EE}
 .score-sub{font-size:22rpx;color:#8AA8CC}
+.score-sync{font-size:20rpx;color:#6B87AA}
 .score-track{height:14rpx;background:rgba(255,255,255,.14);border-radius:999rpx;margin:28rpx 0 24rpx;overflow:hidden}
 .score-fill{height:100%;border-radius:999rpx}
 .metric-row{display:flex;justify-content:space-between;gap:8rpx}

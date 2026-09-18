@@ -49,6 +49,7 @@ Page({
     sending: false,
     scrollTo: '',
     refreshing: false,
+    syncText: '',
     usageText: ''
   },
 
@@ -132,15 +133,25 @@ Page({
       counts: a.counts || {},
       daily: daily,
       disclaimer: a.disclaimer || '',
+      syncText: this.fmtTime(a.updatedAt),
       usageText: a.mockMode ? '当前为演示模式：未配置 DeepSeek API Key，分析由规则模板生成' : ''
     });
 
     wx.setNavigationBarTitle({ title: (st.name || '我') + ' · 本周饮食健康' });
   },
 
+  // ISO 时间 → 今天 HH:MM（跨天显示 M月D日 HH:MM）
+  fmtTime(iso) {
+    const d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return '';
+    const now = new Date();
+    const hm = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    if (d.toDateString() === now.toDateString()) return '今天 ' + hm + ' 更新';
+    return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + hm + ' 更新';
+  },
+
   // 评分环（用 style 字符串，规避 WXSS 对 % 的解析问题）
-  ringStyle(score) {
-    const pct = clampPct(score);
+  ringStyle(score) {    const pct = clampPct(score);
     const color = score >= 85 ? '#07C160' : score >= 75 ? '#2F80ED' : score >= 60 ? '#FF9500' : '#FF3B30';
     return 'width:' + pct + '%;background:' + color;
   },

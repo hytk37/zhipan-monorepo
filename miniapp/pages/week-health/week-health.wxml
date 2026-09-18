@@ -34,6 +34,7 @@
           <view class="lv-tag {{levelClass}}">{{level}}</view>
           <text class="score-week">{{student.name}} · {{dateRange}}</text>
           <text class="score-sub">目标：{{student.goalType}}<block wx:if="{{student.diet}}"> · {{student.diet}}</block></text>
+          <text class="score-sync" wx:if="{{syncText}}">{{syncText}}</text>
         </view>
       </view>
       <view class="score-track">

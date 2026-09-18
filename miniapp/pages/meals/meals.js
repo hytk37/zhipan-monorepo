@@ -16,7 +16,8 @@ Page({
     showDatePicker: false,
     selectedDate: '',
     weekScore: 0,
-    weekLevel: ''
+    weekLevel: '',
+    weekRange: ''
   },
 
   onLoad() {
@@ -95,7 +96,8 @@ Page({
 
       return {
         date: dateStr,
-        weekday: d.weekday || d.day || '',
+        weekday: d.dayLabel || d.weekday || d.day || '',
+        isToday: !!d.isToday,
         meals: meals,
         totalCal: d.totalCal,
         score: (res.stats && (res.stats.daily || []).filter(function(x) { return x.date === d.date; })[0] || {}).score || 70
@@ -109,10 +111,21 @@ Page({
     this.setData({
       records: records,
       currentMonth: '本周',
+      weekRange: (week.dateRange || '') + (week.updatedAt ? ' · 同步于 ' + this.fmtTime(week.updatedAt) : ''),
       monthStats: { checkDays: records.length, avgCal: avgCal, avgScore: avgScore },
       weekScore: stats.score || avgScore,
       weekLevel: stats.level || ''
     });
+  },
+
+  // ISO 时间 → 今天 HH:MM（跨天则显示 M月D日 HH:MM）
+  fmtTime(iso) {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    const now = new Date();
+    const hm = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    if (d.toDateString() === now.toDateString()) return '今天 ' + hm;
+    return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + hm;
   },
 
   _renderHistory(history) {
@@ -138,59 +151,74 @@ Page({
   },
 
   _loadMockRecords() {
-    // 后备：服务器不可用时的本地 mock 数据
-    const records = [
+    // 后备：服务器不可用时的本地 mock（日期按当前时间动态生成，不写死）
+    const WEEKDAY = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    const templates = [
       {
-        date: '6月4日', weekday: '今天',
+        offset: 0,
         meals: [
-          { type: '早餐', time: '07:30', items: '蔬菜瘦肉粥+营养蛋+学生纯牛奶', cal: 480, protein: 22, emoji: '🥣' },
-          { type: '午餐', time: '12:00', items: '土豆排骨+鱼香肉丝+南瓜饭', cal: 720, protein: 38, emoji: '🍖' },
-          { type: '晚餐', time: '18:15', items: '魔芋烧鱼+蒜蓉西兰花+胡萝卜饭', cal: 660, protein: 32, emoji: '🐟' }
+          { type: '早餐', time: '07:30', items: '蔬菜瘦肉粥、营养蛋、学生纯牛奶', cal: 480, protein: 22, emoji: '🥣' },
+          { type: '午餐', time: '12:05', items: '土豆排骨、鱼香肉丝、南瓜饭、西红柿蛋花汤', cal: 720, protein: 38, emoji: '🍖' },
+          { type: '晚餐', time: '18:10', items: '魔芋烧鱼、蒜蓉西兰花、胡萝卜饭', cal: 660, protein: 32, emoji: '🐟' }
         ],
-        totalCal: 1860,
-        score: 85
+        totalCal: 1860, score: 85
       },
       {
-        date: '6月3日', weekday: '昨天',
+        offset: -1,
         meals: [
-          { type: '早餐', time: '08:00', items: '粥+肉包子+豆浆', cal: 420, protein: 15, emoji: '🥟' },
-          { type: '午餐', time: '12:10', items: '鱼香肉丝+米饭+紫菜蛋花汤', cal: 780, protein: 28, emoji: '🍛' },
-          { type: '晚餐', time: '18:30', items: '酸辣粉+煎蛋', cal: 560, protein: 18, emoji: '🍜' }
+          { type: '早餐', time: '07:45', items: '南瓜粥、芽菜肉包、豆浆', cal: 420, protein: 15, emoji: '🥣' },
+          { type: '午餐', time: '12:10', items: '番茄牛腩、黄瓜木耳肉片、燕麦饭、时蔬豆腐汤', cal: 780, protein: 28, emoji: '🍛' },
+          { type: '晚餐', time: '18:30', items: '绍子酸辣粉、卤鸡腿', cal: 560, protein: 18, emoji: '🍜' }
         ],
-        totalCal: 1760,
-        score: 78
+        totalCal: 1760, score: 78
       },
       {
-        date: '6月2日', weekday: '周一',
+        offset: -2,
         meals: [
-          { type: '早餐', time: '07:45', items: '玉米粥+莲白肉包+煎荷包蛋', cal: 380, protein: 12, emoji: '🥣' },
-          { type: '午餐', time: '12:05', items: '干锅排骨+碎肉豌豆+玉米饭', cal: 700, protein: 35, emoji: '🍖' },
-          { type: '晚餐', time: '18:00', items: '西红柿鸡蛋面+拌卤素什锦', cal: 520, protein: 16, emoji: '🍝' }
+          { type: '早餐', time: '07:45', items: '玉米粥、莲白肉包、煎荷包蛋', cal: 380, protein: 12, emoji: '🥣' },
+          { type: '午餐', time: '12:05', items: '干锅排骨、碎肉豌豆、玉米饭、银耳汤', cal: 700, protein: 35, emoji: '🍖' },
+          { type: '晚餐', time: '18:00', items: '西红柿鸡蛋面、拌卤素什锦', cal: 520, protein: 16, emoji: '🍝' }
         ],
-        totalCal: 1600,
-        score: 90
+        totalCal: 1600, score: 90
       },
       {
-        date: '6月1日', weekday: '周日',
+        offset: -3,
         meals: [
-          { type: '午餐', time: '12:30', items: '土豆排骨盖浇饭+红油水饺', cal: 850, protein: 40, emoji: '🍲' },
-          { type: '晚餐', time: '19:00', items: '酸汤肉丝河粉+香辣翅根', cal: 710, protein: 22, emoji: '🍜' }
+          { type: '早餐', time: '08:00', items: '黑米粥、酱肉包、学生纯牛奶', cal: 400, protein: 16, emoji: '🥣' },
+          { type: '午餐', time: '12:30', items: '土豆排骨盖浇饭、红油水饺', cal: 850, protein: 40, emoji: '🍲' },
+          { type: '晚餐', time: '19:00', items: '酸汤肉丝河粉、香辣翅根', cal: 710, protein: 22, emoji: '🍜' }
         ],
-        totalCal: 1560,
-        score: 65
+        totalCal: 1560, score: 65
       },
       {
-        date: '5月31日', weekday: '周六',
+        offset: -4,
         meals: [
-          { type: '早餐', time: '09:00', items: '红薯粥+营养蛋+蒸红薯', cal: 520, protein: 14, emoji: '🫓' },
-          { type: '午餐', time: '12:00', items: '番茄牛腩+蒜蓉菠菜+燕麦饭', cal: 780, protein: 42, emoji: '🥩' },
-          { type: '晚餐', time: '18:30', items: '台式卤肉盖浇饭', cal: 680, protein: 24, emoji: '🍚' }
+          { type: '早餐', time: '09:00', items: '红薯粥、营养蛋、蒸红薯', cal: 520, protein: 14, emoji: '🥣' },
+          { type: '午餐', time: '12:00', items: '鲜椒烧牛肉、蒜蓉菠菜、燕麦饭、紫菜蛋花汤', cal: 780, protein: 42, emoji: '🥩' },
+          { type: '晚餐', time: '18:30', items: '台式卤肉盖浇饭、青瓜三鲜汤', cal: 680, protein: 24, emoji: '🍚' }
         ],
-        totalCal: 1980,
-        score: 82
+        totalCal: 1980, score: 82
       }
     ];
-    this.setData({ records });
+
+    const today = new Date();
+    const records = templates.map(function(t) {
+      const d = new Date(today.getTime());
+      d.setDate(d.getDate() + t.offset);
+      let weekday;
+      if (t.offset === 0) weekday = '今天';
+      else if (t.offset === -1) weekday = '昨天';
+      else if (t.offset === -2) weekday = '前天';
+      else weekday = WEEKDAY[d.getDay()];
+      return {
+        date: (d.getMonth() + 1) + '月' + d.getDate() + '日',
+        weekday: weekday,
+        meals: t.meals,
+        totalCal: t.totalCal,
+        score: t.score
+      };
+    });
+    this.setData({ records: records });
   },
 
   onSearchInput(e) {

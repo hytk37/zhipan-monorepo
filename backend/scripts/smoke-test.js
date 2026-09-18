@@ -120,12 +120,29 @@ function expect(name, res, code, extra) {
     { students: [] }, adminToken), 400);
 
   // ── routes/ai.js（AI 能力：无 Key 时应全部走降级且不报错）──
+  const weekProbe = await request(port, 'GET', '/api/ai/week-meals/0');
+  const testDate = (weekProbe.json && weekProbe.json.week && weekProbe.json.week.days[0].date) || '';
   expect('GET  /api/ai/status AI 状态', await request(port, 'GET', '/api/ai/status'), 200,
     (r) => !!(r.json && typeof r.json.configured === 'boolean'));
   expect('GET  /api/ai/week-meals/0 本周用餐记录', await request(port, 'GET', '/api/ai/week-meals/0'), 200,
     (r) => !!(r.json && r.json.week && r.json.stats && Array.isArray(r.json.week.days)));
   expect('GET  /api/ai/week-meals/0 逐餐含真实菜品', await request(port, 'GET', '/api/ai/week-meals/0'), 200,
     (r) => !!(r.json.week.days[0].meals[0].items.length > 0));
+  expect('GET  /api/ai/week-meals/0 日期跟随当前周（时间自动同步）', await request(port, 'GET', '/api/ai/week-meals/0'), 200,
+    (r) => {
+      const w = r.json.week;
+      if (!w.startDate || !w.endDate) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const start = new Date(w.startDate + 'T00:00:00');
+      const end = new Date(w.endDate + 'T00:00:00');
+      // 本周区间必须覆盖或紧邻今天（前后 7 天内），否则说明日期被写死了
+      return start <= new Date(today.getTime() + 7 * 86400000) && end >= new Date(today.getTime() - 7 * 86400000);
+    });
+  expect('GET  /api/ai/week-meals/0 含今天/昨天相对标签', await request(port, 'GET', '/api/ai/week-meals/0'), 200,
+    (r) => !!(r.json.week.days.every((d) => !!d.dayLabel) && r.json.week.days.some((d) => d.dayLabel === '今天' || d.dayLabel === '昨天')));
+  expect('GET  /api/menu/week 菜单日期已同步当前周', await request(port, 'GET', '/api/menu/week'), 200,
+    (r) => !!(r.json && r.json.sourceWeek && r.json.week !== r.json.sourceWeek && r.json.days[0].date >= '2020-01-01'));
   expect('GET  /api/ai/health/week/0 周健康分析', await request(port, 'GET', '/api/ai/health/week/0'), 200,
     (r) => !!(r.json && typeof r.json.score === 'number' && r.json.analysis && r.json.analysis.summary));
   expect('GET  /api/ai/health/week/0 分析含问题项与建议', await request(port, 'GET', '/api/ai/health/week/0'), 200,
@@ -137,13 +154,13 @@ function expect(name, res, code, extra) {
     { studentId: 0, question: '我这周脂肪为什么偏高？' }), 200,
     (r) => !!(r.json && typeof r.json.answer === 'string' && r.json.answer.length > 10));
   expect('POST /api/ai/meal-log 手动记一餐', await request(port, 'POST', '/api/ai/meal-log',
-    { studentId: 0, date: '2026-05-25', meal: '午餐', dishes: [{ name: '蒜蓉西兰花', qty: 1 }] }), 200,
+    { studentId: 0, date: testDate, meal: '午餐', dishes: [{ name: '蒜蓉西兰花', qty: 1 }] }), 200,
     (r) => !!(r.json && r.json.ok === true));
   expect('POST /api/ai/meal-log 清真学生记猪肉应被拦', await request(port, 'POST', '/api/ai/meal-log',
-    { studentId: 1, date: '2026-05-25', meal: '午餐', dishes: [{ name: '干锅排骨' }] }), 400,
+    { studentId: 1, date: testDate, meal: '午餐', dishes: [{ name: '干锅排骨' }] }), 400,
     (r) => !!(r.json && r.json.blocked && r.json.blocked.length > 0));
   expect('POST /api/ai/meal-log 空菜品应 400', await request(port, 'POST', '/api/ai/meal-log',
-    { studentId: 0, date: '2026-05-25', meal: '午餐', dishes: [] }), 400);
+    { studentId: 0, date: testDate, meal: '午餐', dishes: [] }), 400);
   expect('GET  /api/ai/candidates/1 安全菜品候选', await request(port, 'GET', '/api/ai/candidates/1'), 200,
     (r) => !!(r.json && r.json.total > 0 && Array.isArray(r.json.names)));
   expect('GET  /api/ai/usage token 用量', await request(port, 'GET', '/api/ai/usage'), 200,

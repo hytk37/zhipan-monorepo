@@ -10,6 +10,7 @@
 const { chatWithRetry, parseJson, getUsage } = require('./client');
 const { WEEK_HEALTH_SYSTEM, buildWeekHealthUser } = require('./prompts');
 const weekMeals = require('../weekMeals');
+const cal = require('../calendar');
 const { studentProfiles } = require('../../models/data');
 const { isConfigured, config } = require('../../config/deepseek');
 
@@ -137,7 +138,8 @@ async function analyze(studentId, opts) {
   const stats = weekMeals.computeWeekStats(id);
   const digest = weekMeals.buildMealDigest(id);
   const profile = studentProfiles[id] || {};
-  const cacheKey = id + ':' + stats.dateRange;
+  // 缓存键带上「当天日期」：跨天后自动重新生成，避免文案里还说着昨天
+  const cacheKey = id + ':' + cal.toDateStr(new Date()) + ':' + stats.dateRange;
 
   if (!opts || !opts.refresh) {
     const hit = CACHE.get(cacheKey);
@@ -186,7 +188,12 @@ async function analyze(studentId, opts) {
     studentId: id,
     student: { name: profile.name || '', avatar: profile.avatar || '🧑', diet: stats.diet, goalType: stats.goalType },
     week: stats.week,
+    weekNo: stats.weekNo,
     dateRange: stats.dateRange,
+    startDate: stats.startDate,
+    endDate: stats.endDate,
+    updatedAt: stats.updatedAt,
+    sourceWeek: stats.sourceWeek,
     // 评分与等级永远来自确定性计算，AI 无权修改
     score: stats.score,
     level: stats.level,

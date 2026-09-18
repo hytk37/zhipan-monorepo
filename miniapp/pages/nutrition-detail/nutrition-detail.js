@@ -44,15 +44,26 @@ Page({
     n.fatPct = Math.min(Math.round((n.fat / n.fatTarget) * 100), 100);
     n.fibPct = Math.min(Math.round((n.fiber / n.fiberTarget) * 100), 100);
     attachBarStyles(n);
+    // 历史日期按当前时间动态生成（最近 5 天），不写死
+    const mockHistory = [
+      { offset: 0, score: 82, cal: 1680 },
+      { offset: -1, score: 78, cal: 1760 },
+      { offset: -2, score: 90, cal: 1600 },
+      { offset: -3, score: 65, cal: 1560 },
+      { offset: -4, score: 82, cal: 1980 }
+    ].map(function(h) {
+      const d = new Date();
+      d.setDate(d.getDate() + h.offset);
+      return {
+        date: (d.getMonth() + 1) + '月' + d.getDate() + '日',
+        score: h.score,
+        cal: h.cal,
+        scoreColor: h.score >= 80 ? '#07C160' : h.score >= 60 ? '#FF9500' : '#FF3B30'
+      };
+    });
     this.setData({
       nutrition: n,
-      history: [
-        { date: '6月4日', score: 82, cal: 1680, scoreColor: '#07C160' },
-        { date: '6月3日', score: 78, cal: 1760, scoreColor: '#07C160' },
-        { date: '6月2日', score: 90, cal: 1600, scoreColor: '#07C160' },
-        { date: '6月1日', score: 65, cal: 1560, scoreColor: '#FF9500' },
-        { date: '5月31日', score: 82, cal: 1980, scoreColor: '#07C160' }
-      ],
+      history: mockHistory,
       suggestions: [
         { text: '蛋白质摄入接近目标，继续保持', type: 'green' },
         { text: '膳食纤维偏低，建议增加蔬菜和水果', type: 'orange' },

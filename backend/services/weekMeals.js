@@ -9,6 +9,14 @@
 
 const { weeklyMenu, foodDB, studentProfiles, todayNutritionStore } = require('../models/data');
 const { isSafeForStudent } = require('../models/dishRules');
+const cal = require('./calendar');
+
+// ─── 当前周的菜单（日期跟随系统时间自动同步）────
+// weeklyMenu 只是「按星期几组织的食谱模板」（来源于第13周），
+// 这里把它锚定到当前自然周，页面显示的日期才不会停在历史日期。
+function currentWeekMenu(now) {
+  return cal.anchorMenuToCurrentWeek(weeklyMenu, now);
+}
 
 // ─── 菜品名 → foodDB 索引 ───────────────────────
 const BY_NAME = {};
@@ -74,8 +82,9 @@ function buildStudentWeek(studentId) {
   const store = todayNutritionStore[studentId] || {};
   const rnd = makeRnd(1000 + studentId * 7919);
   const days = [];
+  const menu = currentWeekMenu();   // 日期锚定到当前自然周
 
-  weeklyMenu.days.forEach((dayData, di) => {
+  menu.days.forEach((dayData, di) => {
     const meals = [];
     const dayUsed = new Set();   // 同一天内不重复同一道菜
 
@@ -162,7 +171,9 @@ function buildStudentWeek(studentId) {
     days.push({
       date: dayData.date,
       day: dayData.day,
-      weekday: dayData.day.replace('星期', '周'),
+      weekday: dayData.weekday || dayData.day.replace('星期', '周'),
+      dayLabel: dayData.dayLabel || '',
+      isToday: !!dayData.isToday,
       meals,
       totalCal: Math.round(sum('totalCal')),
       totalProtein: sum('totalProtein'),
@@ -174,8 +185,14 @@ function buildStudentWeek(studentId) {
 
   return {
     studentId,
-    week: weeklyMenu.week,
-    dateRange: weeklyMenu.dateRange,
+    studentName: profile.name || '',
+    week: menu.week,
+    weekNo: menu.weekNo,
+    dateRange: menu.dateRange,
+    startDate: menu.startDate,
+    endDate: menu.endDate,
+    updatedAt: menu.updatedAt,
+    sourceWeek: menu.sourceWeek,
     goalType: store.goalType || '均衡饮食',
     diet: profile.diet || '无限制',
     allergyList: profile.allergyList || [],
@@ -191,13 +208,16 @@ function buildStudentWeek(studentId) {
 }
 
 // ─── 内存存储（进程级缓存）──────────────────────
-const WEEK_STORE = {};   // studentId -> week 对象
+// 缓存按「日期 + 学生」区分：跨天后自动重建，保证日期始终与系统时间同步
+const WEEK_STORE = {};   // 'YYYY-MM-DD:studentId' -> week 对象
 const LOG_STORE = {};    // studentId -> [自记餐次]
 
 function getWeek(studentId) {
   const id = parseInt(studentId, 10);
-  if (!WEEK_STORE[id]) WEEK_STORE[id] = buildStudentWeek(id);
-  const week = WEEK_STORE[id];
+  const todayStr = cal.toDateStr(new Date());
+  const key = todayStr + ':' + id;
+  if (!WEEK_STORE[key]) WEEK_STORE[key] = buildStudentWeek(id);
+  const week = WEEK_STORE[key];
   // 合并「学生自己记的餐」
   const logs = LOG_STORE[id] || [];
   if (!logs.length) return week;
@@ -380,7 +400,12 @@ function computeWeekStats(studentId) {
 
   return {
     week: week.week,
+    weekNo: week.weekNo,
     dateRange: week.dateRange,
+    startDate: week.startDate,
+    endDate: week.endDate,
+    updatedAt: week.updatedAt,
+    sourceWeek: week.sourceWeek,
     goalType: week.goalType,
     diet: week.diet,
     allergyList: week.allergyList,
@@ -418,6 +443,7 @@ function buildMealDigest(studentId) {
 
 module.exports = {
   findDish,
+  currentWeekMenu,
   getWeek,
   addMeal,
   computeWeekStats,
