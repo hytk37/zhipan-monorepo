@@ -12,7 +12,8 @@
     "db:seed": "node scripts/seed.js --exec",
     "db:seed:file": "node scripts/seed.js --out=sql/seed-demo.sql --students=6 --days-summary=7",
     "db:test": "node scripts/db-smoke-test.js",
-    "share": "node scripts/share.js"
+    "share": "node scripts/share.js",
+    "pack:cloudbase": "node scripts/pack-cloudbase.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
