@@ -35,7 +35,7 @@ zhipan-monorepo/
 │   ├── repositories/               ← 数据库仓储打样（尚未接管运行时）
 │   └── scripts/                    ← smoke-test / preflight / seed / check-sql
 │
-├── admin/index.html                ← 管理大屏（单文件，Chart.js + 暗色主题）
+├── admin/index.html                ← 管理大屏（单文件，Chart.js + 暗色主题 + AI 运营洞察/报告导出）
 │
 ├── demo/                           ← 嘉宾扫码体验（手机网页版，零依赖免登录）
 │   ├── index.html                  ← 体验页：本周分析 / 追问 AI / 本周菜单 / 拍照记餐
@@ -101,7 +101,7 @@ AI: 未配置 Key（接口走规则模板降级，功能仍可用）
 | `npm run demo` | 同上（不开浏览器：`npm run share`） |
 | `npm run share` | 起服务 + 公网隧道（内网穿透），默认从 8080 起自动挑空闲端口 |
 | `npm run preflight` | **部署前自检**（目录 / 依赖 / AI 配置 / 密钥扫描 / 关键接口 / 演示地址）★ 上线前推荐跑 |
-| `npm test` | 接口冒烟测试（77 项断言，含 AI 与演示模式） |
+| `npm test` | 接口冒烟测试（92 项断言，含 AI、报表与演示模式） |
 | `npm run db:check` | MySQL schema 语法自检（无需数据库） |
 | `npm run db:seed:dry` | 种子数据 dry-run |
 
@@ -176,6 +176,10 @@ start-demo.bat --port 8090     # 指定端口
 | `POST /api/ai/meal-log` | 手动记一餐（同样过禁忌硬过滤） |
 | `GET /api/ai/candidates/:studentId` | 该生可吃的菜品候选（已过滤禁忌） |
 | `GET /api/ai/status` · `/api/ai/usage` | AI 配置状态与 token 用量 |
+| `GET /api/report/daily` | **食堂运营报告**（指标 / 营养对比 / 纤维分档 / 30 日趋势 / 菜品结构 / 重点关注 + AI 洞察） |
+| `GET /api/report/daily.csv` | 同上，**CSV 附件下载**（带 BOM，Excel 直接打开）`?noai=1` 只出数据 |
+| `GET /api/ai/admin/insight` | **管理视角 AI 洞察**（全校数据 → 亮点 / 风险与处置 / 建议动作，6 小时缓存） |
+| `POST /api/ai/admin/ask` | 管理端追问（基于同一份运营数据，如「纤维达标率为什么偏低」） |
 | `GET /api/demo/config` · `/api/demo/qr.png` · `/api/demo/ping` | 演示配置 / 二维码 / 健康检查（二维码用 `?target=admin` 可切到管理后台） |
 | `GET /api/menu/week` | 本周菜单（日期跟随当前自然周自动同步） |
 

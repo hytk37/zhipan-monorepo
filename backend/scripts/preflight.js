@@ -158,6 +158,14 @@ function bad(name, extra) { fail++; problems.push(name + (extra ? ' — ' + extr
     (t, r) => String(t).indexOf('PNG') >= 0 || (r.headers.get('content-type') || '').indexOf('image/png') >= 0);
   await probe('管理大屏 /admin', '/admin', (t) => String(t).indexOf('<html') >= 0);
   await probe('周健康分析 /api/ai/health/week/0', '/api/ai/health/week/0', (j) => j && typeof j.score === 'number' && j.analysis);
+  await probe('运营报告 /api/report/daily（纯数据）', '/api/report/daily?noai=1',
+    (j) => j && j.ok && j.report && j.report.kpi && j.report.kpi.studentCount > 0);
+  await probe('报告 CSV 下载 /api/report/daily.csv', '/api/report/daily.csv?noai=1',
+    (t, r) => (r.headers.get('content-type') || '').indexOf('text/csv') >= 0
+      && (r.headers.get('content-disposition') || '').indexOf('attachment') >= 0
+      && String(t).indexOf('【一、关键指标】') >= 0);
+  await probe('管理 AI 洞察 /api/ai/admin/insight', '/api/ai/admin/insight',
+    (j) => j && j.ok && j.insight && j.insight.summary);
   await probe('本周菜单 /api/menu/week', '/api/menu/week', (j) => j && j.days && j.days.length);
   await probe('本周用餐记录 /api/ai/week-meals/0', '/api/ai/week-meals/0', (j) => j && j.week && j.stats);
 

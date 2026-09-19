@@ -9,6 +9,8 @@
 //   POST /api/ai/recognize-meal
 //   POST /api/ai/meal-log
 //   GET  /api/ai/candidates/:studentId
+//   GET  /api/ai/admin/insight        食堂运营 AI 洞察（管理视角，全校数据）
+//   POST /api/ai/admin/ask            针对运营数据追问（管理视角）
 // 设计边界：评分与营养数值来自确定性代码；AI 只负责解释与表达
 
 const { Router } = require('express');
@@ -17,6 +19,7 @@ const router = Router();
 const weekHealth = require('../services/ai/weekHealth');
 const coach = require('../services/ai/coach');
 const recognize = require('../services/ai/recognize');
+const adminInsight = require('../services/ai/adminInsight');
 const client = require('../services/ai/client');
 const weekMeals = require('../services/weekMeals');
 const { describe } = require('../config/deepseek');
@@ -115,6 +118,42 @@ router.get('/ai/candidates/:studentId', (req, res) => {
     total: names.length,
     names,
   });
+});
+
+// ─── 管理后台：食堂运营 AI 洞察 ──────────────────
+// 与 /api/report/daily 共用同一份数据与缓存，不会重复调用模型
+router.get('/ai/admin/insight', async (req, res) => {
+  const refresh = req.query.refresh === '1' || req.query.refresh === 'true';
+  try {
+    const r = await adminInsight.buildInsight({ refresh: refresh });
+    res.json({
+      ok: true,
+      source: r.source,
+      cached: !!r.cached,
+      configured: !!r.configured,
+      aiError: r.aiError || null,
+      ms: r.ms || 0,
+      generatedAt: r.generatedAt,
+      insight: r.insight,
+    });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message || 'insight_failed' });
+  }
+});
+
+// ─── 管理后台：针对运营数据追问 ──────────────────
+router.post('/ai/admin/ask', async (req, res) => {
+  const question = (req.body && req.body.question) || '';
+  try {
+    const r = await adminInsight.askAdmin(question);
+    if (!r.ok) {
+      const code = r.error === 'empty_question' ? 400 : r.error === 'too_long' ? 400 : 500;
+      return res.status(code).json({ ok: false, error: r.error });
+    }
+    res.json({ ok: true, answer: r.answer, source: r.source, aiError: r.aiError || null });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message || 'ask_failed' });
+  }
 });
 
 module.exports = router;

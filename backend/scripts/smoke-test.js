@@ -26,6 +26,7 @@ function request(port, method, urlPath, body, token, extraHeaders) {
       res.on('end', () => resolve({
         code: res.statusCode,
         body: buf,
+        headers: res.headers,
         json: (() => { try { return JSON.parse(buf); } catch (e) { return null; } })(),
       }));
     });
@@ -166,6 +167,46 @@ function expect(name, res, code, extra) {
   expect('GET  /api/ai/usage token 用量', await request(port, 'GET', '/api/ai/usage'), 200,
     (r) => !!(r.json && r.json.today));
 
+  // ── 管理后台：运营报表（routes/report.js）──
+  // 说明：管理洞察会走真实 AI（约数秒），无 Key 时自动降级，两种都应 200
+  expect('GET  /api/report/daily 运营报告（不含 AI，纯数据）',
+    await request(port, 'GET', '/api/report/daily?noai=1'), 200,
+    (r) => !!(r.json && r.json.ok && r.json.report && r.json.report.kpi.studentCount > 0 && r.json.insight === null));
+  expect('GET  /api/report/daily 报告含全部章节',
+    await request(port, 'GET', '/api/report/daily?noai=1'), 200,
+    (r) => {
+      const p = r.json.report;
+      return !!(p.nutrition.items.length === 5 && p.fiber.total > 0 && typeof p.trend.calChangePct === 'number'
+        && p.dishes.total > 0 && p.focusStudents.length > 0 && p.menu && p.disclaimer);
+    });
+  expect('GET  /api/report/daily 报告数字由代码计算（引用真实规模）',
+    await request(port, 'GET', '/api/report/daily?noai=1'), 200,
+    (r) => r.json.report.kpi.recordCount > 100000 && r.json.report.nutrition.fiberOkRate === 56);
+  expect('GET  /api/report/daily 含 AI 洞察（无 Key 时降级）',
+    await request(port, 'GET', '/api/report/daily'), 200,
+    (r) => {
+      const i = r.json.insight;
+      return !!(i && i.insight && i.insight.summary && i.insight.highlights.length
+        && i.insight.risks.length && i.insight.actions.length && (i.source === 'ai' || !!i.aiError));
+    });
+  expect('GET  /api/report/daily.csv CSV 附件可下载',
+    await request(port, 'GET', '/api/report/daily.csv?noai=1'), 200,
+    (r) => !!(r.headers && String(r.headers['content-type']).indexOf('text/csv') >= 0
+      && String(r.headers['content-disposition']).indexOf('attachment') >= 0));
+  expect('GET  /api/report/daily.csv 内容含全部章节',
+    await request(port, 'GET', '/api/report/daily.csv?noai=1'), 200,
+    (r) => ['【一、关键指标】', '【二、营养供给', '【三、膳食纤维', '【四、近 30 日趋势】',
+      '【五、菜品供给结构】', '【六、重点关注学生', '【说明】'].every((s) => r.body.indexOf(s) >= 0));
+  expect('GET  /api/ai/admin/insight 管理洞察接口',
+    await request(port, 'GET', '/api/ai/admin/insight'), 200,
+    (r) => !!(r.json && r.json.ok && r.json.insight && r.json.insight.summary
+      && (r.json.source === 'ai' || r.json.source === 'fallback')));
+  expect('POST /api/ai/admin/ask 管理端追问',
+    await request(port, 'POST', '/api/ai/admin/ask', { question: '纤维达标率为什么偏低？' }), 200,
+    (r) => !!(r.json && r.json.ok && typeof r.json.answer === 'string' && r.json.answer.length > 10));
+  expect('POST /api/ai/admin/ask 空问题应 400',
+    await request(port, 'POST', '/api/ai/admin/ask', { question: '' }), 400);
+
   // ── routes/demo.js（嘉宾扫码体验）──
   // 注意：前面的管理员「批量导入学生」用例会往 studentProfiles 里加人，
   // 所以这里只校验「至少 6 位体验身份」，不写死数量
@@ -196,6 +237,30 @@ function expect(name, res, code, extra) {
   expect('GET  /api/demo/config localhost 访问时回退局域网',
     await request(port, 'GET', '/api/demo/config', null, null, { host: 'localhost:3000' }), 200,
     (r) => r.json.mode === 'lan' && /^http:\/\/\d+\.\d+\.\d+\.\d+:/.test(r.json.demoUrl));
+
+  // ── 运行期公网地址覆盖（内网穿透）──
+  // 解决：「用局域网地址打开投屏页 → 二维码编码成内网地址 → 嘉宾用流量扫不开」
+  expect('POST /api/demo/base-url 本机写入公网地址',
+    await request(port, 'POST', '/api/demo/base-url', { url: 'https://demo-test-abc.trycloudflare.com' }, null, { host: 'localhost' }), 200,
+    (r) => !!(r.json && r.json.ok === true));
+  expect('GET  /api/demo/config 二维码改用公网地址（覆盖请求域名）',
+    await request(port, 'GET', '/api/demo/config', null, null, { host: 'localhost:3000' }), 200,
+    (r) => r.json.demoUrl === 'https://demo-test-abc.trycloudflare.com/demo'
+      && r.json.adminUrl === 'https://demo-test-abc.trycloudflare.com/admin'
+      && r.json.baseUrlSource === '内网穿透' && r.json.mode === 'cloud');
+  expect('POST /api/demo/base-url 非法地址应 400',
+    await request(port, 'POST', '/api/demo/base-url', { url: 'not a url' }, null, { host: 'localhost' }), 400,
+    (r) => !!(r.json && r.json.error === 'invalid_url'));
+  expect('POST /api/demo/base-url 经转发调用应 403',
+    await request(port, 'POST', '/api/demo/base-url', { url: 'https://evil.example.com' }, null,
+      { host: 'localhost', 'x-forwarded-host': 'evil.example.com' }), 403,
+    (r) => !!(r.json && r.json.error === 'local_only'));
+  expect('DELETE /api/demo/base-url 可清除',
+    await request(port, 'DELETE', '/api/demo/base-url', null, null, { host: 'localhost' }), 200,
+    (r) => !!(r.json && r.json.cleared === true));
+  expect('GET  /api/demo/config 清除后回到局域网',
+    await request(port, 'GET', '/api/demo/config', null, null, { host: 'localhost:3000' }), 200,
+    (r) => r.json.mode === 'lan' && r.json.baseUrlSource !== '内网穿透');
 
   // ── 静态托管与兜底 ──
   expect('GET  /admin 管理后台页面', await request(port, 'GET', '/admin'), 200, (r) => r.body.indexOf('<html') >= 0);
