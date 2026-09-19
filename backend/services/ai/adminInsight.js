@@ -45,6 +45,14 @@ function fallbackInsight(report) {
   const fiberItem = items.filter((i) => i.name === '膳食纤维')[0] || {};
 
   const trendWord = t.calChangePct >= 0 ? '微升' : '微降';
+  const friedRate = (report.dishes && report.dishes.friedRate) || 0;
+  // 按实际比例生成措辞，避免出现「已经把 14% 压缩到 20% 以内」这种不合逻辑的句子
+  const friedLine = friedRate > 20
+    ? '把重油做法占比从当前的 ' + friedRate + '% 压缩到 20% 以内，并增设清蒸/白灼窗口'
+    : '重油做法占比 ' + friedRate + '%（低于 20% 控制线），把其中的高脂菜品替换为清蒸/白灼做法';
+  const friedRisk = friedRate > 20
+    ? '建议压到 20% 以内并增设清蒸/白灼窗口'
+    : '占比不高但仍是脂肪超标的主要来源，建议把其中的高脂菜品替换为清蒸/白灼做法';
 
   return {
     summary: '本周日均就餐 ' + k.mealCount + ' 人次，营养记录覆盖率 ' + k.nutritionCoverage + '%。'
@@ -69,7 +77,7 @@ function fallbackInsight(report) {
       {
         title: '脂肪偏高',
         detail: '脂肪超标人群占比 ' + n.fatOverRate + '%，供给端脂肪达推荐的 ' + ((items.filter((i) => i.name === '脂肪')[0] || {}).actual || '—') + '%。',
-        action: '重油菜（炸/干锅/红烧类）占比目前 ' + (report.dishes && report.dishes.friedRate) + '%，建议压到 20% 以内并增设清蒸/白灼窗口。',
+        action: friedRisk,
       },
       {
         title: '蛋白不足',
@@ -80,7 +88,7 @@ function fallbackInsight(report) {
     actions: [
       '午晚餐各固定增加 1 道深色蔬菜，价格维持在低价档',
       '主食窗口新增杂粮饭/蒸红薯，与白米饭同价',
-      '把重油做法占比从当前 ' + (report.dishes && report.dishes.friedRate) + '% 压缩到 20% 以内',
+      friedLine,
       '为过敏与特殊饮食学生设置专用窗口或明确标识',
       '每周按纤维达标率复盘一次菜单调整效果',
     ],

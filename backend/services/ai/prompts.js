@@ -240,7 +240,10 @@ function buildAdminCoachContext(report) {
     '重点问题：人均热量 ' + n.avgCal + '/' + n.avgCalRec + ' kcal（' + n.avgCalStatus + '）；脂肪超标人群 ' + n.fatOverRate + '%；纤维达标率 ' + n.fiberOkRate + '%（人均 ' + n.fiberAvg + '/' + n.fiberRec + ' g）',
     '纤维分档：' + ((report.fiber && report.fiber.labels) || []).join('｜'),
     '近7日 vs 前7日：热量 ' + t.last7AvgCal + ' vs ' + t.prev7AvgCal + ' kcal（' + t.calChangePct + '%），纤维 ' + t.last7AvgFiber + ' vs ' + t.prev7AvgFiber + ' g（' + t.fiberChangePct + '%）',
-    '菜品结构：' + ((report.dishes && report.dishes.items) || []).map((i) => i.cat + ' ' + i.count + ' 道').join('、') + '；高蛋白 ' + (report.dishes && report.dishes.highProtein) + ' 道；重油 ' + (report.dishes && report.dishes.fried) + ' 道',
+    '菜品结构：' + ((report.dishes && report.dishes.items) || []).map((i) => i.cat + ' ' + i.count + ' 道').join('、')
+      + '；高蛋白 ' + (report.dishes && report.dishes.highProtein) + ' 道（占 ' + (report.dishes && report.dishes.highProteinRate) + '%）'
+      + '；重油做法 ' + (report.dishes && report.dishes.fried) + ' 道（占 ' + (report.dishes && report.dishes.friedRate) + '%）'
+      + '；清淡素菜 ' + (report.dishes && report.dishes.lightVeg) + ' 道',
     '重点关注学生（抽样）：' + ((report.focusStudents || []).slice(0, 6).map((s) => s.name + '(' + s.college + '，' + s.issues.slice(0, 2).join('/') + ')').join('；') || '无'),
   ].join('\n');
 }
