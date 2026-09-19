@@ -166,6 +166,24 @@ function expect(name, res, code, extra) {
   expect('GET  /api/ai/usage token 用量', await request(port, 'GET', '/api/ai/usage'), 200,
     (r) => !!(r.json && r.json.today));
 
+  // ── routes/demo.js（嘉宾扫码体验）──
+  // 注意：前面的管理员「批量导入学生」用例会往 studentProfiles 里加人，
+  // 所以这里只校验「至少 6 位体验身份」，不写死数量
+  expect('GET  /api/demo/config 演示配置', await request(port, 'GET', '/api/demo/config'), 200,
+    (r) => !!(r.json && r.json.demoUrl && Array.isArray(r.json.personas) && r.json.personas.length >= 6));
+  expect('GET  /api/demo/config 体验链接指向 /demo', await request(port, 'GET', '/api/demo/config'), 200,
+    (r) => /\/demo$/.test(r.json.demoUrl));
+  expect('GET  /api/demo/ping 保活接口', await request(port, 'GET', '/api/demo/ping'), 200,
+    (r) => !!(r.json && r.json.ok === true));
+  expect('GET  /api/demo/qr.png 二维码为 PNG', await request(port, 'GET', '/api/demo/qr.png?size=240'), 200,
+    (r) => r.body.indexOf('PNG') >= 0 && r.body.indexOf('IHDR') >= 0);
+  expect('GET  /api/demo/qr.svg 矢量二维码', await request(port, 'GET', '/api/demo/qr.svg'), 200,
+    (r) => r.body.indexOf('<svg') >= 0);
+  expect('GET  /demo 扫码体验页', await request(port, 'GET', '/demo'), 200,
+    (r) => r.body.indexOf('智慧膳系统') >= 0 && r.body.indexOf('本周饮食健康分析') >= 0);
+  expect('GET  /demo/qr.html 投屏二维码页', await request(port, 'GET', '/demo/qr.html'), 200,
+    (r) => r.body.indexOf('扫码打开体验版') >= 0);
+
   // ── 静态托管与兜底 ──
   expect('GET  /admin 管理后台页面', await request(port, 'GET', '/admin'), 200, (r) => r.body.indexOf('<html') >= 0);
   expect('GET  /admin/ 管理后台页面', await request(port, 'GET', '/admin/'), 200, (r) => r.body.indexOf('<html') >= 0);

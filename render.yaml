@@ -1,0 +1,51 @@
+# ============================================
+# Render 部署蓝图（Blueprint）
+# ============================================
+# 用法：把本仓库推到 GitHub → Render 控制台 New → Blueprint → 选择仓库
+# 它会按下面的配置自动创建服务；DEEPSEEK_API_KEY 需在控制台手动填（不会进仓库）
+#
+# 说明：
+#   rootDir 保持仓库根目录，因为后端要用到同级的 admin/（管理大屏）与 demo/（扫码体验页）
+#   启动命令直接跑 backend/api-server.js，端口读取 platform 注入的 PORT（已兼容）
+#   健康检查用 /api/demo/ping，同时也能用外部监控定时访问防止免费实例休眠
+#
+# 若 Render 提示 runtime 字段不支持（老版控制台）：把 runtime: node 改成 env: node
+
+services:
+  - type: web
+    name: zhipan-smart-canteen
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: cd backend && npm install --omit=dev
+    startCommand: node backend/api-server.js
+    healthCheckPath: /api/demo/ping
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22.22.2"
+
+      # ── AI 能力（不填 Key 时接口自动降级到规则模板，页面不会报错）──
+      - key: DEEPSEEK_API_KEY
+        sync: false                      # 在 Render 控制台 Environment 里手填
+      - key: AI_MODEL_FLASH
+        value: deepseek-flash
+      - key: AI_MODEL_PRO
+        value: deepseek-v4-pro
+      - key: AI_ENABLED
+        value: "true"
+      - key: AI_MAX_CONCURRENCY
+        value: "4"
+      - key: AI_TIMEOUT_MS
+        value: "25000"
+      - key: AI_DAILY_TOKEN_BUDGET
+        value: "800000"
+
+      # 二维码地址：留空时自动用 Render 注入的 RENDER_EXTERNAL_URL
+      - key: PUBLIC_BASE_URL
+        value: ""
+
+      # 加一把管理后台的锁（可选，见 middleware/auth.js）
+      - key: ADMIN_SECRET_TOKEN
+        sync: false

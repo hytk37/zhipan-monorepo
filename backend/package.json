@@ -15,9 +15,13 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "mysql2": "^3.24.4"
+    "mysql2": "^3.24.4",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "node-sql-parser": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
