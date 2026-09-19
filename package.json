@@ -1,0 +1,20 @@
+{
+  "name": "zhipan-monorepo",
+  "version": "2.1.0",
+  "private": true,
+  "description": "智慧膳系统（高校食堂营养分析与 AI 推荐）— monorepo 根声明",
+  "//说明": [
+    "本文件只为「buildpack 构建方式」服务：Koyeb / Heroku 的 Node buildpack 要求仓库根存在 package.json 才能识别 Node 项目。",
+    "用 Dockerfile 构建时本文件不参与（镜像内直接装 backend 依赖）。",
+    "本地开发仍然进入 backend/ 目录操作，不受影响：cd backend && npm start"
+  ],
+  "scripts": {
+    "postinstall": "cd backend && npm install --omit=dev --no-audit --no-fund",
+    "start": "node backend/api-server.js",
+    "preflight": "cd backend && node scripts/preflight.js",
+    "test": "cd backend && node scripts/smoke-test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,31 @@
+# 构建镜像时排除的内容（保持镜像精简，并确保密钥绝不进镜像）
+# ⚠️ 注意：不要把 .dockerignore 里的 .env 规则删掉，否则本地密钥会被打进镜像
+
+# 依赖（镜像内重新安装）
+node_modules
+**/node_modules
+
+# Git 与仓库元数据
+.git
+.git-rewrite
+.gitattributes
+.github
+
+# 🔐 密钥与运行时数据（绝不能进镜像）
+**/.env
+**/.env.local
+**/.env.*.local
+backend/.data
+
+# 不需要进容器的部分
+miniapp
+*.md
+产物
+.workbuddy
+.vscode
+.idea
+
+# 杂项
+**/*.log
+**/.DS_Store
+**/Thumbs.db

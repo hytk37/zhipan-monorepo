@@ -101,21 +101,37 @@ AI: 未配置 Key（接口走规则模板降级，功能仍可用）
 
 ## 四、部署到云端（嘉宾任意网络扫码体验）
 
-仓库根目录已有 `render.yaml`，用 Render 部署只需三步：
+仓库根目录已备好容器化与平台配置文件：`Dockerfile`、`.dockerignore`、`Procfile`、`package.json`（根）、`render.yaml`。
 
-1. 把本仓库推到 GitHub
-2. Render 控制台 → **New → Blueprint** → 选择本仓库（自动读取 `render.yaml`）
-3. 在服务的 **Environment** 里填 `DEEPSEEK_API_KEY`（不填也能跑）
+### Koyeb（推荐）
+
+1. 把仓库推到 GitHub（已完成）
+2. Koyeb 控制台 → **Create Service** → **GitHub** → 选本仓库，分支 `main`
+3. 关键配置：
+
+| 配置区 | 字段 | 值 |
+|---|---|---|
+| Builder | Builder | **Dockerfile**（仓库根，无需改路径） |
+| Instance | Instance type | **Free** |
+| Regions | Region | **Singapore** |
+| Exposed ports | Port | **8000**（与 Dockerfile 一致；应用始终跟随平台注入的 `PORT`） |
+| Health check | Path | **`/api/demo/ping`** |
+| Environment variables | `DEEPSEEK_API_KEY` | 你的密钥（类型选 Secret；不填也能跑） |
 
 部署完成后：
 
-- 体验页：`https://你的域名/demo`
-- 投屏二维码：`https://你的域名/demo/qr.html`
-- 地址优先级：`PUBLIC_BASE_URL` > `RENDER_EXTERNAL_URL`（平台自动注入）> 局域网 IP
+- 体验页 `https://你的域名.koyeb.app/demo`
+- 投屏二维码 `https://你的域名.koyeb.app/demo/qr.html`
+- 地址优先级：`PUBLIC_BASE_URL` > `KOYEB_PUBLIC_DOMAIN`（平台自动注入）> `RENDER_EXTERNAL_URL` > 局域网 IP
 
-> ⚠️ 免费实例 15 分钟无访问会休眠，冷启动 30–60 秒。
-> 演示前先打开一次预热，或用监控每 10 分钟访问 `/api/demo/ping` 保活。
-> 完整步骤、现场检查清单与风险预案见 `产物/AI功能设计/演示方案-嘉宾扫码体验.md`。
+> Koyeb 免费实例闲置 **1 小时**才缩容到 0，唤醒仅 **1–5 秒**，演示基本无感。
+> 演示前 1 分钟打开一次 `/api/demo/ping` 预热即可。
+> 完整步骤、现场检查清单与排查表见 `产物/AI功能设计/上线操作手册.md`。
+
+### Render（备选）
+
+仓库里也有 `render.yaml`，Render 控制台 **New → Blueprint** 选本仓库即可。
+注意 Render 免费实例 15 分钟休眠、冷启动 30–60 秒，演示前需提前预热或用监控保活。
 
 ---
 
