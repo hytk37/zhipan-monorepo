@@ -78,6 +78,11 @@ AI: 未配置 Key（接口走规则模板降级，功能仍可用）
 
 把 DeepSeek API Key 填到 `backend/.env` 的 `DEEPSEEK_API_KEY=`（文件可从 `.env.example` 复制）。
 **不填也能完整演示** —— 所有 AI 能力自动降级为规则模板，页面不会报错。
+
+> ⚠️ **不要**把 Key 填进 `.env.example`！那个文件会被提交到 GitHub，
+> 一旦提交密钥就泄露了，GitHub 还会直接拒绝推送（push protection）。
+> 首次使用先执行：`copy .env.example .env`（Windows）/ `cp .env.example .env`
+
 详见 `产物/AI功能设计/AI配置说明.md`。
 
 ---
