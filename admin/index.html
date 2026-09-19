@@ -1631,12 +1631,14 @@ document.getElementById('ai-close').addEventListener('click', function(){
 });
 
 // ===== 登录功能 =====
-// 自动检测：如果当前页面是通过 http:// 打开的（即通过 /admin 路由），
-// 就用当前主机地址；否则回退到配置的局域网 IP
+// 大屏页面本身由后端静态托管，所以接口地址 = 当前页面的源（协议+主机+端口）。
+// ⚠️ 不能写成「主机名 + :3000」：内网穿透 / 云托管都是 443 端口（地址里不带端口），
+//    那样会把请求打到不存在的 :3000，登录时表现为「服务器连接失败，请确保后端已启动」。
+//    用 location.origin 后：localhost:3000、localhost:8080、隧道域名、云托管默认域名全都自适应。
 const loc = window.location;
 const API_BASE = (loc.protocol === 'http:' || loc.protocol === 'https:')
-  ? loc.protocol + '//' + loc.hostname + ':3000'
-  : 'http://localhost:3000';
+  ? loc.origin
+  : 'http://localhost:3000';   // 仅当直接以 file:// 打开本地文件时的兜底
 let adminToken = localStorage.getItem('adminToken') || '';
 
 // 密码框回车登录

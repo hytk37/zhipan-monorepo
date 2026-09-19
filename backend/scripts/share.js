@@ -6,10 +6,14 @@
 //       嘉宾用任意网络扫码即可访问（无需备案、无需账号、无需买服务器）。
 //
 // 用法：
-//   node scripts/share.js              # 启动服务 + 开隧道（默认端口 3000）
-//   node scripts/share.js --port 8080  # 换个端口
-//   node scripts/share.js --no-server  # 服务已在运行，只开隧道
-//   node scripts/share.js --local      # 不开隧道，只启动服务并打印本机演示地址（离线检查用）
+//   node scripts/share.js                 # 自动挑一个空闲端口（从 8080 起，避开 3000）
+//   node scripts/share.js --port 8090     # 手动指定端口（被占用会明确报错）
+//   node scripts/share.js --no-server     # 服务已在运行，只开隧道
+//   node scripts/share.js --local         # 不开隧道，只启动服务并打印本机演示地址
+//
+// 端口说明：
+//   默认**不使用 3000**，而是从 8080 起找一个空闲端口，避免与本地其他项目冲突；
+//   若该端口已在跑本项目服务，则直接复用，不会重复启动。
 //
 // 说明：cloudflared 会从 Cloudflare 官方 GitHub Release 下载到 backend/.tools/
 //       （仅首次需要，约 50MB；已存在则直接复用）
@@ -18,16 +22,20 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const https = require('https');
-const { spawn, spawnSync } = require('child_process');
+const net = require('net');
+const { spawn } = require('child_process');
 
 const args = process.argv.slice(2);
 function argVal(name, def) {
   const i = args.indexOf(name);
   return i >= 0 && args[i + 1] ? args[i + 1] : def;
 }
-const PORT = parseInt(argVal('--port', process.env.PORT || '3000'), 10);
-const NO_SERVER = args.indexOf('--no-server') >= 0;
-const LOCAL_ONLY = args.indexOf('--local') >= 0;
+function hasFlag(name) { return args.indexOf(name) >= 0; }
+
+const NO_SERVER = hasFlag('--no-server');
+const LOCAL_ONLY = hasFlag('--local');
+const PORT_START = 8080;   // 自动挑端口的起点（避开 3000）
+const PORT_MAX = 8120;
 
 const BACKEND = path.join(__dirname, '..');
 const TOOLS = path.join(BACKEND, '.tools');
@@ -39,23 +47,63 @@ const CF_URL = process.platform === 'win32'
 function log(msg) { console.log(msg); }
 function line() { console.log('──────────────────────────────────────────────'); }
 
-function pingServer() {
+/** 本项目服务是否已在该端口运行（用保活接口探测，避免误判其他程序） */
+function serverResponds(port, timeoutMs) {
   return new Promise((resolve) => {
-    const req = http.request({ host: '127.0.0.1', port: PORT, method: 'GET', path: '/api/demo/ping' }, (res) => {
-      const chunks = [];
-      res.on('data', (c) => chunks.push(c));
-      res.on('end', () => resolve(res.statusCode === 200));
+    const req = http.request({ host: '127.0.0.1', port, method: 'GET', path: '/api/demo/ping', timeout: timeoutMs || 1200 }, (res) => {
+      res.resume();
+      resolve(res.statusCode === 200);
     });
     req.on('error', () => resolve(false));
+    req.on('timeout', () => { req.destroy(); resolve(false); });
     req.end();
   });
 }
 
-function waitServer(timeoutMs) {
+/** 端口是否空闲 */
+function portFree(port) {
+  return new Promise((resolve) => {
+    const srv = net.createServer();
+    srv.once('error', () => resolve(false));
+    srv.once('listening', () => srv.close(() => resolve(true)));
+    srv.listen(port, '127.0.0.1');
+  });
+}
+
+/**
+ * 决定用哪个端口：
+ *   · 显式给了 --port / PORT 环境变量 → 用它（被别的程序占用则报错退出）
+ *   · 否则从 8080 起找空闲端口（默认避开 3000）；该端口已在跑本项目服务则复用
+ */
+async function resolvePort() {
+  const explicit = hasFlag('--port')
+    ? parseInt(argVal('--port', ''), 10)
+    : (process.env.PORT ? parseInt(process.env.PORT, 10) : null);
+
+  if (explicit) {
+    if (await serverResponds(explicit)) return { port: explicit, reuse: true };
+    if (!(await portFree(explicit))) {
+      log('  ✗ 端口 ' + explicit + ' 已被其他程序占用。');
+      log('    换个端口：npm run share -- --port ' + (explicit + 1) + '    （或不带 --port，自动选择）');
+      process.exit(1);
+    }
+    return { port: explicit, reuse: false, explicit: true };
+  }
+
+  for (let p = PORT_START; p <= PORT_MAX; p++) {
+    if (await serverResponds(p)) return { port: p, reuse: true, auto: true };
+    if (await portFree(p)) return { port: p, reuse: false, auto: true };
+  }
+  log('  ✗ ' + PORT_START + '-' + PORT_MAX + ' 之间没有空闲端口。');
+  log('    请手动指定：npm run share -- --port 9000');
+  process.exit(1);
+}
+
+function waitServer(port, timeoutMs) {
   const t0 = Date.now();
   return new Promise((resolve) => {
     (function tick() {
-      pingServer().then((ok) => {
+      serverResponds(port).then((ok) => {
         if (ok) return resolve(true);
         if (Date.now() - t0 > timeoutMs) return resolve(false);
         setTimeout(tick, 400);
@@ -83,8 +131,7 @@ function download(url, dest) {
         received += c.length;
         if (Date.now() - lastPrint > 1500) {
           lastPrint = Date.now();
-          const mb = (received / 1048576).toFixed(1);
-          process.stdout.write('\r  下载中 ' + mb + ' MB' + (total ? ' / ' + (total / 1048576).toFixed(1) + ' MB' : '') + '   ');
+          process.stdout.write('\r  下载中 ' + (received / 1048576).toFixed(1) + ' MB' + (total ? ' / ' + (total / 1048576).toFixed(1) + ' MB' : '') + '   ');
         }
       });
       res.pipe(file);
@@ -100,33 +147,41 @@ function download(url, dest) {
   log('  智慧膳系统 · 一键公网演示地址');
   line();
 
-  // ① 本地服务
+  // ① 本地服务与端口
   let child = null;
-  let alreadyUp = await pingServer();
-  if (alreadyUp) {
-    log('  ① 本地服务已在运行（端口 ' + PORT + '），直接复用');
-  } else if (NO_SERVER) {
-    log('  ① 指定 --no-server，但端口 ' + PORT + ' 上没检测到服务 —— 请先启动：npm start');
-    process.exit(1);
-  } else {
-    log('  ① 正在启动本地服务（端口 ' + PORT + '）…');
-    child = spawn(process.execPath, [path.join(BACKEND, 'api-server.js')], {
-      cwd: BACKEND,
-      env: Object.assign({}, process.env, { PORT: String(PORT) }),
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    child.stdout.on('data', () => {});
-    child.stderr.on('data', (d) => process.stderr.write(d));
-    const ok = await waitServer(15000);
-    if (!ok) {
-      log('     ✗ 服务启动失败，请先在 backend/ 目录手动执行 npm start 看看报错');
-      if (child) child.kill();
+  let PORT;
+  if (NO_SERVER) {
+    PORT = parseInt(argVal('--port', process.env.PORT || String(PORT_START)), 10);
+    if (!(await serverResponds(PORT, 2000))) {
+      log('  ① 指定了 --no-server，但端口 ' + PORT + ' 上没有检测到本项目服务。');
+      log('    请先启动（cd backend && npm start），或去掉 --no-server 让脚本自己启动');
       process.exit(1);
     }
-    log('     ✓ 服务已就绪');
+    log('  ① 复用已在运行的服务（端口 ' + PORT + '）');
+  } else {
+    const picked = await resolvePort();
+    PORT = picked.port;
+    if (picked.reuse) {
+      log('  ① 复用已在运行的服务（端口 ' + PORT + '）');
+    } else {
+      log('  ① 正在启动本地服务（端口 ' + PORT + (picked.auto ? '，已自动避开 3000' : '') + '）…');
+      child = spawn(process.execPath, [path.join(BACKEND, 'api-server.js')], {
+        cwd: BACKEND,
+        env: Object.assign({}, process.env, { PORT: String(PORT) }),
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      child.stdout.on('data', () => {});
+      child.stderr.on('data', (d) => process.stderr.write(d));
+      if (!(await waitServer(PORT, 15000))) {
+        log('     ✗ 服务启动失败，请手动执行 cd backend && npm start 看看报错');
+        if (child) child.kill();
+        process.exit(1);
+      }
+      log('     ✓ 服务已就绪');
+    }
   }
 
-  // ② 本机演示地址（局域网模式）
+  // ② 本机演示地址
   const cfgLocal = JSON.parse(await new Promise((resolve, reject) => {
     http.get({ host: '127.0.0.1', port: PORT, path: '/api/demo/config' }, (res) => {
       const chunks = [];
@@ -177,6 +232,7 @@ function download(url, dest) {
   const tunnel = spawn(CF_BIN, ['tunnel', '--url', 'http://localhost:' + PORT, '--no-autoupdate'], {
     stdio: ['ignore', 'pipe', 'pipe'],
   });
+  tunnelRef = tunnel;
 
   let publicUrl = null;
   let buffer = '';
@@ -186,7 +242,7 @@ function download(url, dest) {
     if (m && !publicUrl) {
       publicUrl = m[0];
       line();
-      log('  ✅ 公网演示地址已生成');
+      log('  ✅ 公网演示地址已生成（本地端口 ' + PORT + '）');
       log('');
       log('     体验页  : ' + publicUrl + '/demo');
       log('     投屏页  : ' + publicUrl + '/demo/qr.html   ← 打开这个投屏，二维码会指向公网地址');
@@ -199,8 +255,6 @@ function download(url, dest) {
   };
   tunnel.stdout.on('data', onData);
   tunnel.stderr.on('data', onData);
-
-  tunnelRef = tunnel;
 
   setTimeout(() => {
     if (!publicUrl) {
