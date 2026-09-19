@@ -149,8 +149,9 @@ function startServer(port) {
       const demoInfo = require('./services/demoInfo');
       const cfg = demoInfo.demoConfig(actual, require('./models/data').studentProfiles);
       console.log('  ------------------------------------------------');
-      console.log('  📱 嘉宾扫码体验: ' + cfg.demoUrl + '  [' + cfg.modeLabel + ']');
-      console.log('  🖥  投屏用二维码页: ' + cfg.projectorUrl);
+      console.log('  📱 学生端体验页  : ' + cfg.demoUrl + '  [' + cfg.modeLabel + ']');
+      console.log('  🖥  管理后台大屏  : ' + cfg.adminUrl);
+      console.log('  🔳 投屏二维码页  : ' + cfg.projectorUrl + '   （页面上有 学生端 + 管理后台 两个二维码）');
       if (cfg.mode === 'lan' && !addrsHintPrinted) {
         console.log('  ⚠️  局域网模式：嘉宾手机需连同一个 WiFi；打不开请检查防火墙放行 ' + actual + ' 端口');
         addrsHintPrinted = true;

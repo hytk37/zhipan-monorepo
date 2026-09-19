@@ -2,7 +2,9 @@
 
 高校食堂**营养分析与 AI 推荐**系统。以真实食堂周食谱为基础，把学生一周吃过的菜品换算成营养数据，用 DeepSeek 生成可读的健康分析与改进建议，并同步呈现在学生端、后厨端与管理大屏。
 
-> 演示入口：`/demo`（手机体验版，免登录）· 投屏二维码：`/demo/qr.html` · 管理大屏：`/admin`
+> 演示入口：`/demo`（学生端手机体验版，免登录）· 管理大屏：`/admin`
+> 投屏二维码页 `/demo/qr.html` —— **一页两个二维码**：学生端体验 + 管理后台
+> 一键演示（起服务 + 公网隧道 + 打开投屏页）：双击仓库根的 `start-demo.bat`
 
 ---
 
@@ -37,7 +39,9 @@ zhipan-monorepo/
 │
 ├── demo/                           ← 嘉宾扫码体验（手机网页版，零依赖免登录）
 │   ├── index.html                  ← 体验页：本周分析 / 追问 AI / 本周菜单 / 拍照记餐
-│   └── qr.html                     ← 投屏二维码页
+│   └── qr.html                     ← 投屏二维码页（学生端 + 管理后台 两个二维码）
+│
+├── start-demo.bat                  ← 一键演示：起服务 + 公网隧道 + 打开投屏页
 │
 └── miniapp/                        ← 微信小程序学生端（10 个页面）
     ├── app.js / app.json / app.wxss
@@ -67,8 +71,9 @@ npm start
 ```
 地址:      http://localhost:3000
 admin:     http://localhost:3000/admin          (admin / admin123)
-📱 嘉宾扫码体验: http://192.168.x.x:3000/demo     [局域网]
-🖥  投屏用二维码页: http://192.168.x.x:3000/demo/qr.html
+📱 学生端体验页  : http://192.168.x.x:3000/demo     [局域网]
+🖥  管理后台大屏  : http://192.168.x.x:3000/admin
+🔳 投屏二维码页  : http://192.168.x.x:3000/demo/qr.html   （页面上有 学生端 + 管理后台 两个二维码）
 AI: 未配置 Key（接口走规则模板降级，功能仍可用）
 ```
 
@@ -92,10 +97,27 @@ AI: 未配置 Key（接口走规则模板降级，功能仍可用）
 | 命令 | 作用 |
 |---|---|
 | `npm start` | 启动服务 |
-| `npm run preflight` | **部署前自检**（目录 / 依赖 / AI 配置 / 关键接口 / 演示地址）★ 上线前推荐跑 |
-| `npm test` | 接口冒烟测试（73 项断言，含 AI 与演示模式） |
+| **`start-demo.bat`**（仓库根，双击即可） | **一键演示**：起服务 + 开公网隧道 + 自动打开投屏二维码页 |
+| `npm run demo` | 同上（不开浏览器：`npm run share`） |
+| `npm run share` | 起服务 + 公网隧道（内网穿透），默认从 8080 起自动挑空闲端口 |
+| `npm run preflight` | **部署前自检**（目录 / 依赖 / AI 配置 / 密钥扫描 / 关键接口 / 演示地址）★ 上线前推荐跑 |
+| `npm test` | 接口冒烟测试（77 项断言，含 AI 与演示模式） |
 | `npm run db:check` | MySQL schema 语法自检（无需数据库） |
 | `npm run db:seed:dry` | 种子数据 dry-run |
+
+### 一键演示（内网穿透）
+
+演示当天网络不可控时，最省事的一条路 —— **双击仓库根目录的 `start-demo.bat`**：
+
+```
+start-demo.bat                 # 起服务 + 隧道 + 自动打开投屏页（自动挑空闲端口）
+start-demo.bat --port 8090     # 指定端口
+```
+
+它会依次完成：启动本地服务 → 复用/下载 cloudflared → 建立 Cloudflare 免费隧道 → 打印公网地址 → 打开投屏二维码页。**无需注册、无需备案、无需买服务器**。
+
+> ⚠️ 弹出来的那个黑窗口**演示期间不要关**，关掉即断线。
+> 临时域名每次启动都会变，所以现场一律用投屏页（`/demo/qr.html`），别把二维码印在 PPT 上。
 
 ---
 
@@ -154,7 +176,7 @@ AI: 未配置 Key（接口走规则模板降级，功能仍可用）
 | `POST /api/ai/meal-log` | 手动记一餐（同样过禁忌硬过滤） |
 | `GET /api/ai/candidates/:studentId` | 该生可吃的菜品候选（已过滤禁忌） |
 | `GET /api/ai/status` · `/api/ai/usage` | AI 配置状态与 token 用量 |
-| `GET /api/demo/config` · `/api/demo/qr.png` · `/api/demo/ping` | 演示配置 / 二维码 / 健康检查 |
+| `GET /api/demo/config` · `/api/demo/qr.png` · `/api/demo/ping` | 演示配置 / 二维码 / 健康检查（二维码用 `?target=admin` 可切到管理后台） |
 | `GET /api/menu/week` | 本周菜单（日期跟随当前自然周自动同步） |
 
 ---

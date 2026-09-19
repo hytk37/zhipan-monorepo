@@ -11,6 +11,8 @@
   "scripts": {
     "postinstall": "cd backend && npm install --omit=dev --no-audit --no-fund",
     "start": "node backend/api-server.js",
+    "demo": "node backend/scripts/share.js --open",
+    "share": "node backend/scripts/share.js",
     "preflight": "cd backend && node scripts/preflight.js",
     "test": "cd backend && node scripts/smoke-test.js"
   },

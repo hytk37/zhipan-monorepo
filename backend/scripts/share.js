@@ -7,6 +7,7 @@
 //
 // 用法：
 //   node scripts/share.js                 # 自动挑一个空闲端口（从 8080 起，避开 3000）
+//   node scripts/share.js --open          # 同上，并在建好隧道后自动打开投屏二维码页
 //   node scripts/share.js --port 8090     # 手动指定端口（被占用会明确报错）
 //   node scripts/share.js --no-server     # 服务已在运行，只开隧道
 //   node scripts/share.js --local         # 不开隧道，只启动服务并打印本机演示地址
@@ -34,6 +35,7 @@ function hasFlag(name) { return args.indexOf(name) >= 0; }
 
 const NO_SERVER = hasFlag('--no-server');
 const LOCAL_ONLY = hasFlag('--local');
+const OPEN_BROWSER = hasFlag('--open');
 const PORT_START = 8080;   // 自动挑端口的起点（避开 3000）
 const PORT_MAX = 8120;
 
@@ -46,6 +48,32 @@ const CF_URL = process.platform === 'win32'
 
 function log(msg) { console.log(msg); }
 function line() { console.log('──────────────────────────────────────────────'); }
+
+/** 用系统默认浏览器打开地址（失败也不影响隧道运行） */
+function openInBrowser(url) {
+  try {
+    const cmd = process.platform === 'win32' ? 'cmd'
+      : process.platform === 'darwin' ? 'open' : 'xdg-open';
+    const argv = process.platform === 'win32' ? ['/c', 'start', '', url] : [url];
+    spawn(cmd, argv, { detached: true, stdio: 'ignore' }).unref();
+    log('  ⑤ 已用默认浏览器打开投屏二维码页');
+  } catch (e) {
+    log('  ⑤ 打开浏览器失败（不影响使用）：' + e.message);
+  }
+}
+
+/**
+ * 刷新本机 DNS 缓存。
+ * 实测踩坑：隧道域名刚生成时，本机若在那一瞬间查过一次 DNS，会把「解析失败」
+ * 缓存下来（Windows DNS 客户端缓存 NXDOMAIN），导致本机浏览器打不开自己的隧道地址
+ * ——尽管手机（别的网络）完全正常。刷一次缓存即可立刻恢复。
+ */
+function flushDns() {
+  if (process.platform !== 'win32') return;
+  try {
+    spawn('ipconfig', ['/flushdns'], { stdio: 'ignore' });
+  } catch (e) { /* 忽略：非管理员或命令不存在都不影响隧道 */ }
+}
 
 /** 本项目服务是否已在该端口运行（用保活接口探测，避免误判其他程序） */
 function serverResponds(port, timeoutMs) {
@@ -189,7 +217,10 @@ function download(url, dest) {
       res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
     }).on('error', reject);
   }));
-  log('  ② 本机演示地址：' + cfgLocal.demoUrl);
+  log('  ② 本机演示地址（局域网可访问）：');
+  log('     投屏二维码页 : ' + cfgLocal.projectorUrl);
+  log('     学生端       : ' + cfgLocal.demoUrl);
+  log('     管理后台     : ' + cfgLocal.adminUrl);
 
   // 统一收尾：Ctrl+C 时把子进程一起关掉，避免残留占用端口
   let tunnelRef = null;
@@ -244,13 +275,17 @@ function download(url, dest) {
       line();
       log('  ✅ 公网演示地址已生成（本地端口 ' + PORT + '）');
       log('');
-      log('     体验页  : ' + publicUrl + '/demo');
-      log('     投屏页  : ' + publicUrl + '/demo/qr.html   ← 打开这个投屏，二维码会指向公网地址');
-      log('     管理大屏: ' + publicUrl + '/admin');
+      log('     投屏二维码页 : ' + publicUrl + '/demo/qr.html');
+      log('                    ↑ 打开这个投屏，页面上有两个二维码');
+      log('                      · 学生端   ' + publicUrl + '/demo');
+      log('                      · 管理后台 ' + publicUrl + '/admin');
       log('');
       log('     嘉宾用手机（4G/5G 或任意 WiFi）扫码即可体验');
       log('     ⚠️ 演示期间本窗口不要关，关闭即断线');
       line();
+      // 隧道域名刚生效，先刷掉本机可能缓存的「解析失败」，再打开浏览器
+      flushDns();
+      if (OPEN_BROWSER) setTimeout(() => openInBrowser(publicUrl + '/demo/qr.html'), 800);
     }
   };
   tunnel.stdout.on('data', onData);

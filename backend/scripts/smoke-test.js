@@ -179,10 +179,15 @@ function expect(name, res, code, extra) {
     (r) => r.body.indexOf('PNG') >= 0 && r.body.indexOf('IHDR') >= 0);
   expect('GET  /api/demo/qr.svg 矢量二维码', await request(port, 'GET', '/api/demo/qr.svg'), 200,
     (r) => r.body.indexOf('<svg') >= 0);
+  expect('GET  /api/demo/qr.png?target=admin 管理后台二维码', await request(port, 'GET', '/api/demo/qr.png?target=admin'), 200,
+    (r) => r.body.indexOf('PNG') >= 0 && r.body.indexOf('IHDR') >= 0);
+  expect('GET  /api/demo/qr-dataurl 同时给出两张', await request(port, 'GET', '/api/demo/qr-dataurl'), 200,
+    (r) => !!(r.json && r.json.dataUrl && r.json.adminDataUrl && r.json.dataUrl !== r.json.adminDataUrl));
   expect('GET  /demo 扫码体验页', await request(port, 'GET', '/demo'), 200,
     (r) => r.body.indexOf('智慧膳系统') >= 0 && r.body.indexOf('本周饮食健康分析') >= 0);
-  expect('GET  /demo/qr.html 投屏二维码页', await request(port, 'GET', '/demo/qr.html'), 200,
-    (r) => r.body.indexOf('扫码打开体验版') >= 0);
+  expect('GET  /demo/qr.html 投屏页含两个二维码', await request(port, 'GET', '/demo/qr.html'), 200,
+    (r) => r.body.indexOf('target=demo') >= 0 && r.body.indexOf('target=admin') >= 0
+      && r.body.indexOf('扫码体验学生端') >= 0 && r.body.indexOf('扫码打开管理大屏') >= 0);
   // 国内平台（腾讯云 CloudBase 默认域名等）零配置：二维码地址跟随访问域名
   expect('GET  /api/demo/config 二维码地址跟随访问域名',
     await request(port, 'GET', '/api/demo/config', null, null,

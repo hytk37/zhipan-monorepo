@@ -37,8 +37,12 @@ function bad(name, extra) { fail++; problems.push(name + (extra ? ' — ' + extr
   const need = [
     ['admin/index.html', '管理大屏'],
     ['demo/index.html', '手机体验页（扫码用）'],
-    ['demo/qr.html', '投屏二维码页'],
+    ['demo/qr.html', '投屏二维码页（学生端 + 管理后台两个二维码）'],
+    ['start-demo.bat', '一键演示脚本（起服务 + 公网隧道）'],
     ['backend/api-server.js', '服务入口'],
+    ['backend/scripts/share.js', '内网穿透脚本'],
+    ['backend/scripts/pack-cloudbase.js', '云托管部署包脚本'],
+    ['Dockerfile', '容器化构建（Koyeb / 云托管）'],
     ['render.yaml', 'Render 部署蓝图'],
   ];
   need.forEach(([rel, label]) => {
@@ -148,7 +152,10 @@ function bad(name, extra) { fail++; problems.push(name + (extra ? ' — ' + extr
   const cfg = await probe('演示配置 /api/demo/config', '/api/demo/config', (j) => j && j.demoUrl && j.personas);
   await probe('二维码 /api/demo/qr.png', '/api/demo/qr.png?size=240', (t, r) => String(t).indexOf('PNG') >= 0 || (r.headers.get('content-type') || '').indexOf('image/png') >= 0);
   await probe('手机体验页 /demo', '/demo', (t) => String(t).indexOf('本周饮食健康分析') >= 0);
-  await probe('投屏二维码页 /demo/qr.html', '/demo/qr.html', (t) => String(t).indexOf('扫码打开体验版') >= 0);
+  await probe('投屏二维码页 /demo/qr.html', '/demo/qr.html',
+    (t) => String(t).indexOf('target=demo') >= 0 && String(t).indexOf('target=admin') >= 0);
+  await probe('管理后台二维码 /api/demo/qr.png?target=admin', '/api/demo/qr.png?size=240&target=admin',
+    (t, r) => String(t).indexOf('PNG') >= 0 || (r.headers.get('content-type') || '').indexOf('image/png') >= 0);
   await probe('管理大屏 /admin', '/admin', (t) => String(t).indexOf('<html') >= 0);
   await probe('周健康分析 /api/ai/health/week/0', '/api/ai/health/week/0', (j) => j && typeof j.score === 'number' && j.analysis);
   await probe('本周菜单 /api/menu/week', '/api/menu/week', (j) => j && j.days && j.days.length);
