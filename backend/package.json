@@ -5,6 +5,7 @@
   "main": "api-server.js",
   "scripts": {
     "start": "node api-server.js",
+    "preflight": "node scripts/preflight.js",
     "test": "node scripts/smoke-test.js",
     "db:check": "node scripts/check-sql.js sql/schema.sql",
     "db:seed:dry": "node scripts/seed.js --dry-run",

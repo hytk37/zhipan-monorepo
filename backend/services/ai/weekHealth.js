@@ -64,14 +64,14 @@ function fallbackAnalysis(stats, digest, profile) {
   if (worst) {
     const day = digest.find((d) => d.date === worst.date);
     mealComments.push({
-      date: worst.date, meal: '全天',
+      date: cal.formatCn(worst.date), meal: '全天',
       comment: '这天脂肪 ' + worst.fat + 'g，是本周最高。菜品以'
         + (day ? day.meals.map((m) => m.dishes.join('、')).join('；').slice(0, 40) : '重油做法为主') + '为主，建议下次把其中一道换成清炒或蒜蓉类。',
     });
   }
   if (best && best.date !== worst.date) {
     mealComments.push({
-      date: best.date, meal: '全天',
+      date: cal.formatCn(best.date), meal: '全天',
       comment: '这天搭配最均衡：脂肪 ' + best.fat + 'g、纤维 ' + best.fiber + 'g，素菜比例更合理，可以照这个吃法继续。',
     });
   }
@@ -114,6 +114,24 @@ function suggestFor(key, vegTop) {
     fried: '把干锅、油炸、粉蒸类每周控制在 3 次以内，多用清炒、白灼、炖煮替代。',
   };
   return map[key] || '按食堂现有菜品，替换其中一道为清炒或炖煮类即可。';
+}
+
+// ─── 日期规范化：把模型可能回吐的 ISO 日期（2026-09-14）转成 9月14日 ───
+function normalizeDateStr(s) {
+  const t = String(s || '').trim();
+  const m = t.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return parseInt(m[2], 10) + '月' + parseInt(m[3], 10) + '日';
+  return t;
+}
+
+function normalizeAnalysis(obj) {
+  if (obj && Array.isArray(obj.meal_comments)) {
+    obj.meal_comments = obj.meal_comments.map((m) => ({
+      ...m,
+      date: normalizeDateStr(m.date),
+    }));
+  }
+  return obj;
 }
 
 // ─── 字段校验：模型输出必须齐全，否则降级 ───────
@@ -169,7 +187,7 @@ async function analyze(studentId, opts) {
     if (res.ok) {
       const parsed = parseJson(res.content);
       if (validateAnalysis(parsed)) {
-        analysis = parsed;
+        analysis = normalizeAnalysis(parsed);
         source = 'ai';
         usage = res.usage || null;
       } else {

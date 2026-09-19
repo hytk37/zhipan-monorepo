@@ -4,6 +4,8 @@
 // 边界①：模型不计算任何数值，只做解释与表达
 // 边界③：输出必须是 JSON 且通过字段校验，失败即降级
 
+const cal = require('../calendar');
+
 // ─── 周健康分析 ────────────────────────────────
 const WEEK_HEALTH_SYSTEM = [
   '你是「智慧膳系统」的校园营养分析助手，面向在校学生解读一周饮食。',
@@ -59,11 +61,11 @@ function buildWeekHealthUser(stats, digest, profile) {
     系统识别的问题项: stats.problems,
     系统识别的亮点: stats.highlights,
     逐日数据: stats.daily.map((d) => ({
-      日期: d.date, 星期: d.weekday,
+      日期: cal.formatCn(d.date), 星期: d.weekday,
       热量: d.cal, 蛋白: d.protein, 脂肪: d.fat, 碳水: d.carbs, 纤维: d.fiber,
     })),
     本周实际吃的菜: digest.map((d) => ({
-      日期: d.date, 星期: d.weekday,
+      日期: cal.formatCn(d.date), 星期: d.weekday,
       餐次: d.meals.map((m) => ({ 餐: m.meal, 菜品: m.dishes, 热量: m.cal })),
     })),
   };
