@@ -12,3 +12,6 @@ backend/.env
 
 # 登录 token 落盘目录（本地生成，不提交）
 backend/.data/
+
+# 内网穿透工具（npm run share 自动下载的 cloudflared，约 50MB，不入库）
+backend/.tools/

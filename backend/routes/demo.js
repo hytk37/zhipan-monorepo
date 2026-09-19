@@ -20,21 +20,25 @@ function currentPort(req) {
 }
 
 router.get('/demo/config', (req, res) => {
-  res.json(demoInfo.demoConfig(currentPort(req), studentProfiles));
+  res.json(demoInfo.demoConfig(currentPort(req), studentProfiles, req));
 });
 
-// 健康检查 / 保活（Render 健康检查路径；也可用外部监控定时访问防止免费实例休眠）
+// 健康检查 / 保活（Koyeb / CloudBase 健康检查路径；也可用外部监控定时访问防止休眠）
 router.get('/demo/ping', (req, res) => {
+  // 与 /api/demo/config 用同一套地址判断逻辑，避免两者报告的运行模式不一致
+  const cfg = demoInfo.demoConfig(currentPort(req), studentProfiles, req);
   res.json({
     ok: true,
     service: '智慧膳系统 · 演示环境',
-    mode: demoInfo.cloudBaseUrl() ? 'cloud' : 'lan',
+    mode: cfg.mode,
+    modeLabel: cfg.modeLabel,
+    baseUrlSource: cfg.baseUrlSource,
     time: new Date().toISOString(),
   });
 });
 
 router.get('/demo/qr.png', async (req, res) => {
-  const cfg = demoInfo.demoConfig(currentPort(req), studentProfiles);
+  const cfg = demoInfo.demoConfig(currentPort(req), studentProfiles, req);
   const size = Math.min(Math.max(parseInt(req.query.size, 10) || 480, 120), 1200);
   try {
     const buf = await QRCode.toBuffer(cfg.demoUrl, {
@@ -54,7 +58,7 @@ router.get('/demo/qr.png', async (req, res) => {
 });
 
 router.get('/demo/qr.svg', async (req, res) => {
-  const cfg = demoInfo.demoConfig(currentPort(req), studentProfiles);
+  const cfg = demoInfo.demoConfig(currentPort(req), studentProfiles, req);
   try {
     const svg = await QRCode.toString(cfg.demoUrl, {
       type: 'svg',
@@ -71,7 +75,7 @@ router.get('/demo/qr.svg', async (req, res) => {
 });
 
 router.get('/demo/qr-dataurl', async (req, res) => {
-  const cfg = demoInfo.demoConfig(currentPort(req), studentProfiles);
+  const cfg = demoInfo.demoConfig(currentPort(req), studentProfiles, req);
   try {
     const url = await QRCode.toDataURL(cfg.demoUrl, {
       width: 480, margin: 2, errorCorrectionLevel: 'M',

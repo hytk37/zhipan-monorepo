@@ -10,10 +10,10 @@ const path = require('path');
 
 const app = require(path.join(__dirname, '..', 'api-server.js'));
 
-function request(port, method, urlPath, body, token) {
+function request(port, method, urlPath, body, token, extraHeaders) {
   return new Promise((resolve) => {
     const payload = body ? JSON.stringify(body) : null;
-    const headers = {};
+    const headers = Object.assign({}, extraHeaders || {});
     if (payload) {
       headers['Content-Type'] = 'application/json';
       headers['Content-Length'] = Buffer.byteLength(payload);
@@ -183,6 +183,14 @@ function expect(name, res, code, extra) {
     (r) => r.body.indexOf('智慧膳系统') >= 0 && r.body.indexOf('本周饮食健康分析') >= 0);
   expect('GET  /demo/qr.html 投屏二维码页', await request(port, 'GET', '/demo/qr.html'), 200,
     (r) => r.body.indexOf('扫码打开体验版') >= 0);
+  // 国内平台（腾讯云 CloudBase 默认域名等）零配置：二维码地址跟随访问域名
+  expect('GET  /api/demo/config 二维码地址跟随访问域名',
+    await request(port, 'GET', '/api/demo/config', null, null,
+      { host: 'zhipan-demo.tcloudbaseapp.com', 'x-forwarded-proto': 'https' }), 200,
+    (r) => r.json.demoUrl === 'https://zhipan-demo.tcloudbaseapp.com/demo');
+  expect('GET  /api/demo/config localhost 访问时回退局域网',
+    await request(port, 'GET', '/api/demo/config', null, null, { host: 'localhost:3000' }), 200,
+    (r) => r.json.mode === 'lan' && /^http:\/\/\d+\.\d+\.\d+\.\d+:/.test(r.json.demoUrl));
 
   // ── 静态托管与兜底 ──
   expect('GET  /admin 管理后台页面', await request(port, 'GET', '/admin'), 200, (r) => r.body.indexOf('<html') >= 0);

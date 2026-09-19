@@ -43,6 +43,23 @@ function normalizeUrl(raw) {
 }
 
 /**
+ * 从请求头推导「访问者实际使用的地址」——这是最准确的一种，
+ * 也是国内平台（腾讯云 CloudBase 等）不注入任何环境变量时的兜底方案。
+ * 只对 localhost / 127.0.0.1 这类本机地址返回 null（二维码指向 localhost 对嘉宾没用）。
+ * @param {object} req Express 请求（可选）
+ */
+function baseFromRequest(req) {
+  if (!req || !req.headers) return null;
+  const rawHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim();
+  if (!rawHost) return null;
+  const hostname = rawHost.split(':')[0].toLowerCase().replace(/^\[|\]$/g, '');
+  if (['localhost', '127.0.0.1', '0.0.0.0', '::1'].indexOf(hostname) >= 0) return null;
+  let proto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+  if (!proto) proto = req.secure ? 'https' : 'http';
+  return proto.toLowerCase() + '://' + rawHost;
+}
+
+/**
  * 列出可用于局域网演示的地址（按可用性排序）
  * @returns {Array<{name:string, address:string, preferred:boolean}>}
  */
@@ -122,17 +139,33 @@ const CLOUD_TIPS = {
 
 /**
  * 组装演示配置（供 /api/demo/config 与二维码使用）
+ * 地址优先级：
+ *   ① PUBLIC_BASE_URL（手动指定，最高优先级）
+ *   ② 请求头推导（访问者实际用的域名 —— 国内平台无需任何配置就能正确）
+ *   ③ 平台注入变量（KOYEB_PUBLIC_DOMAIN / RENDER_EXTERNAL_URL 等）
+ *   ④ 局域网 IP（本地演示）
  * @param {number} port 实际监听端口
+ * @param {object} studentProfiles 学生数据
+ * @param {object} [req] Express 请求（有则启用第②级）
  */
-function demoConfig(port, studentProfiles) {
-  const cloud = cloudBaseUrl();
-  const platform = platformName();
+function demoConfig(port, studentProfiles, req) {
+  const manual = process.env.PUBLIC_BASE_URL ? normalizeUrl(process.env.PUBLIC_BASE_URL) : null;
+  const fromReq = manual ? null : baseFromRequest(req);
+  const platformUrl = (manual || fromReq) ? null : cloudBaseUrl();
   const addrs = listLanAddresses();
+
+  const cloud = manual || fromReq || platformUrl;
   const base = cloud || ('http://' + (addrs.length ? addrs[0].address : '127.0.0.1') + ':' + port);
+  const source = manual ? 'PUBLIC_BASE_URL'
+    : fromReq ? '请求域名'
+      : platformUrl ? '平台变量'
+        : '局域网';
+  const platform = platformName();
 
   return {
     mode: cloud ? 'cloud' : 'lan',
     modeLabel: cloud ? '云端（公网）' + (platform ? ' · ' + platform : '') : '局域网',
+    baseUrlSource: source,
     platform: platform,
     demoUrl: base + '/demo',
     qrUrl: base + '/api/demo/qr.png',
@@ -151,4 +184,4 @@ function demoConfig(port, studentProfiles) {
   };
 }
 
-module.exports = { cloudBaseUrl, platformName, listLanAddresses, buildBaseUrl, demoConfig, demoPersonas };
+module.exports = { cloudBaseUrl, platformName, baseFromRequest, listLanAddresses, buildBaseUrl, demoConfig, demoPersonas };
