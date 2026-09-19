@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#07C160" />
+<title>智慧膳系统 · 扫码体验版</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: #F5F7F9; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; color: #18232F; }
+  body { padding-bottom: 76px; }
+  .wrap { max-width: 480px; margin: 0 auto; }
+
+  /* 顶部 */
+  .hero { background: linear-gradient(135deg, #0F2A4A, #0B1B33); color: #fff; padding: 18px 16px 22px; }
+  .hero-top { display: flex; align-items: center; gap: 10px; }
+  .logo { width: 36px; height: 36px; border-radius: 10px; background: #07C160; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex: 0 0 auto; }
+  .hero-title { font-size: 17px; font-weight: 600; line-height: 1.3; }
+  .hero-sub { font-size: 11px; color: #94B4D8; margin-top: 2px; }
+  .demo-pill { margin-left: auto; font-size: 10px; color: #4FD8B0; border: 1px solid rgba(79,216,176,.45); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+
+  /* 身份选择 */
+  .persona { margin-top: 14px; background: rgba(255,255,255,.08); border-radius: 14px; padding: 10px 12px; }
+  .persona-label { font-size: 11px; color: #94B4D8; margin-bottom: 8px; }
+  .persona-list { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+  .persona-item { flex: 0 0 auto; background: rgba(255,255,255,.1); border: 1px solid transparent; border-radius: 12px; padding: 8px 12px; font-size: 12px; color: #DCE9F7; white-space: nowrap; }
+  .persona-item.on { background: rgba(7,193,96,.22); border-color: #07C160; color: #fff; }
+  .persona-item b { display: block; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .persona-item span { font-size: 10px; color: #94B4D8; }
+
+  /* 通用卡片 */
+  .card { background: #fff; border-radius: 16px; margin: 12px; padding: 16px; box-shadow: 0 2px 10px rgba(24,35,47,.05); }
+  .card-title { font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .badge { font-size: 10px; font-weight: 400; border-radius: 999px; padding: 3px 9px; }
+  .badge.ai { background: #EAF8F3; color: #0B7A66; border: 1px solid #CFEFE4; }
+  .badge.rule { background: #FFF6E6; color: #8A6D3B; border: 1px solid #F5E3C0; }
+  .muted { color: #6C7A8A; font-size: 12px; line-height: 1.65; }
+
+  /* 评分卡 */
+  .score-row { display: flex; align-items: center; gap: 14px; }
+  .ring { width: 92px; height: 92px; border-radius: 50%; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+  .ring-inner { width: 74px; height: 74px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-num { font-size: 26px; font-weight: 700; line-height: 1; }
+  .ring-unit { font-size: 10px; color: #93A4B8; margin-top: 2px; }
+  .score-meta { flex: 1; min-width: 0; }
+  .lv { display: inline-block; font-size: 11px; color: #fff; border-radius: 999px; padding: 3px 10px; margin-bottom: 6px; }
+  .lv-0 { background: #07C160; } .lv-1 { background: #2F80ED; } .lv-2 { background: #FF9500; } .lv-3 { background: #FF3B30; }
+  .sync { font-size: 10px; color: #93A4B8; margin-top: 4px; }
+
+  /* 指标格 */
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+  .metric { background: #F6F9FC; border-radius: 10px; padding: 8px 4px; text-align: center; }
+  .metric b { display: block; font-size: 15px; font-weight: 600; }
+  .metric span { font-size: 10px; color: #93A4B8; }
+
+  /* 列表项 */
+  .item { border-left: 3px solid #FF9500; background: #FBFDFF; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+  .item.good { border-left-color: #07C160; }
+  .item b { font-size: 13px; display: block; margin-bottom: 3px; }
+  .item p { margin: 0; font-size: 12px; color: #6C7A8A; line-height: 1.6; }
+  .item .sug { display: block; margin-top: 6px; font-size: 12px; color: #0B7A66; background: #EAF8F3; border-radius: 8px; padding: 6px 8px; }
+  .mc { padding: 9px 0; border-bottom: 1px solid #F0F4F8; }
+  .mc:last-child { border-bottom: none; }
+  .mc-head { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+  .mc-head em { font-style: normal; color: #2F80ED; background: #EDF4FE; border-radius: 6px; padding: 1px 6px; font-size: 10px; margin-left: 6px; }
+  .adv { display: flex; gap: 8px; padding: 7px 0; font-size: 12.5px; color: #3B4C5E; line-height: 1.6; }
+  .adv i { flex: 0 0 auto; width: 18px; height: 18px; border-radius: 50%; background: #EAF8F3; color: #0B7A66; font-style: normal; font-size: 11px; text-align: center; line-height: 18px; font-weight: 600; }
+
+  /* 对话 */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .chip { font-size: 11px; color: #2F80ED; background: #EDF4FE; border-radius: 999px; padding: 5px 11px; }
+  .msgs { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .bub { max-width: 86%; font-size: 12.5px; line-height: 1.65; padding: 9px 11px; border-radius: 12px; white-space: pre-wrap; }
+  .bub.me { align-self: flex-end; background: #07C160; color: #fff; }
+  .bub.ai { align-self: flex-start; background: #F4F8FB; border: 1px solid #E6ECF3; color: #3B4C5E; }
+  .bub .tag { display: block; font-size: 10px; color: #93A4B8; margin-top: 4px; }
+  .input-row { display: flex; gap: 8px; }
+  .input-row input { flex: 1; min-width: 0; height: 40px; border: 1px solid #E6ECF3; background: #F6F9FC; border-radius: 999px; padding: 0 14px; font-size: 13px; color: #18232F; }
+  .input-row button { flex: 0 0 auto; height: 40px; padding: 0 18px; border: none; border-radius: 999px; background: #07C160; color: #fff; font-size: 13px; font-weight: 500; }
+
+  /* 菜单 */
+  .day { border: 1px solid #EEF2F7; border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
+  .day-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #F8FAFC; font-size: 13px; font-weight: 600; }
+  .day-head .tag { font-size: 10px; font-weight: 400; color: #6C7A8A; background: #fff; border: 1px solid #E6ECF3; border-radius: 999px; padding: 2px 8px; }
+  .day-head .today { color: #07C160; }
+  .day-body { padding: 8px 12px 12px; }
+  .line { margin-bottom: 8px; }
+  .line:last-child { margin-bottom: 0; }
+  .line-label { font-size: 11px; color: #93A4B8; margin-bottom: 3px; }
+  .line-items { font-size: 12.5px; color: #3B4C5E; line-height: 1.7; }
+
+  /* 拍照 */
+  .photo-btn { display: block; width: 100%; text-align: center; background: #07C160; color: #fff; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 500; border: none; }
+  .photo-out { margin-top: 12px; }
+  .pill { display: inline-block; font-size: 11px; background: #F4F8FB; border: 1px solid #E6ECF3; border-radius: 999px; padding: 4px 10px; margin: 0 6px 6px 0; }
+  .pill.warn { background: #FFF6E6; border-color: #F5E3C0; color: #8A6D3B; }
+
+  /* 底部导航 */
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; background: #fff; border-top: 1px solid #EDF1F5; padding-bottom: env(safe-area-inset-bottom, 0); }
+  .tabbar div { flex: 1; text-align: center; padding: 9px 0 10px; font-size: 11px; color: #93A4B8; }
+  .tabbar div.on { color: #07C160; font-weight: 600; }
+  .tabbar b { display: block; font-size: 17px; font-weight: 400; margin-bottom: 1px; }
+
+  .loading { text-align: center; color: #93A4B8; font-size: 12.5px; padding: 26px 0; }
+  .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: rgba(11,27,51,.92); color: #fff; font-size: 12.5px; padding: 9px 16px; border-radius: 999px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 99; }
+  .toast.on { opacity: 1; }
+  .foot { text-align: center; font-size: 10.5px; color: #A6B3C0; padding: 4px 20px 18px; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-top">
+      <div class="logo">膳</div>
+      <div>
+        <div class="hero-title">智慧膳系统 · 体验版</div>
+        <div class="hero-sub" id="hero-sub">正在连接服务…</div>
+      </div>
+      <div class="demo-pill">演示模式</div>
+    </div>
+    <div class="persona">
+      <div class="persona-label">选择一个体验身份（模拟在校学生，含不同饮食禁忌）</div>
+      <div class="persona-list" id="persona-list"></div>
+    </div>
+  </div>
+
+  <!-- ① 本周分析 -->
+  <section id="tab-analysis">
+    <div class="card">
+      <div class="card-title">本周饮食健康分析 <span class="badge" id="src-badge">—</span></div>
+      <div id="analysis-body"><div class="loading">正在生成分析…</div></div>
+    </div>
+  </section>
+
+  <!-- ② 追问 -->
+  <section id="tab-chat" style="display:none">
+    <div class="card">
+      <div class="card-title">追问 AI <span class="badge ai">基于真实数据</span></div>
+      <div class="chips" id="chips"></div>
+      <div class="msgs" id="msgs"></div>
+      <div class="input-row">
+        <input id="q" placeholder="问点关于这周饮食的问题…" />
+        <button id="send">发送</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ 菜单 -->
+  <section id="tab-menu" style="display:none">
+    <div class="card">
+      <div class="card-title">本周食堂菜单 <span class="badge rule" id="menu-week">—</span></div>
+      <div id="menu-body"><div class="loading">加载中…</div></div>
+    </div>
+  </section>
+
+  <!-- ④ 拍照记一餐 -->
+  <section id="tab-photo" style="display:none">
+    <div class="card">
+      <div class="card-title">拍照识别一餐 <span class="badge ai">AI 识图</span></div>
+      <p class="muted" style="margin-top:0">拍一张餐盘照片，AI 识别菜品后自动算营养并写入本周记录。识别结果会再过一遍该身份的饮食禁忌过滤。</p>
+      <input type="file" id="photo" accept="image/*" capture="environment" style="display:none" />
+      <button class="photo-btn" id="photo-btn">📷 拍照 / 从相册选择</button>
+      <div class="photo-out" id="photo-out"></div>
+    </div>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<div class="tabbar">
+  <div class="on" data-tab="analysis"><b>📊</b>本周分析</div>
+  <div data-tab="chat"><b>💬</b>追问 AI</div>
+  <div data-tab="menu"><b>🍚</b>本周菜单</div>
+  <div data-tab="photo"><b>📷</b>拍照记餐</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var API = '';                       // 与页面同源，直接相对路径
+  var state = { personas: [], me: null, chat: [] };
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+  function toast(msg) {
+    var t = $('toast'); t.textContent = msg; t.className = 'toast on';
+    setTimeout(function () { t.className = 'toast'; }, 2200);
+  }
+  function api(path, opt) {
+    return fetch(API + path, opt).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, data: j }; }); });
+  }
+  function levelClass(level) {
+    return ({ '优秀': 'lv-0', '良好': 'lv-1', '一般': 'lv-2', '需改善': 'lv-3' })[level] || 'lv-2';
+  }
+  function levelColor(score) {
+    return score >= 85 ? '#07C160' : score >= 75 ? '#2F80ED' : score >= 60 ? '#FF9500' : '#FF3B30';
+  }
+
+  /* ── 身份 ── */
+  function renderPersonas() {
+    var box = $('persona-list');
+    box.innerHTML = state.personas.map(function (p) {
+      return '<div class="persona-item' + (state.me && state.me.id === p.id ? ' on' : '') + '" data-id="' + p.id + '">'
+        + '<b>' + esc(p.avatar || '') + ' ' + esc(p.name) + '</b><span>' + esc(p.tag) + '</span></div>';
+    }).join('');
+    Array.prototype.forEach.call(box.children, function (el) {
+      el.onclick = function () {
+        var id = parseInt(el.getAttribute('data-id'), 10);
+        state.me = state.personas.filter(function (p) { return p.id === id; })[0];
+        state.chat = []; $('msgs').innerHTML = '';
+        try { localStorage.setItem('demoPersona', String(id)); } catch (e) {}
+        renderPersonas();
+        $('hero-sub').textContent = state.me.avatar + ' ' + state.me.name + ' · ' + state.me.college + ' · ' + state.me.goal;
+        loadAnalysis(); loadMenu();
+      };
+    });
+  }
+
+  /* ── ① 本周分析 ── */
+  function loadAnalysis(refresh) {
+    var box = $('analysis-body');
+    box.innerHTML = '<div class="loading">' + (refresh ? 'AI 重新分析中…' : '正在生成分析…') + '</div>';
+    api('/api/ai/health/week/' + state.me.id + (refresh ? '?refresh=1' : '')).then(function (r) {
+      if (!r.ok || !r.data || typeof r.data.score !== 'number') {
+        box.innerHTML = '<div class="loading">服务暂时不可用，请稍后重试</div>';
+        return;
+      }
+      renderAnalysis(r.data);
+    }).catch(function () {
+      box.innerHTML = '<div class="loading">网络异常，请检查服务是否在线</div>';
+    });
+  }
+
+  function renderAnalysis(d) {
+    var an = d.analysis || {}, avg = d.avg || {}, t = d.targets || {};
+    var src = d.source === 'ai' ? 'DeepSeek 生成' : '规则模板';
+    var badge = $('src-badge');
+    badge.textContent = src; badge.className = 'badge ' + (d.source === 'ai' ? 'ai' : 'rule');
+
+    var html = '';
+    html += '<div class="score-row">'
+      + '<div class="ring" style="background:conic-gradient(' + levelColor(d.score) + ' 0turn ' + (d.score / 100) + 'turn,#EEF3F8 ' + (d.score / 100) + 'turn 1turn)">'
+      + '<div class="ring-inner"><div class="ring-num" style="color:' + levelColor(d.score) + '">' + d.score + '</div><div class="ring-unit">分</div></div></div>'
+      + '<div class="score-meta"><span class="lv ' + levelClass(d.level) + '">' + esc(d.level) + '</span>'
+      + '<div class="muted">' + esc(d.week || '') + ' · ' + esc(d.dateRange || '') + '</div>'
+      + '<div class="sync">' + (d.updatedAt ? new Date(d.updatedAt).toLocaleString('zh-CN', { hour12: false }) + ' 更新' : '') + '</div>'
+      + '</div></div>';
+
+    html += '<div class="grid4">'
+      + '<div class="metric"><b>' + Math.round(avg.cal || 0) + '</b><span>热量/' + t.cal + '</span></div>'
+      + '<div class="metric"><b>' + Math.round(avg.protein || 0) + '</b><span>蛋白/' + t.protein + 'g</span></div>'
+      + '<div class="metric"><b>' + Math.round(avg.fat || 0) + '</b><span>脂肪/' + t.fat + 'g</span></div>'
+      + '<div class="metric"><b>' + Math.round(avg.fiber || 0) + '</b><span>纤维/' + t.fiber + 'g</span></div>'
+      + '</div>';
+
+    html += '<p class="muted" style="margin:14px 0 0">' + esc(an.summary || '') + '</p>';
+
+    if ((an.problems || []).length) {
+      html += '<div style="margin-top:14px"><div class="muted" style="font-weight:600;color:#18232F;margin-bottom:8px">需要改进</div>';
+      an.problems.forEach(function (p) {
+        html += '<div class="item"><b>' + esc(p.title) + '</b><p>' + esc(p.detail) + '</p>'
+          + (p.suggestion ? '<span class="sug">→ ' + esc(p.suggestion) + '</span>' : '') + '</div>';
+      });
+      html += '</div>';
+    }
+    if ((an.highlights || []).length) {
+      html += '<div style="margin-top:12px"><div class="muted" style="font-weight:600;color:#18232F;margin-bottom:8px">做得好的地方</div>';
+      an.highlights.forEach(function (h) {
+        html += '<div class="item good"><b>' + esc(h.title) + '</b><p>' + esc(h.detail) + '</p></div>';
+      });
+      html += '</div>';
+    }
+    if ((an.mealComments || []).length) {
+      html += '<div style="margin-top:12px"><div class="muted" style="font-weight:600;color:#18232F;margin-bottom:6px">按菜品逐餐点评</div>';
+      an.mealComments.forEach(function (m) {
+        html += '<div class="mc"><div class="mc-head">' + esc(m.date) + '<em>' + esc(m.meal) + '</em></div>'
+          + '<p class="muted" style="margin:0">' + esc(m.comment) + '</p></div>';
+      });
+      html += '</div>';
+    }
+    if ((an.advice || []).length) {
+      html += '<div style="margin-top:12px"><div class="muted" style="font-weight:600;color:#18232F;margin-bottom:6px">下周可以这样做</div>';
+      an.advice.forEach(function (a, i) { html += '<div class="adv"><i>' + (i + 1) + '</i><span>' + esc(a) + '</span></div>'; });
+      html += '</div>';
+    }
+    html += '<div style="margin-top:14px;display:flex;gap:8px">'
+      + '<button class="photo-btn" style="background:#F4F8FB;color:#2F80ED;font-weight:500" id="re-analyze">重新分析</button>'
+      + '</div>';
+    if (d.mockMode) {
+      html += '<p class="muted" style="margin-top:10px;color:#8A6D3B">未配置 DeepSeek API Key，当前文案由规则模板生成（内容仍基于真实营养数据）。</p>';
+    }
+
+    $('analysis-body').innerHTML = html;
+    var re = $('re-analyze');
+    if (re) re.onclick = function () { loadAnalysis(true); };
+  }
+
+  /* ── ② 追问 ── */
+  var QUICK = ['我这周脂肪为什么偏高？', '我想补膳食纤维，食堂有哪些菜可以选？', '我下周该怎么吃？'];
+  $('chips').innerHTML = QUICK.map(function (q) { return '<span class="chip">' + esc(q) + '</span>'; }).join('');
+  Array.prototype.forEach.call($('chips').children, function (el) {
+    el.onclick = function () { $('q').value = el.textContent; send(); };
+  });
+
+  function pushBub(role, text, tag) {
+    var div = document.createElement('div');
+    div.className = 'bub ' + (role === 'me' ? 'me' : 'ai');
+    div.textContent = text;
+    if (tag) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = tag; div.appendChild(s); }
+    $('msgs').appendChild(div);
+    $('msgs').scrollTop = $('msgs').scrollHeight;
+    return div;
+  }
+
+  function send() {
+    var q = ($('q').value || '').trim();
+    if (!q) return;
+    $('q').value = '';
+    pushBub('me', q);
+    var pending = pushBub('ai', '思考中…');
+    var history = state.chat.slice(-6);
+    api('/api/ai/chat', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId: state.me.id, question: q, history: history })
+    }).then(function (r) {
+      var ans = (r.data && r.data.answer) || '暂时没能回答，请稍后再试。';
+      pending.textContent = ans;
+      var tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = r.data && r.data.source === 'ai' ? 'AI' : '规则模板';
+      pending.appendChild(tag);
+      state.chat.push({ role: 'user', content: q }, { role: 'assistant', content: ans });
+    }).catch(function () {
+      pending.textContent = '网络异常，暂时回答不了。';
+    });
+  }
+  $('send').onclick = send;
+  $('q').addEventListener('keydown', function (e) { if (e.key === 'Enter') send(); });
+
+  /* ── ③ 菜单 ── */
+  function loadMenu() {
+    api('/api/menu/week').then(function (r) {
+      if (!r.ok || !r.data || !r.data.days) { $('menu-body').innerHTML = '<div class="loading">菜单加载失败</div>'; return; }
+      var m = r.data;
+      $('menu-week').textContent = m.dateRange || m.week;
+      var html = '';
+      m.days.forEach(function (d) {
+        html += '<div class="day"><div class="day-head">' + esc(d.day)
+          + '<span class="tag' + (d.isToday ? ' today' : '') + '">' + esc(d.dayLabel || d.weekday || '') + ' ' + esc(d.date || '') + '</span></div><div class="day-body">';
+        (d.meals || []).forEach(function (meal) {
+          html += '<div class="line"><div class="line-label">' + esc(meal.meal) + '</div>';
+          (meal.lines || []).forEach(function (l) {
+            html += '<div class="line-items">' + esc((l.line ? l.line + '：' : '') + (l.items || []).join('、')) + '</div>';
+          });
+          html += '</div>';
+        });
+        html += '</div></div>';
+      });
+      html += '<p class="muted" style="font-size:11px">食谱内容取自真实食堂周食谱，日期按当前自然周自动同步。</p>';
+      $('menu-body').innerHTML = html;
+    });
+  }
+
+  /* ── ④ 拍照识别 ── */
+  $('photo-btn').onclick = function () { $('photo').click(); };
+  $('photo').onchange = function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    var out = $('photo-out');
+    out.innerHTML = '<div class="loading">正在压缩并识别…</div>';
+    var img = new Image();
+    var reader = new FileReader();
+    reader.onload = function () {
+      img.onload = function () {
+        var max = 512;
+        var scale = Math.min(1, max / Math.max(img.width, img.height));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.width * scale);
+        c.height = Math.round(img.height * scale);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        var dataUrl = c.toDataURL('image/jpeg', 0.7);
+        api('/api/ai/recognize-meal', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ studentId: state.me.id, image: dataUrl, commit: true, meal: guessMeal() })
+        }).then(function (r) {
+          var d = r.data || {};
+          if (!d.ok) {
+            var msg = d.hint || (d.error === 'not_configured'
+              ? '未配置 DeepSeek API Key，暂时无法识图（可在服务器环境变量里补上后重试）。'
+              : '识别失败，换一张更清晰的照片试试。');
+            out.innerHTML = '<p class="muted">' + esc(msg) + '</p>';
+            return;
+          }
+          var html = '<div style="margin-bottom:10px">';
+          (d.dishes || []).forEach(function (x) {
+            html += '<span class="pill">' + esc(x.emoji || '') + ' ' + esc(x.name) + ' ×' + x.portion + '</span>';
+          });
+          (d.blocked || []).forEach(function (b) {
+            html += '<span class="pill warn">已排除 ' + esc(b.name) + '（' + esc(b.reason) + '）</span>';
+          });
+          html += '</div><p class="muted">合计 <b>' + (d.totals ? d.totals.cal : 0) + ' kcal</b> · 蛋白 '
+            + (d.totals ? d.totals.protein : 0) + 'g · 脂肪 ' + (d.totals ? d.totals.fat : 0) + 'g · 纤维 '
+            + (d.totals ? d.totals.fiber : 0) + 'g<br/>' + esc(d.note || '') + '</p>';
+          if (d.committed) html += '<p class="muted" style="color:#0B7A66">✓ 已写入本周用餐记录（可回「本周分析」页重新分析查看变化）</p>';
+          out.innerHTML = html;
+          loadAnalysis(true);
+        }).catch(function () {
+          out.innerHTML = '<p class="muted">网络异常，识别失败。</p>';
+        });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(f);
+  };
+
+  function guessMeal() {
+    var h = new Date().getHours();
+    if (h < 10) return '早餐';
+    if (h < 16) return '午餐';
+    return '晚餐';
+  }
+
+  /* ── Tab 切换 ── */
+  Array.prototype.forEach.call(document.querySelectorAll('.tabbar div'), function (el) {
+    el.onclick = function () {
+      var tab = el.getAttribute('data-tab');
+      Array.prototype.forEach.call(document.querySelectorAll('.tabbar div'), function (x) { x.className = ''; });
+      el.className = 'on';
+      ['analysis', 'chat', 'menu', 'photo'].forEach(function (t) {
+        $('tab-' + t).style.display = t === tab ? '' : 'none';
+      });
+      window.scrollTo(0, 0);
+    };
+  });
+
+  /* ── 启动 ── */
+  api('/api/demo/config').then(function (r) {
+    if (!r.ok || !r.data || !r.data.personas) throw new Error('bad config');
+    var cfg = r.data;
+    state.personas = cfg.personas;
+    $('foot').innerHTML = '本次为演示体验环境 · 数据为教学演示数据<br/>后端：' + esc(cfg.apiBase || location.origin);
+    var saved = 0;
+    try { saved = parseInt(localStorage.getItem('demoPersona'), 10); } catch (e) {}
+    var pick = state.personas.filter(function (p) { return p.id === saved; })[0];
+    if (!pick) pick = state.personas[Math.floor(Math.random() * state.personas.length)];
+    state.me = pick;
+    renderPersonas();
+    $('hero-sub').textContent = pick.avatar + ' ' + pick.name + ' · ' + pick.college + ' · ' + pick.goal;
+    loadAnalysis(); loadMenu();
+  }).catch(function () {
+    $('hero-sub').textContent = '服务未连接';
+    $('analysis-body').innerHTML = '<div class="loading">无法连接演示服务，请确认后端已启动</div>';
+  });
+})();
+</script>
+</body>
+</html>

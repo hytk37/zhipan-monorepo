@@ -1,0 +1,50 @@
+<!-- pages/nutrition-detail/nutrition-detail.wxml -->
+<view class="page-nutrition">
+  <view class="card">
+    <view class="card-title"><text>📊 {{date}}营养报告</text></view>
+    <view class="score-big">
+      <text class="score-num">{{nutrition.score}}</text>
+      <text class="score-label">/100 综合评分</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title"><text>📈 营养素详情</text></view>
+    <view class="detail-item">
+      <view class="detail-head"><text class="detail-label">🔥 热量</text><text class="detail-val">{{nutrition.calories}}/{{nutrition.caloriesTarget}} kcal</text></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.calBarStyle}}"></view></view>
+    </view>
+    <view class="detail-item">
+      <view class="detail-head"><text class="detail-label">🥩 蛋白质</text><text class="detail-val">{{nutrition.protein}}/{{nutrition.proteinTarget}}g</text></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.proBarStyle}}"></view></view>
+    </view>
+    <view class="detail-item">
+      <view class="detail-head"><text class="detail-label">🍞 碳水化合物</text><text class="detail-val">{{nutrition.carbs}}/{{nutrition.carbsTarget}}g</text></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.carBarStyle}}"></view></view>
+    </view>
+    <view class="detail-item">
+      <view class="detail-head"><text class="detail-label">🧈 脂肪</text><text class="detail-val">{{nutrition.fat}}/{{nutrition.fatTarget}}g</text></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.fatBarStyle}}"></view></view>
+    </view>
+    <view class="detail-item">
+      <view class="detail-head"><text class="detail-label">🥬 膳食纤维</text><text class="detail-val">{{nutrition.fiber}}/{{nutrition.fiberTarget}}g</text></view>
+      <view class="progress-bar"><view class="progress-fill" style="{{nutrition.fibBarStyle}}"></view></view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title"><text>💡 AI建议</text></view>
+    <view class="suggestion alert-{{item.type}}" wx:for="{{suggestions}}" wx:key="text">
+      <text>{{item.text}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title"><text>📅 近期评分</text></view>
+    <view class="history-row" wx:for="{{history}}" wx:key="date">
+      <text class="hist-date">{{item.date}}</text>
+      <text class="hist-cal">{{item.cal}}kcal</text>
+      <text class="hist-score" style="color:{{item.scoreColor}}">{{item.score}}分</text>
+    </view>
+  </view>
+</view>

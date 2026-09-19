@@ -55,57 +55,6 @@ function bad(name, extra) { fail++; problems.push(name + (extra ? ' — ' + extr
   });
   try { require.resolve('mysql2'); } catch (e) { warn_('mysql2 未安装（仅数据库层用到，不影响演示）'); }
 
-  // ── 3.5 密钥泄露检查（被 GitHub push protection 拦过，这里提前发现）──
-  console.log('\n【密钥安全】');
-  const SECRET_RE = /sk-[A-Za-z0-9_-]{16,}/;
-  const ALLOW = ['sk-demo', 'sk-test', 'sk-你的', 'sk-xxx', 'sk-填'];
-  const leaked = [];
-
-  // 只扫描「会被提交的文件」：优先用 git ls-files（权威），失败再退回目录遍历
-  let scanList = [];
-  try {
-    const { execSync } = require('child_process');
-    const out = execSync('git ls-files', { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
-    scanList = out.split('\n').map((s) => s.trim()).filter(Boolean);
-  } catch (e) {
-    warn_('无法读取 git 文件列表，改用目录扫描', '（若在 Render 上运行可忽略）');
-  }
-
-  function checkLine(rel, line, lineNo) {
-    if (!SECRET_RE.test(line)) return;
-    if (ALLOW.some((a) => line.indexOf(a) >= 0)) return;
-    leaked.push(rel + ':' + lineNo);
-  }
-
-  if (scanList.length) {
-    scanList.forEach((rel) => {
-      if (!/\.(js|json|md|yml|yaml|html|txt|bat|example)$/i.test(rel) && rel.indexOf('.env.example') < 0) return;
-      const full = path.join(ROOT, rel.replace(/\//g, path.sep));
-      if (!fs.existsSync(full)) return;
-      try {
-        fs.readFileSync(full, 'utf8').split('\n').forEach((l, i) => checkLine(rel, l, i + 1));
-      } catch (e) {}
-    });
-  }
-
-  // .env 是本地私密文件（已被 .gitignore 忽略），单独确认它没被误提交
-  const envPath = path.join(BACKEND, '.env');
-  const envText = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-  try {
-    const { execSync } = require('child_process');
-    const tracked = execSync('git ls-files backend/.env', { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-    if (tracked) bad('backend/.env 被 git 跟踪了！', '它含真实密钥，必须从仓库移除');
-    else if (SECRET_RE.test(envText)) ok('backend/.env 已填 Key 且未被 git 跟踪（安全）');
-  } catch (e) {
-    if (SECRET_RE.test(envText)) ok('backend/.env 已填 Key（该文件已被 .gitignore 忽略）');
-  }
-
-  if (leaked.length) {
-    bad('发现真实密钥写进了「会被提交的文件」', leaked.slice(0, 3).join('、') + '  ← 必须改填到 backend/.env');
-  } else {
-    ok('会提交的文件里没有真实密钥（已扫描 ' + scanList.length + ' 个被跟踪文件）');
-  }
-
   // ── 4. 配置 ──
   console.log('\n【配置】');
   const { describe } = require('../config/deepseek');

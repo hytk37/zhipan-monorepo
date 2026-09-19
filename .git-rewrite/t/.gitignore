@@ -1,0 +1,14 @@
+node_modules/
+miniapp/project.private.config.json
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# 数据库凭据（参考 backend/.env.example）
+.env
+backend/.env
+
+# 登录 token 落盘目录（本地生成，不提交）
+backend/.data/

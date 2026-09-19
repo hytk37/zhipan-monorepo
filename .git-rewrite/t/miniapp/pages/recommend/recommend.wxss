@@ -1,0 +1,103 @@
+/* pages/recommend/recommend.wxss */
+.page-recommend { min-height: 100vh; padding-bottom: calc(100rpx + env(safe-area-inset-bottom, 0)); }
+
+/* 分类标签 */
+.category-tabs {
+  display: flex;
+  gap: 12rpx;
+  padding: 16rpx 24rpx;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+.category-tab {
+  padding: 10rpx 24rpx;
+  border-radius: 100rpx;
+  font-size: 26rpx;
+  background: #ffffff;
+  color: #666;
+  border: 1rpx solid #EEEEEE;
+  flex-shrink: 0;
+}
+.category-tab.active {
+  background: #07C160;
+  color: #ffffff;
+  border-color: #07C160;
+}
+
+/* AI方案卡片 */
+.plan-card {
+  background: linear-gradient(135deg, #E8F8EE, #D4F1E0);
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin: 16rpx 24rpx;
+}
+.plan-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+.plan-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #07C160;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+}
+.plan-name { font-size: 30rpx; font-weight: 600; color: #333; }
+.plan-desc { font-size: 22rpx; color: #666; margin-top: 4rpx; }
+.plan-lack {
+  background: rgba(255,149,0,0.1);
+  border-radius: 12rpx;
+  padding: 12rpx 16rpx;
+  font-size: 24rpx;
+  color: #9A5700;
+  margin-bottom: 16rpx;
+}
+.lack-highlight { font-weight: 600; color: #FF9500; }
+
+.plan-foods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+.plan-food {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 16rpx;
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+}
+.pf-emoji { font-size: 44rpx; flex-shrink: 0; }
+.pf-info { flex: 1; min-width: 0; }
+.pf-name { font-size: 26rpx; font-weight: 600; margin-bottom: 4rpx; }
+.pf-detail { font-size: 20rpx; color: #999; }
+.pf-reason { font-size: 20rpx; color: #07C160; margin-top: 6rpx; }
+
+.plan-total {
+  text-align: center;
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+}
+.adopt-btn { margin-top: 0; }
+
+/* 营养小贴士 */
+.tip-card {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+.tip-card:last-child { border-bottom: none; }
+.tip-icon { font-size: 40rpx; margin-right: 16rpx; flex-shrink: 0; }
+.tip-content { flex: 1; min-width: 0; }
+.tip-title { font-size: 26rpx; font-weight: 600; margin-bottom: 4rpx; }
+.tip-text { font-size: 22rpx; color: #999; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tip-arrow { font-size: 32rpx; color: #CCC; margin-left: 8rpx; }

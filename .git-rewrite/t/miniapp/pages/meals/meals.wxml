@@ -1,0 +1,89 @@
+<!-- pages/meals/meals.wxml -->
+<view class="page-meals">
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-wrap">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索菜品或日期..."
+        value="{{searchKey}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+    </view>
+  </view>
+
+  <!-- AI 周分析入口 -->
+  <view class="ai-bar" bindtap="goWeekHealth">
+    <view class="ai-bar-badge">AI</view>
+    <view class="ai-bar-body">
+      <view class="ai-bar-title">按本周菜品分析健康程度</view>
+      <view class="ai-bar-sub">逐餐点评 + 改进建议 + 可追问</view>
+    </view>
+    <view class="ai-bar-arrow">›</view>
+  </view>
+
+  <!-- 本月统计 -->
+  <view class="card stats-card">
+    <view class="card-title">
+      <text>📊 {{currentMonth}}统计</text>
+      <text class="week-range">{{weekRange}}</text>
+    </view>    <view class="stats-row">
+      <view class="stat-item">
+        <view class="stat-num" style="color:#07C160;">{{monthStats.checkDays}}</view>
+        <view class="stat-label">打卡天数</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <view class="stat-num" style="color:#FF9500;">{{monthStats.avgCal}}</view>
+        <view class="stat-label">日均热量(kcal)</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <view class="stat-num" style="color:#007AFF;">{{monthStats.avgScore}}</view>
+        <view class="stat-label">营养评分</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 用餐记录列表 -->
+  <view class="card" wx:for="{{records}}" wx:key="date" wx:for-index="dayidx" wx:for-item="record">
+    <view class="record-header" bindtap="goDayDetail" data-index="{{dayidx}}">
+      <view class="record-date">
+        <text class="date-text">{{record.date}}</text>
+        <text class="weekday-text">{{record.weekday}}</text>
+      </view>
+      <view class="record-score">
+        <text class="score-num" style="color:{{record.score >= 80 ? '#07C160' : record.score >= 60 ? '#FF9500' : '#FF3B30'}}">{{record.score}}</text>
+        <text class="score-unit">分</text>
+      </view>
+    </view>
+
+    <view class="meal-list">
+      <view class="meal-row" wx:for="{{record.meals}}" wx:key="type" bindtap="goMealDetail" data-dayidx="{{dayidx}}" data-mealidx="{{index}}">
+        <view class="meal-emoji">{{item.emoji}}</view>
+        <view class="meal-info">
+          <view class="meal-top">
+            <text class="meal-type">{{item.type}}</text>
+            <text class="meal-time">{{item.time}}</text>
+          </view>
+          <view class="meal-items">{{item.items}}</view>
+        </view>
+        <view class="meal-cal">
+          <text class="cal-num">{{item.cal}}</text>
+          <text class="cal-unit">kcal</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="record-footer">
+      <text class="total-label">合计</text>
+      <text class="total-cal">{{record.totalCal}} kcal</text>
+    </view>
+  </view>
+
+  <view style="height: 40rpx;"></view>
+</view>

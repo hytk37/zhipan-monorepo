@@ -1,0 +1,28 @@
+{
+  "name": "hx-smart-canteen-api",
+  "version": "2.1.0",
+  "description": "智慧膳系统 · 高校智慧食堂 API 服务",
+  "main": "api-server.js",
+  "scripts": {
+    "start": "node api-server.js",
+    "preflight": "node scripts/preflight.js",
+    "test": "node scripts/smoke-test.js",
+    "db:check": "node scripts/check-sql.js sql/schema.sql",
+    "db:seed:dry": "node scripts/seed.js --dry-run",
+    "db:seed": "node scripts/seed.js --exec",
+    "db:seed:file": "node scripts/seed.js --out=sql/seed-demo.sql --students=6 --days-summary=7",
+    "db:test": "node scripts/db-smoke-test.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.4",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "node-sql-parser": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

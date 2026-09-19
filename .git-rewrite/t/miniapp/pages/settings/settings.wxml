@@ -1,0 +1,239 @@
+<!-- pages/settings/settings.wxml -->
+<view class="page-settings">
+
+  <!-- 编辑资料 -->
+  <block wx:if="{{type === 'profile'}}">
+    <view class="card">
+      <view class="card-title"><text>📝 基本信息</text></view>
+      <view class="form-item">
+        <text class="form-label">姓名</text>
+        <input class="form-input" value="{{profileForm.name}}" data-field="profileForm.name" bindinput="onInput" placeholder="请输入姓名" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">学号</text>
+        <input class="form-input" value="{{profileForm.id}}" data-field="profileForm.id" bindinput="onInput" placeholder="请输入学号" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">学院</text>
+        <input class="form-input" value="{{profileForm.college}}" data-field="profileForm.college" bindinput="onInput" placeholder="请输入学院" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">性别</text>
+        <picker range="{{genderOptions}}" value="{{genderIndex}}" bindchange="onGenderChange">
+          <view class="form-value">{{profileForm.gender}} ›</view>
+        </picker>
+      </view>
+      <view class="form-item">
+        <text class="form-label">年龄</text>
+        <input class="form-input" type="number" value="{{profileForm.age}}" data-field="profileForm.age" bindinput="onInput" placeholder="请输入年龄" />
+        <text class="form-unit">岁</text>
+      </view>
+    </view>
+    <view class="card">
+      <view class="card-title"><text>🖼️ 选择头像</text></view>
+      <view class="avatar-grid">
+        <view
+          class="avatar-option {{avatarIndex === idx ? 'selected' : ''}}"
+          wx:for="{{avatarOptions}}"
+          wx:key="idx"
+          data-idx="{{idx}}"
+          bindtap="onAvatarChange"
+          style="background:{{item.color}}"
+        >
+          <text class="avatar-emoji">{{item.emoji}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="card">
+      <view class="card-title"><text>🥘 饮食偏好</text></view>
+      <view class="form-item">
+        <text class="form-label">饮食类型</text>
+        <picker range="{{dietOptions}}" value="{{dietIndex}}" bindchange="onDietChange">
+          <view class="form-value">{{profileForm.diet}} ›</view>
+        </picker>
+      </view>
+      <view class="diet-hint">
+        <text wx:if="{{profileForm.diet === '清真'}}">符合清真（Halal）饮食标准</text>
+        <text wx:if="{{profileForm.diet === '蛋奶素'}}">蛋奶素食，无肉类食物</text>
+        <text wx:if="{{profileForm.diet === '无麸质'}}">避免含麸质食物（小麦、大麦等）</text>
+        <text wx:if="{{profileForm.diet === '低敏'}}">排除常见过敏源食材</text>
+        <text wx:if="{{profileForm.diet === '无限制'}}">无特殊饮食限制</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 饮食目标 -->
+  <block wx:if="{{type === 'goal'}}">
+    <view class="card">
+      <view class="card-title"><text>🎯 饮食目标</text></view>
+      <view class="form-item">
+        <text class="form-label">目标类型</text>
+        <picker range="{{goalTypes}}" value="{{goalTypeIndex}}" bindchange="onGoalTypeChange">
+          <view class="form-value">{{goalForm.goalType}} ›</view>
+        </picker>
+      </view>
+      <view class="goal-type-desc">
+        <text wx:if="{{goalForm.goalType === '减脂塑形'}}">低热量高蛋白，控制碳水摄入</text>
+        <text wx:if="{{goalForm.goalType === '均衡饮食'}}">营养均衡，适量摄入各类营养素</text>
+        <text wx:if="{{goalForm.goalType === '增肌增重'}}">高热量高蛋白，增加碳水摄入</text>
+        <text wx:if="{{goalForm.goalType === '健康增重'}}">适度增加热量，注重蛋白质补充</text>
+      </view>
+      <view class="form-item">
+        <text class="form-label">每日热量目标</text>
+        <input class="form-input" type="number" value="{{goalForm.caloriesTarget}}" data-field="goalForm.caloriesTarget" bindinput="onInput" />
+        <text class="form-unit">kcal</text>
+      </view>
+      <view class="form-item">
+        <text class="form-label">蛋白质目标</text>
+        <input class="form-input" type="number" value="{{goalForm.proteinTarget}}" data-field="goalForm.proteinTarget" bindinput="onInput" />
+        <text class="form-unit">g</text>
+      </view>
+      <view class="form-item">
+        <text class="form-label">碳水目标</text>
+        <input class="form-input" type="number" value="{{goalForm.carbsTarget}}" data-field="goalForm.carbsTarget" bindinput="onInput" />
+        <text class="form-unit">g</text>
+      </view>
+      <view class="form-item">
+        <text class="form-label">脂肪目标</text>
+        <input class="form-input" type="number" value="{{goalForm.fatTarget}}" data-field="goalForm.fatTarget" bindinput="onInput" />
+        <text class="form-unit">g</text>
+      </view>
+      <view class="form-item">
+        <text class="form-label">膳食纤维目标</text>
+        <input class="form-input" type="number" value="{{goalForm.fiberTarget}}" data-field="goalForm.fiberTarget" bindinput="onInput" />
+        <text class="form-unit">g</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 过敏源设置 -->
+  <block wx:if="{{type === 'allergy'}}">
+    <view class="card">
+      <view class="card-title"><text>⚠️ 过敏源设置</text></view>
+      <view class="allergy-tip-text">选择你的过敏食物，智慧膳系统会在推荐时自动排除</view>
+      <view class="allergy-grid">
+        <view
+          class="allergy-chip {{allergyMap[item] ? 'active' : ''}}"
+          wx:for="{{commonAllergies}}"
+          wx:key="*this"
+          data-name="{{item}}"
+          bindtap="toggleAllergy"
+        >
+          {{item}} {{allergyMap[item] ? '✓' : ''}}
+        </view>
+      </view>
+    </view>
+    <view class="card" wx:if="{{allergyList.length > 0}}">
+      <view class="card-title"><text>✅ 已选择的过敏源</text></view>
+      <view class="selected-allergies">
+        <view class="selected-tag" wx:for="{{allergyList}}" wx:key="*this" data-name="{{item}}" bindtap="toggleAllergy">
+          {{item}} ×
+        </view>
+      </view>
+      <view class="remove-hint">点击可取消选择</view>
+    </view>
+  </block>
+
+  <!-- 用餐提醒 -->
+  <block wx:if="{{type === 'remind'}}">
+    <view class="card">
+      <view class="card-title"><text>🔔 用餐提醒</text></view>
+      <view class="remind-row">
+        <view class="remind-left">
+          <text class="remind-emoji">🌅</text>
+          <text class="remind-label">早餐提醒</text>
+        </view>
+        <switch checked="{{remindForm.breakfast}}" data-key="breakfast" bindchange="toggleRemind" color="#07C160" />
+      </view>
+      <view class="remind-row" wx:if="{{remindForm.breakfast}}">
+        <text class="remind-time-label">提醒时间</text>
+        <picker mode="time" value="{{remindForm.breakfastTime}}" data-key="breakfastTime" bindchange="onTimeChange">
+          <view class="form-value">{{remindForm.breakfastTime}} ›</view>
+        </picker>
+      </view>
+      <view class="remind-divider"></view>
+      <view class="remind-row">
+        <view class="remind-left">
+          <text class="remind-emoji">☀️</text>
+          <text class="remind-label">午餐提醒</text>
+        </view>
+        <switch checked="{{remindForm.lunch}}" data-key="lunch" bindchange="toggleRemind" color="#07C160" />
+      </view>
+      <view class="remind-row" wx:if="{{remindForm.lunch}}">
+        <text class="remind-time-label">提醒时间</text>
+        <picker mode="time" value="{{remindForm.lunchTime}}" data-key="lunchTime" bindchange="onTimeChange">
+          <view class="form-value">{{remindForm.lunchTime}} ›</view>
+        </picker>
+      </view>
+      <view class="remind-divider"></view>
+      <view class="remind-row">
+        <view class="remind-left">
+          <text class="remind-emoji">🌙</text>
+          <text class="remind-label">晚餐提醒</text>
+        </view>
+        <switch checked="{{remindForm.dinner}}" data-key="dinner" bindchange="toggleRemind" color="#07C160" />
+      </view>
+      <view class="remind-row" wx:if="{{remindForm.dinner}}">
+        <text class="remind-time-label">提醒时间</text>
+        <picker mode="time" value="{{remindForm.dinnerTime}}" data-key="dinnerTime" bindchange="onTimeChange">
+          <view class="form-value">{{remindForm.dinnerTime}} ›</view>
+        </picker>
+      </view>
+    </view>
+  </block>
+
+  <!-- 身体数据 -->
+  <block wx:if="{{type === 'body'}}">
+    <view class="card">
+      <view class="card-title"><text>📐 身体数据</text></view>
+      <view class="form-item">
+        <text class="form-label">身高</text>
+        <input class="form-input" type="digit" value="{{bodyForm.height}}" data-field="bodyForm.height" bindinput="onInput" placeholder="175" />
+        <text class="form-unit">cm</text>
+      </view>
+      <view class="form-item">
+        <text class="form-label">体重</text>
+        <input class="form-input" type="digit" value="{{bodyForm.weight}}" data-field="bodyForm.weight" bindinput="onInput" placeholder="60" />
+        <text class="form-unit">kg</text>
+      </view>
+      <view class="form-item">
+        <text class="form-label">年龄</text>
+        <input class="form-input" type="number" value="{{bodyForm.age}}" data-field="bodyForm.age" bindinput="onInput" placeholder="20" />
+        <text class="form-unit">岁</text>
+      </view>
+      <view class="form-item">
+        <text class="form-label">性别</text>
+        <picker range="{{genderOptions}}" value="{{bodyGenderIndex}}" bindchange="onGenderChange">
+          <view class="form-value">{{bodyForm.gender}} ›</view>
+        </picker>
+      </view>
+    </view>
+    <view class="card">
+      <view class="card-title"><text>💡 BMI 参考</text></view>
+      <view class="bmi-display">
+        <text class="bmi-num" style="color:{{bmiColor}}">{{bmiValue}}</text>
+        <text class="bmi-status" style="color:{{bmiColor}}">{{bmiStatus}}</text>
+      </view>
+      <view class="bmi-bar-wrap">
+        <view class="bmi-bar">
+          <view class="bmi-bar-seg seg-low"></view>
+          <view class="bmi-bar-seg seg-normal"></view>
+          <view class="bmi-bar-seg seg-high"></view>
+          <view class="bmi-bar-seg seg-obese"></view>
+        </view>
+        <view class="bmi-pointer" style="{{bmiPointerStyle}}"></view>
+      </view>
+      <view class="bmi-scale">
+        <view class="bmi-range bmi-low">体重偏低 &lt;18.5</view>
+        <view class="bmi-range bmi-normal">正常 18.5-24</view>
+        <view class="bmi-range bmi-high">偏胖 24-28</view>
+        <view class="bmi-range bmi-obese">体重偏高 ≥28</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 保存按钮 -->
+  <view class="save-wrap">
+    <button class="btn-primary" bindtap="saveSettings">保存设置</button>
+  </view>
+</view>

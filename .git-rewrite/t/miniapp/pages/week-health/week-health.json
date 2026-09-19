@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "本周饮食健康分析",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {}
+}

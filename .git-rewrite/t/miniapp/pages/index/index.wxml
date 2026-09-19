@@ -1,0 +1,113 @@
+<!-- pages/index/index.wxml -->
+<view class="page-home">
+
+  <!-- 顶部问候区 -->
+  <view class="header">
+    <view class="greeting">你好，{{studentName}} 👋</view>
+    <view class="sub-text">{{todayDate}} · 今天也要好好吃饭哦</view>
+  </view>
+
+  <!-- 今日营养环形图 + 进度条 -->
+  <view class="card nutrition-card">
+    <view class="card-title">
+      <text>📊 今日营养摄入</text>
+      <text class="more" bindtap="goNutritionDetail">详情 ›</text>
+    </view>
+    <view class="nutrition-ring-row">
+      <view class="ring-wrap">
+        <canvas id="ringCanvas" type="2d" class="ring-canvas"></canvas>
+        <view class="ring-center">
+          <view class="ring-score">{{nutrition.score}}</view>
+          <view class="ring-label">营养评分</view>
+        </view>
+      </view>
+      <view class="bars-wrap">
+        <view class="bar-item" wx:for="{{bars}}" wx:key="label">
+          <view class="bar-head">
+            <text class="bar-label">{{item.label}}</text>
+            <text class="bar-val">{{item.val}}</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-fill" style="{{item.barStyle}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="cal-row">
+      <text class="cal-text">热量 {{nutrition.calories}} / {{nutrition.caloriesTarget}} kcal</text>
+      <view class="progress-bar cal-bar">
+        <view class="progress-fill" style="{{nutrition.calBarStyle}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI 预警 -->
+  <view class="alert alert-{{aiWarningType}}" wx:if="{{aiWarning}}">
+    <text>⚠️ {{aiWarning}}</text>
+  </view>
+
+  <!-- AI 本周饮食健康分析入口 -->
+  <view class="ai-entry" bindtap="goWeekHealth">
+    <view class="ai-entry-badge">AI</view>
+    <view class="ai-entry-body">
+      <view class="ai-entry-title">本周饮食健康分析</view>
+      <view class="ai-entry-sub">按你这周吃过的菜，看健康程度并给出改进建议</view>
+    </view>
+    <view class="ai-entry-arrow">›</view>
+  </view>
+
+  <!-- 今日智能推荐 -->
+  <view class="card">
+    <view class="card-title">
+      <text>🍽️ 今日智能推荐</text>
+      <text class="more" bindtap="refreshFoods">换一批</text>
+    </view>
+    <view class="food-card" wx:for="{{todayFoods}}" wx:key="id" bindtap="goFoodDetail" data-id="{{item.id}}">
+      <view class="food-emoji">{{item.emoji}}</view>
+      <view class="food-info">
+        <view class="food-name">{{item.name}}</view>
+        <view class="food-desc">{{item.desc}}</view>
+        <view class="food-tags">
+          <text class="tag tag-{{tag.type}}" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="text">{{tag.text}}</text>
+        </view>
+      </view>
+    </view>
+    <button class="btn-primary {{checked ? 'disabled' : ''}}" bindtap="doCheckin" disabled="{{checked}}">
+      {{checked ? '✅ 已打卡！今日营养目标已记录' : '✅ 确认用餐（打卡营养目标）'}}
+    </button>
+  </view>
+
+  <!-- 本周热量趋势 -->
+  <view class="card">
+    <view class="card-title"><text>📈 本周热量趋势</text></view>
+    <view class="trend-chart">
+      <view class="trend-col" wx:for="{{weekTrend}}" wx:key="day">
+        <view class="trend-val" wx:if="{{item.cal > 0}}">{{item.calText}}</view>
+        <view class="trend-bar-wrap">
+          <view class="trend-bar {{item.active ? 'active' : ''}}" style="{{item.barStyle}}"></view>
+        </view>
+        <view class="trend-label {{item.active ? 'active' : ''}}">{{item.day}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="card">
+    <view class="card-title"><text>⚡ 快捷功能</text></view>
+    <view class="quick-grid">
+      <view class="quick-item" bindtap="goNutritionDetail">
+        <view class="quick-icon qi-1">📊</view>
+        <view class="quick-text">营养报告</view>
+      </view>
+      <view class="quick-item" bindtap="refreshFoods">
+        <view class="quick-icon qi-2">🔄</view>
+        <view class="quick-text">换推荐</view>
+      </view>
+      <view class="quick-item" bindtap="doCheckin">
+        <view class="quick-icon qi-3">✅</view>
+        <view class="quick-text">打卡</view>
+      </view>
+    </view>
+  </view>
+
+</view>

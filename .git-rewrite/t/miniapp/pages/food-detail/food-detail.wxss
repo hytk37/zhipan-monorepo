@@ -1,0 +1,31 @@
+/* pages/food-detail/food-detail.wxss */
+.page-food { padding-bottom: 40rpx; }
+.food-header {
+  background: linear-gradient(135deg, #E8F8EE, #D4F1E0);
+  padding: 40rpx 32rpx;
+  text-align: center;
+}
+.food-emoji-big { font-size: 100rpx; margin-bottom: 12rpx; }
+.food-name-big { font-size: 36rpx; font-weight: 700; color: #333; }
+.food-source { font-size: 24rpx; color: #999; margin-top: 8rpx; }
+.food-tags-row { margin-top: 12rpx; display: flex; justify-content: center; gap: 8rpx; flex-wrap: wrap; }
+.nutrient-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8rpx;
+}
+.nutrient-item { text-align: center; padding: 12rpx 0; }
+.nutrient-val { font-size: 32rpx; font-weight: 700; }
+.nutrient-unit { font-size: 18rpx; color: #999; }
+.nutrient-label { font-size: 20rpx; color: #666; margin-top: 4rpx; }
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 8rpx 0;
+}
+.rating-score { font-size: 40rpx; font-weight: 700; color: #FF9500; }
+.rating-stars { font-size: 28rpx; color: #FF9500; }
+.rating-count { font-size: 24rpx; color: #999; }
+.add-btn-wrap { padding: 20rpx 24rpx; }
+.add-btn { margin: 0; }

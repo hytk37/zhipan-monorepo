@@ -1,0 +1,11 @@
+chore(deploy): 上线准备——自检脚本、仓库说明、部署手册，并修正点评日期格式
+
+- 新增 backend/scripts/preflight.js（npm run preflight）：部署前自检 21 项
+  （目录完整性/依赖可解析/Node 版本/AI 配置/演示地址/9 个关键接口实测）
+- README.md 重写为当前状态：三端结构、命令表、Render 部署三步、AI 边界三原则、接口清单
+- 分支由 master 改名为 main（与 render.yaml 的 branch: main 对齐）
+- 修正 AI 逐餐点评的日期格式：提示词与降级模板改用「9月14日」，
+  并对模型回吐的 ISO 日期（2026-09-14）做二次规范化（normalizeAnalysis）
+- 验证：冒烟 73/73；preflight 21 项全通过；
+  模拟 Render 生产环境（PORT 注入 + 公网地址 + 空 Key）12 项全通过，无 Key 时优雅降级
+- 演示数据快照：导出 6 位学生的真实 AI 输出（评分 59-73），用于离线兜底与 PPT 引用
