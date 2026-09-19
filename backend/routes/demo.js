@@ -10,6 +10,10 @@
 //   ?target=demo   （默认）学生端体验页 /demo
 //   ?target=admin          管理后台大屏 /admin
 // 例：/api/demo/qr.png?size=720&target=admin
+//
+// GET    /api/demo/base-url  读取当前公网地址（也用于服务版本能力探测，全局可用）
+// POST   /api/demo/base-url  写入当前公网地址（仅本机可调，内网穿透脚本用）
+// DELETE /api/demo/base-url  清除
 
 const { Router } = require('express');
 const router = Router();
@@ -40,6 +44,47 @@ function qrTarget(req, cfg) {
 
 router.get('/demo/config', (req, res) => {
   res.json(demoInfo.demoConfig(currentPort(req), studentProfiles, req));
+});
+
+// ─── 运行期公网地址（内网穿透用）──────────────────────────
+// 只接受「本机直连」的调用（share.js 用 127.0.0.1 调）：
+//   · 来源必须是回环地址
+//   · 且不能带 x-forwarded-* 头（云托管/隧道转发过来的请求会带，一律拒绝）
+function fromLocalhostOnly(req, res) {
+  const ip = String((req.socket && req.socket.remoteAddress) || req.ip || '');
+  const loopback = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+  const forwarded = !!(req.headers['x-forwarded-for'] || req.headers['x-forwarded-host']);
+  if (!loopback || forwarded) {
+    res.status(403).json({
+      ok: false, error: 'local_only',
+      hint: '该接口仅供本机的一键演示脚本（start-demo.bat / npm run share）调用',
+    });
+    return false;
+  }
+  return true;
+}
+
+// 读取当前运行期公网地址（同时用作「服务版本能力探测」：
+// 旧版本服务没有这个路由，会返回 404，share.js 据此避免复用旧服务）
+router.get('/demo/base-url', (req, res) => {
+  res.json({ ok: true, url: demoInfo.getRuntimeBaseUrl() });
+});
+
+// 写入当前公网地址（内网穿透建立后由 share.js 调用）
+router.post('/demo/base-url', (req, res) => {
+  if (!fromLocalhostOnly(req, res)) return;
+  const url = demoInfo.setRuntimeBaseUrl(req.body && req.body.url);
+  if (!url) {
+    return res.status(400).json({ ok: false, error: 'invalid_url', hint: '请传 { url: "https://xxx.trycloudflare.com" }' });
+  }
+  res.json({ ok: true, baseUrl: url });
+});
+
+// 清除（隧道关闭时调用，避免二维码还指向已失效的地址）
+router.delete('/demo/base-url', (req, res) => {
+  if (!fromLocalhostOnly(req, res)) return;
+  demoInfo.setRuntimeBaseUrl(null);
+  res.json({ ok: true, cleared: true });
 });
 
 // 健康检查 / 保活（Koyeb / CloudBase 健康检查路径；也可用外部监控定时访问防止休眠）

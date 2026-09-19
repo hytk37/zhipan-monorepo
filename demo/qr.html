@@ -44,6 +44,12 @@
   .step span { font-size: 1.6vh; color: #D6E4F2; line-height: 1.5; }
   .foot { margin-top: 2vh; font-size: 1.4vh; color: #7C97B6; text-align: center; line-height: 1.7; }
 
+  /* 局域网警告条 */
+  .warn { width: 100%; max-width: 1580px; margin-top: 2.2vh; padding: 1.5vh 1.8vw; border-radius: 14px;
+          background: rgba(255,176,32,.14); border: 1px solid rgba(255,176,32,.5);
+          color: #FFD899; font-size: 1.7vh; line-height: 1.6; }
+  .warn b { color: #FFC24D; }
+
   /* 屏幕较矮（如 1366×768 投影）时收紧一点，保证一屏放得下 */
   @media (max-height: 800px) {
     h1 { font-size: 3vh; }
@@ -63,7 +69,14 @@
     <div class="mode">
       <div class="tag" id="mode">—</div>
       <div class="host" id="host">—</div>
+      <div class="host" id="src">—</div>
     </div>
+  </div>
+
+  <!-- 局域网提示：只在二维码指向内网地址时出现 -->
+  <div class="warn" id="warn" style="display:none">
+    ⚠️ 当前二维码指向的是<b>局域网地址</b>，只有连同一个 WiFi 的手机能打开。
+    要让嘉宾用流量（4G/5G）也能扫：在仓库根目录双击 <b>start-demo.bat</b> 开启公网隧道，再刷新本页。
   </div>
 
   <div class="cards">
@@ -106,9 +119,12 @@
   function load() {
     fetch('/api/demo/config').then(function (r) { return r.json(); }).then(function (c) {
       el('mode').textContent = '运行环境：' + c.modeLabel;
-      el('host').textContent = c.mode === 'cloud'
+      el('src').textContent = '地址来源：' + (c.baseUrlSource || '—');
+      var cloud = c.mode === 'cloud';
+      el('host').textContent = cloud
         ? '公网可访问，嘉宾任意网络均可扫码'
         : '局域网演示，嘉宾需连同一个 WiFi';
+      el('warn').style.display = cloud ? 'none' : 'block';
       el('url-demo').textContent = (c.demoUrl || '').replace(/^https?:\/\//, '');
       el('url-admin').textContent = (c.adminUrl || '').replace(/^https?:\/\//, '');
 
